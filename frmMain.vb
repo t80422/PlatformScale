@@ -3,7 +3,8 @@ Imports System.Configuration
 Imports System.IO.Ports
 
 Public Class frmMain
-    Public permissions As Integer
+    Public permissions As Integer '權限等級
+    Public user As String '使用者
     Private serialPortA As SerialPort
     Private serialPortB As SerialPort
     Private nowScale As String
@@ -166,16 +167,24 @@ Public Class frmMain
             txtEmptyCar.Text = row("空重")
             txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
         End If
-        '計算當日趟數送至 趟數
-        Dim carData = SelectTable($"SELECT COUNT(車牌號碼) AS coun FROM 過磅資料表 WHERE 車牌號碼 = '{row("車號")}' AND 過磅日期 = '{Now:d}'").Rows
+        txtCarCount.Text = GetCarCount(row("車號"))
+    End Sub
+
+    ''' <summary>
+    ''' 計算當日車次
+    ''' </summary>
+    ''' <param name="carNo"></param>
+    ''' <returns></returns>
+    Private Function GetCarCount(carNo As String) As Integer
+        Dim carData = SelectTable($"SELECT COUNT(車牌號碼) AS coun FROM 過磅資料表 WHERE 車牌號碼 = '{carNo}' AND 過磅日期 = '{Now:yyyy/MM/dd}'").Rows
         Dim carCount As Integer
         If carData.Count > 0 Then
             carCount = carData(0)("coun")
         Else
             carCount = 0
         End If
-        txtCarCount.Text = carCount
-    End Sub
+        Return carCount
+    End Function
 
     '過磅作業-載入空重
     Private Sub btnLoadEmpty_Click(sender As Object, e As EventArgs) Handles btnLoadEmpty.Click
@@ -190,7 +199,7 @@ Public Class frmMain
     Private Sub LoadWeight(weight As TextBox, time As TextBox)
         Dim value = GetWeight()
         weight.Text = value
-        time.Text = Date.Now.ToString("HH:mm")
+        time.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
 
     End Sub
 
@@ -355,41 +364,41 @@ Public Class frmMain
         txtNetWeight.Text = (Double.Parse(txtTotalWeight.Text) - Double.Parse(txtEmptyCar.Text)).ToString("0.00")
     End Sub
 
-    '過磅作業-空車重量
-    Private Sub txtEmptyCar_Leave(sender As Object, e As EventArgs) Handles txtEmptyCar.Leave
-        '如果欄位為空,就清除載入時間
-        If String.IsNullOrWhiteSpace(txtEmptyCar.Text) Then
-            txtLoudTime_Empty.Clear()
-            Exit Sub
-        End If
-        '檢查是否為正數,是就填入時間,防止使用者手動輸入完資料後沒按Enter
-        If CheckPositiveNumber(txtEmptyCar) AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Empty.Text) Then MsgBox("請輸入Enter")
-    End Sub
+    ''過磅作業-空車重量
+    'Private Sub txtEmptyCar_Leave(sender As Object, e As EventArgs) Handles txtEmptyCar.Leave
+    '    '如果欄位為空,就清除載入時間
+    '    If String.IsNullOrWhiteSpace(txtEmptyCar.Text) Then
+    '        txtLoudTime_Empty.Clear()
+    '        Exit Sub
+    '    End If
+    '    '檢查是否為正數,是就填入時間,防止使用者手動輸入完資料後沒按Enter
+    '    If CheckPositiveNumber(txtEmptyCar) AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Empty.Text) Then MsgBox("請輸入Enter")
+    'End Sub
 
-    '過磅作業-總重
-    Private Sub txtTotalWeight_Leave(sender As Object, e As EventArgs) Handles txtTotalWeight.Leave
-        '如果欄位為空,就清除載入時間
-        If String.IsNullOrWhiteSpace(txtTotalWeight.Text) Then
-            txtLoudTime_Total.Clear()
-            Exit Sub
-        End If
-        '檢查是否為正數,是就填入時間,防止使用者手動輸入完資料後沒按Enter
-        If CheckPositiveNumber(txtTotalWeight) AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Total.Text) Then MsgBox("請輸入Enter")
-    End Sub
+    ''過磅作業-總重
+    'Private Sub txtTotalWeight_Leave(sender As Object, e As EventArgs) Handles txtTotalWeight.Leave
+    '    '如果欄位為空,就清除載入時間
+    '    If String.IsNullOrWhiteSpace(txtTotalWeight.Text) Then
+    '        txtLoudTime_Total.Clear()
+    '        Exit Sub
+    '    End If
+    '    '檢查是否為正數,是就填入時間,防止使用者手動輸入完資料後沒按Enter
+    '    If CheckPositiveNumber(txtTotalWeight) AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Total.Text) Then MsgBox("請輸入Enter")
+    'End Sub
 
-    '過磅作業-空車重量-按 Enter 代入 載入時間
-    Private Sub txtEmptyCar_KeyPress(sender As TextBox, e As KeyPressEventArgs) Handles txtEmptyCar.KeyPress
-        If sender.ReadOnly = False AndAlso e.KeyChar = vbCr Then
-            txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
-        End If
-    End Sub
+    ''過磅作業-空車重量-按 Enter 代入 載入時間
+    'Private Sub txtEmptyCar_KeyPress(sender As TextBox, e As KeyPressEventArgs) Handles txtEmptyCar.KeyPress
+    '    If sender.ReadOnly = False AndAlso e.KeyChar = vbCr Then
+    '        txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+    '    End If
+    'End Sub
 
-    '過磅作業-總重-按 Enter 代入 載入時間
-    Private Sub txtTotalWeight_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtTotalWeight.KeyPress
-        If sender.ReadOnly = False AndAlso e.KeyChar = vbCr Then
-            txtLoudTime_Total.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
-        End If
-    End Sub
+    ''過磅作業-總重-按 Enter 代入 載入時間
+    'Private Sub txtTotalWeight_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtTotalWeight.KeyPress
+    '    If sender.ReadOnly = False AndAlso e.KeyChar = vbCr Then
+    '        txtLoudTime_Total.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+    '    End If
+    'End Sub
 
     '過磅作業-總米數單位.00
     Private Sub RadioButton13_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton13.CheckedChanged
@@ -494,6 +503,7 @@ Public Class frmMain
     Private Sub btnInsert_過磅_Click(sender As Object, e As EventArgs) Handles btnInsert_過磅.Click
         btnClear_過磅.PerformClick()
         txtRcepNo.Text = GetNewRecpNo()
+        txtUser.Text = user
         cmbCliManu.Enabled = True
         cmbCarNo.Enabled = True
         cmbProduct.Enabled = True
@@ -571,16 +581,21 @@ Public Class frmMain
     'dgv點擊-過磅作業-場內車輛列表(二次過磅)、過磅
     Private Sub dgv過磅_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv二次過磅.CellMouseClick, dgv過磅.CellMouseClick
         Dim dgv As DataGridView = sender
+        If dgv.SelectedRows.Count < 1 Then Exit Sub
         ClearControl(dgv.Parent.Controls.OfType(Of Control).Where(Function(ctrl) TypeOf ctrl IsNot GroupBox))
         Dim selectRow = dgv.SelectedRows(0)
         GetDataToControls(tp過磅, selectRow)
         '因為會切換到選項的進出貨,就會觸發cmb重置,所以要再抓一次
         Dim value = GetCellData(selectRow, "客戶/廠商")
         cmbCliManu.SelectedIndex = cmbCliManu.FindStringExact(value)
-        value = GetCellData(selectRow, "車牌號碼")
-        cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(value)
+        Dim carNo = GetCellData(selectRow, "車牌號碼")
+        cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(carNo)
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) Then txtLoudTime_Empty.Text = Date.Parse(txtLoudTime_Empty.Text).ToString("HH:mm")
         If Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then txtLoudTime_Total.Text = Date.Parse(txtLoudTime_Total.Text).ToString("HH:mm")
+
+        '計算當日車趟數
+        txtCarCount.Text = GetCarCount(carNo)
+
         If permissions <> 1 Then
             cmbCliManu.Enabled = True
             cmbProduct.Enabled = True
@@ -601,12 +616,18 @@ Public Class frmMain
                 .SelectedIndex = -1
             End With
         End If
+
+        '刷新空車重,載入時間
+        txtEmptyCar.Clear()
+        txtLoudTime_Empty.Clear()
     End Sub
 
     'dgv點擊-系統設定-權限設定
     Private Sub dgv權限_CellMouseClick(sender As DataGridView, e As DataGridViewCellMouseEventArgs) Handles dgv權限.CellMouseClick
+        Dim dgv As DataGridView = sender
+        If dgv.SelectedRows.Count < 1 Then Exit Sub
         ClearControl(grp權限)
-        Dim selectRow = sender.SelectedRows(0)
+        Dim selectRow = dgv.SelectedRows(0)
         GetDataToControls(grp權限, selectRow)
     End Sub
 
@@ -616,7 +637,12 @@ Public Class frmMain
             MsgBox("請先 新增過磅")
             Exit Sub
         End If
+
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) And Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then
+            If SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE {txtRcepNo.Tag} = '{txtRcepNo.Text}'").Rows.Count > 0 Then
+                If MsgBox($"{txtRcepNo.Tag}:{txtRcepNo.Text} 已修改,是否覆蓋", MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
+            End If
+            DeleteTable("過磅資料表", $"{txtRcepNo.Tag} = '{txtRcepNo.Text}'")
             If Insert過磅Data("過磅資料表") Then
                 Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
                 DeleteTable("二次過磅暫存資料表", dic)
@@ -625,16 +651,34 @@ Public Class frmMain
             End If
             '二次過磅(對象為未登錄空車重)
         ElseIf Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) OrElse Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then
-            '同一台車不可能重複出現在廠內
-            If SelectTable($"SELECT * FROM 二次過磅暫存資料表 WHERE {cmbCarNo.Tag} = '{cmbCarNo.Text}'").Rows.Count > 0 Then
-                MsgBox("重複輸入")
-                Exit Sub
-            End If
+            ''提醒輸入載入時間
+            'If Not String.IsNullOrWhiteSpace(txtEmptyCar.Text) AndAlso Integer.Parse(txtEmptyCar.Text) > 0 AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Empty.Text) Then
+            '    MsgBox("請輸入空車載入時間,否則空車重量請輸入0")
+            '    Exit Sub
+            'End If
+            'If Not String.IsNullOrWhiteSpace(txtTotalWeight.Text) AndAlso Integer.Parse(txtTotalWeight.Text) > 0 AndAlso String.IsNullOrWhiteSpace(txtLoudTime_Total.Text) Then
+            '    MsgBox("請輸入總重載入時間,否則總重請輸入0")
+            '    Exit Sub
+            'End If
 
+            Dim tempRows = SelectTable($"SELECT * FROM 二次過磅暫存資料表 WHERE {cmbCarNo.Tag} = '{cmbCarNo.Text}' AND 過磅日期 = '{Now:yyyy/MM/dd}'").Rows
+            '同一台車不可能重複出現在廠內
+            If tempRows.Count > 0 Then
+                Dim rcepNo = tempRows(0).Field(Of String)("磅單序號")
+                If rcepNo <> txtRcepNo.Text Then
+                    MsgBox($"{cmbCarNo.Tag}:{cmbCarNo.Text} 重複輸入,請檢察 場內車輛列表")
+                    Exit Sub
+                ElseIf tempRows(0).Field(Of String)("磅單序號") = txtRcepNo.Text Then
+                    Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
+                    DeleteTable("二次過磅暫存資料表", dic)
+                End If
+            End If
             If Not Insert過磅Data("二次過磅暫存資料表") Then Exit Sub
         Else
-            MsgBox("請先秤重")
+            MsgBox("請先檢查重量貨載入時間")
+            Exit Sub
         End If
+
         '臨時客戶/廠商,新增到資料表
         If cmbCliManu.SelectedIndex = -1 Then
             Dim table As String = ""
@@ -665,18 +709,27 @@ Public Class frmMain
                     {"全銜", cmbCliManu.Text}
                 }
                 InserTable(table, dic)
-                '臨時車號,新增到資料表
-                dic.Clear()
-                dic.Add("車主", cmbCliManu.Text)
-                dic.Add("車號", cmbCarNo.Text)
-                InserTable("車籍資料表", dic)
                 SetCmbCliManu(cm)
+                '對應臨時客戶/廠商新增時要刷新
+                btnClear_Click(btnClear_客戶, e)
+                btnClear_Click(btnClear_廠商, e)
             End If
-            '對應臨時客戶/廠商新增時要刷新
-            btnClear_Click(btnClear_客戶, e)
-            btnClear_Click(btnClear_廠商, e)
+        End If
+
+        '臨時車號,新增到資料表
+        If cmbCarNo.SelectedIndex = -1 Then
+            '檢查是否重複
+            If SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}'").Rows.Count = 0 Then
+                Dim dic As New Dictionary(Of String, Object) From {
+                    {"車主", cmbCliManu.Text},
+                    {"車號", cmbCarNo.Text}
+                }
+                InserTable("車籍資料表", dic)
+            End If
+            '對應臨時車號新增時要刷新
             btnClear_Click(btnClear_車籍, e)
         End If
+
         btnClear_過磅.PerformClick()
         MsgBox("儲存成功")
     End Sub
@@ -757,17 +810,31 @@ Public Class frmMain
 
     '儲存-系統設定-Port設定
     Private Sub btnSave_Port_Click(sender As Object, e As EventArgs) Handles btnSave_Port.Click
-        If String.IsNullOrWhiteSpace(txtPortA.Text) OrElse String.IsNullOrWhiteSpace(txtPortB.Text) Then Exit Sub
-        If Not CheckPositiveNumber(txtPortA) OrElse Not CheckPositiveNumber(txtPortB) Then Exit Sub
+        If String.IsNullOrWhiteSpace(txtPortA.Text) And String.IsNullOrWhiteSpace(txtPortB.Text) Then Exit Sub
+
+        '輸入防呆
+        If Not String.IsNullOrWhiteSpace(txtPortA.Text) AndAlso Not CheckPositiveNumber(txtPortA) Then Exit Sub
+        If Not String.IsNullOrWhiteSpace(txtPortB.Text) AndAlso Not CheckPositiveNumber(txtPortB) Then Exit Sub
+
+        '檢查是否兩個Port設定一樣
+        Dim row = SelectTable("SELECT * FROM 通訊埠口資料表").Rows(0)
+        If Not String.IsNullOrWhiteSpace(txtPortA.Text) AndAlso txtPortA.Text = row("埠口2") Then
+            MsgBox("不能與 埠口2 設定一樣")
+            Exit Sub
+        End If
+        If Not String.IsNullOrWhiteSpace(txtPortB.Text) AndAlso txtPortB.Text = row("埠口1") Then
+            MsgBox("不能與 埠口1 設定一樣")
+            Exit Sub
+        End If
+
         Dim dic As New Dictionary(Of String, String)
-        grpPort.Controls.OfType(Of TextBox).ToList.ForEach(Sub(t) dic.Add(t.Tag.ToString, t.Text))
+        grpPort.Controls.OfType(Of TextBox).Where(Function(txt) Not String.IsNullOrWhiteSpace(txt.Text)).ToList.ForEach(Sub(t) dic.Add(t.Tag.ToString, t.Text))
         If UpdateTable("通訊埠口資料表", dic, "1=1") Then
             dgvPort.DataSource = SelectTable("SELECT * FROM 通訊埠口資料表")
             txtPortA.Clear()
             txtPortB.Clear()
             MsgBox("儲存成功")
         End If
-
     End Sub
 
     '儲存-系統設定-遠端備份
@@ -834,16 +901,19 @@ Public Class frmMain
 
     'dgv點擊-廠商資料、客戶資料、車籍資料
     Private Sub dgv_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv廠商.CellMouseClick, dgv客戶.CellMouseClick, dgv車籍.CellMouseClick
-        Dim dgv = CType(sender, DataGridView)
+        Dim dgv As DataGridView = sender
+        If dgv.SelectedRows.Count < 1 Then Exit Sub
         Dim tp = dgv.Parent
         Dim selectRow = dgv.SelectedRows(0)
-        GetDGVValue(tp, selectRow)
+        GetDataToControls(tp, selectRow)
     End Sub
 
     'dgv點擊-貨品資料
     Private Sub dgv貨品_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv貨品.CellMouseClick
+        Dim dgv As DataGridView = sender
+        If dgv.SelectedRows.Count < 1 Then Exit Sub
         Dim row = dgv貨品.SelectedRows(0)
-        GetDGVValue(tp貨品, row)
+        GetDataToControls(tp貨品, row)
         If row.Cells("噸數設定").Value Then
             rdoTSet.Checked = True
         Else
@@ -1017,7 +1087,6 @@ Public Class frmMain
     Private Sub BtnClear(tp As TabPage)
         Dim table As String = ""
         Dim dgv As DataGridView = Nothing
-        'Dim btn As Button = Nothing
         Select Case tp.Text
             Case "廠商資料"
                 table = "廠商資料表"
@@ -1033,7 +1102,6 @@ Public Class frmMain
                 dgv = dgv貨品
         End Select
         dgv.DataSource = SelectTable(GetTableAllData(table))
-        'If btn IsNot Nothing Then btn.PerformClick()
     End Sub
 
     '清除-車籍資料
@@ -1140,5 +1208,30 @@ Public Class frmMain
                 LoginForm1.Show()
             End If
         End If
+    End Sub
+
+    ''過磅作業-空重輸入時間
+    'Private Sub btnEmptyCarTime_Click(sender As Object, e As EventArgs) Handles btnEmptyCarTime.Click
+    '    txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+    'End Sub
+
+    ''過磅作業-總重輸入時間
+    'Private Sub btnFullCarTime_Click(sender As Object, e As EventArgs) Handles btnFullCarTime.Click
+    '    txtLoudTime_Total.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+    'End Sub
+
+    '過磅作業-空重輸入時間
+    Private Sub txtEmptyCar_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtEmptyCar.KeyPress
+        If txtEmptyCar.ReadOnly = True Then Exit Sub
+        txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+        If String.IsNullOrWhiteSpace(txtEmptyCar.Text) Then txtLoudTime_Empty.Clear()
+    End Sub
+
+    '過磅作業-總重輸入時間
+    Private Sub txtTotalWeight_KeyUp(sender As Object, e As KeyEventArgs) Handles txtTotalWeight.KeyUp
+        '手動模式觸發
+        If txtTotalWeight.ReadOnly = True Then Exit Sub
+        txtLoudTime_Total.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
+        If String.IsNullOrWhiteSpace(txtTotalWeight.Text) Then txtLoudTime_Total.Clear()
     End Sub
 End Class

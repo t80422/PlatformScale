@@ -94,6 +94,7 @@ Partial Class frmScaleQuery
         Me.txtDate.Name = "txtDate"
         Me.txtDate.Size = New System.Drawing.Size(220, 36)
         Me.txtDate.TabIndex = 8
+        Me.txtDate.Tag = "過磅日期"
         '
         'GroupBox1
         '
@@ -134,6 +135,7 @@ Partial Class frmScaleQuery
         Me.cmbProduct.Name = "cmbProduct"
         Me.cmbProduct.Size = New System.Drawing.Size(217, 32)
         Me.cmbProduct.TabIndex = 9
+        Me.cmbProduct.Tag = "產品名稱"
         '
         'cmbCarNo
         '
@@ -143,6 +145,7 @@ Partial Class frmScaleQuery
         Me.cmbCarNo.Name = "cmbCarNo"
         Me.cmbCarNo.Size = New System.Drawing.Size(217, 32)
         Me.cmbCarNo.TabIndex = 8
+        Me.cmbCarNo.Tag = "車牌號碼"
         '
         'cmbManufacturer
         '
@@ -152,6 +155,7 @@ Partial Class frmScaleQuery
         Me.cmbManufacturer.Name = "cmbManufacturer"
         Me.cmbManufacturer.Size = New System.Drawing.Size(217, 32)
         Me.cmbManufacturer.TabIndex = 7
+        Me.cmbManufacturer.Tag = "[客戶/廠商]"
         '
         'cmbCustomer
         '
@@ -161,6 +165,7 @@ Partial Class frmScaleQuery
         Me.cmbCustomer.Name = "cmbCustomer"
         Me.cmbCustomer.Size = New System.Drawing.Size(217, 32)
         Me.cmbCustomer.TabIndex = 6
+        Me.cmbCustomer.Tag = "[客戶/廠商]"
         '
         'btnQuery
         '
