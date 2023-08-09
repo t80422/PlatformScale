@@ -1,4 +1,6 @@
-﻿Public Class frmScaleQuery
+﻿Imports System.Text
+
+Public Class frmScaleQuery
     Private Sub ScaleQuery_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         cmbCustomer.DataSource = SelectTable("SELECT 代號, 簡稱 FROM 客戶資料表")
         cmbCustomer.DisplayMember = "簡稱"
@@ -29,20 +31,25 @@
     End Sub
 
     Private Sub btnQuery_Click(sender As Object, e As EventArgs) Handles btnQuery.Click
-        Dim cusManu = IIf(cmbCustomer.Text <> "", cmbCustomer.Text, cmbManufacturer.Text)
-        frmMain.dgv過磅.DataSource = SelectTable($"SELECT * FROM 過磅資料表 WHERE [客戶/廠商] = '{cusManu}' OR 車牌號碼 = '{cmbCarNo.Text}' OR 產品名稱 = '{cmbProduct.Text}' OR 過磅日期 = '{txtDate.Text}'")
+        Dim list As New List(Of String)
+        For Each grp In Controls.OfType(Of GroupBox)
+            grp.Controls.OfType(Of Control).Where(Function(ctrls) ctrls.GetType.Name <> "MonthCalendar" AndAlso Not String.IsNullOrEmpty(ctrls.Tag) AndAlso Not String.IsNullOrEmpty(ctrls.Text)).ToList.
+                ForEach(Sub(x) list.Add($"{x.Tag} = '{x.Text}'"))
+        Next
+        frmMain.dgv過磅.DataSource = SelectTable($"SELECT * FROM 過磅資料表 WHERE {String.Join(" AND ", list)}")
         Close()
     End Sub
 
     '客戶 廠商只能二擇一
-    Private Sub cmbCustomer_SelectedIndexChanged(sender As ComboBox, e As EventArgs) Handles cmbCustomer.SelectedIndexChanged
+    Private Sub cmbCustomer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbCustomer.SelectedIndexChanged
         If sender.SelectedIndex <> -1 Then
             cmbManufacturer.SelectedIndex = -1
             cmbManufacturer.ResetText()
         End If
     End Sub
 
-    Private Sub cmbManufacturer_SelectedIndexChanged(sender As ComboBox, e As EventArgs) Handles cmbManufacturer.SelectedIndexChanged
+    '客戶 廠商只能二擇一
+    Private Sub cmbManufacturer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbManufacturer.SelectedIndexChanged
         If sender.SelectedIndex <> -1 Then
             cmbCustomer.SelectedIndex = -1
             cmbCustomer.ResetText()

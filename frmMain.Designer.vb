@@ -25,7 +25,6 @@ Partial Class frmMain
         Me.components = New System.ComponentModel.Container()
         Me.tabMain = New System.Windows.Forms.TabControl()
         Me.tp過磅 = New System.Windows.Forms.TabPage()
-        Me.btnDel_二次過磅 = New System.Windows.Forms.Button()
         Me.btnQuery_過磅 = New System.Windows.Forms.Button()
         Me.btnInsert_過磅 = New System.Windows.Forms.Button()
         Me.Label100 = New System.Windows.Forms.Label()
@@ -84,7 +83,7 @@ Partial Class frmMain
         Me.Label63 = New System.Windows.Forms.Label()
         Me.cmbProduct = New System.Windows.Forms.ComboBox()
         Me.Label58 = New System.Windows.Forms.Label()
-        Me.TextBox40 = New System.Windows.Forms.TextBox()
+        Me.txtUser = New System.Windows.Forms.TextBox()
         Me.lblCliManu = New System.Windows.Forms.Label()
         Me.Label54 = New System.Windows.Forms.Label()
         Me.tp廠商 = New System.Windows.Forms.TabPage()
@@ -298,6 +297,7 @@ Partial Class frmMain
         Me.tpLogout = New System.Windows.Forms.TabPage()
         Me.tmr過磅 = New System.Windows.Forms.Timer(Me.components)
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
+        Me.btnDel_二次過磅 = New System.Windows.Forms.Button()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.grpDecimal.SuspendLayout()
@@ -401,7 +401,7 @@ Partial Class frmMain
         Me.tp過磅.Controls.Add(Me.Label63)
         Me.tp過磅.Controls.Add(Me.cmbProduct)
         Me.tp過磅.Controls.Add(Me.Label58)
-        Me.tp過磅.Controls.Add(Me.TextBox40)
+        Me.tp過磅.Controls.Add(Me.txtUser)
         Me.tp過磅.Controls.Add(Me.lblCliManu)
         Me.tp過磅.Controls.Add(Me.Label54)
         Me.tp過磅.Location = New System.Drawing.Point(4, 31)
@@ -410,17 +410,6 @@ Partial Class frmMain
         Me.tp過磅.TabIndex = 4
         Me.tp過磅.Text = "過磅作業"
         Me.tp過磅.UseVisualStyleBackColor = True
-        '
-        'btnDel_二次過磅
-        '
-        Me.btnDel_二次過磅.AutoSize = True
-        Me.btnDel_二次過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_二次過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
-        Me.btnDel_二次過磅.Location = New System.Drawing.Point(680, 577)
-        Me.btnDel_二次過磅.Name = "btnDel_二次過磅"
-        Me.btnDel_二次過磅.Size = New System.Drawing.Size(81, 81)
-        Me.btnDel_二次過磅.TabIndex = 233
-        Me.btnDel_二次過磅.UseVisualStyleBackColor = False
         '
         'btnQuery_過磅
         '
@@ -604,7 +593,7 @@ Partial Class frmMain
         Me.GroupBox5.Controls.Add(Me.Label79)
         Me.GroupBox5.Controls.Add(Me.lblAValue)
         Me.GroupBox5.Controls.Add(Me.Label76)
-        Me.GroupBox5.Location = New System.Drawing.Point(765, 479)
+        Me.GroupBox5.Location = New System.Drawing.Point(764, 479)
         Me.GroupBox5.Name = "GroupBox5"
         Me.GroupBox5.Size = New System.Drawing.Size(227, 179)
         Me.GroupBox5.TabIndex = 264
@@ -763,7 +752,6 @@ Partial Class frmMain
         Me.txtLoudTime_Total.Location = New System.Drawing.Point(739, 168)
         Me.txtLoudTime_Total.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtLoudTime_Total.Name = "txtLoudTime_Total"
-        Me.txtLoudTime_Total.ReadOnly = True
         Me.txtLoudTime_Total.Size = New System.Drawing.Size(150, 27)
         Me.txtLoudTime_Total.TabIndex = 250
         Me.txtLoudTime_Total.Tag = "總重載入時間"
@@ -784,7 +772,6 @@ Partial Class frmMain
         Me.txtLoudTime_Empty.Location = New System.Drawing.Point(739, 131)
         Me.txtLoudTime_Empty.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtLoudTime_Empty.Name = "txtLoudTime_Empty"
-        Me.txtLoudTime_Empty.ReadOnly = True
         Me.txtLoudTime_Empty.Size = New System.Drawing.Size(150, 27)
         Me.txtLoudTime_Empty.TabIndex = 248
         Me.txtLoudTime_Empty.Tag = "空重載入時間"
@@ -1022,7 +1009,7 @@ Partial Class frmMain
         Me.dgv過磅.Name = "dgv過磅"
         Me.dgv過磅.ReadOnly = True
         Me.dgv過磅.RowTemplate.Height = 24
-        Me.dgv過磅.Size = New System.Drawing.Size(988, 180)
+        Me.dgv過磅.Size = New System.Drawing.Size(978, 180)
         Me.dgv過磅.TabIndex = 229
         '
         'Label63
@@ -1057,16 +1044,16 @@ Partial Class frmMain
         Me.Label58.TabIndex = 218
         Me.Label58.Text = "承 辦 人"
         '
-        'TextBox40
+        'txtUser
         '
-        Me.TextBox40.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.TextBox40.Location = New System.Drawing.Point(739, 92)
-        Me.TextBox40.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
-        Me.TextBox40.Name = "TextBox40"
-        Me.TextBox40.ReadOnly = True
-        Me.TextBox40.Size = New System.Drawing.Size(150, 27)
-        Me.TextBox40.TabIndex = 217
-        Me.TextBox40.Tag = "承辦人"
+        Me.txtUser.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.txtUser.Location = New System.Drawing.Point(739, 92)
+        Me.txtUser.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
+        Me.txtUser.Name = "txtUser"
+        Me.txtUser.ReadOnly = True
+        Me.txtUser.Size = New System.Drawing.Size(150, 27)
+        Me.txtUser.TabIndex = 217
+        Me.txtUser.Tag = "承辦人"
         '
         'lblCliManu
         '
@@ -3090,7 +3077,7 @@ Partial Class frmMain
         Me.Label94.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.Label94.Location = New System.Drawing.Point(6, 323)
         Me.Label94.Name = "Label94"
-        Me.Label94.Size = New System.Drawing.Size(986, 130)
+        Me.Label94.Size = New System.Drawing.Size(986, 120)
         Me.Label94.TabIndex = 258
         Me.Label94.Text = "權限 1 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可操作一般過磅與新增資料,但無法修改刪除及使用系統設定的功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 2 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可修改過磅與刪除過磅資料,亦可手動與自動過磅,但仍" &
     "無法操作系統設定功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 3 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    系統設定的最高等級,可操作任何畫面與資料"
@@ -3381,12 +3368,12 @@ Partial Class frmMain
         Me.dgv權限.AllowUserToDeleteRows = False
         Me.dgv權限.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.dgv權限.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgv權限.Location = New System.Drawing.Point(6, 461)
+        Me.dgv權限.Location = New System.Drawing.Point(6, 448)
         Me.dgv權限.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.dgv權限.Name = "dgv權限"
         Me.dgv權限.ReadOnly = True
         Me.dgv權限.RowTemplate.Height = 24
-        Me.dgv權限.Size = New System.Drawing.Size(986, 195)
+        Me.dgv權限.Size = New System.Drawing.Size(986, 208)
         Me.dgv權限.TabIndex = 249
         '
         'tpLogout
@@ -3407,6 +3394,17 @@ Partial Class frmMain
         'tmrScale
         '
         Me.tmrScale.Interval = 500
+        '
+        'btnDel_二次過磅
+        '
+        Me.btnDel_二次過磅.AutoSize = True
+        Me.btnDel_二次過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnDel_二次過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_二次過磅.Location = New System.Drawing.Point(677, 577)
+        Me.btnDel_二次過磅.Name = "btnDel_二次過磅"
+        Me.btnDel_二次過磅.Size = New System.Drawing.Size(81, 81)
+        Me.btnDel_二次過磅.TabIndex = 233
+        Me.btnDel_二次過磅.UseVisualStyleBackColor = False
         '
         'frmMain
         '
@@ -3583,7 +3581,7 @@ Partial Class frmMain
     Friend WithEvents Label63 As Label
     Friend WithEvents cmbProduct As ComboBox
     Friend WithEvents Label58 As Label
-    Friend WithEvents TextBox40 As TextBox
+    Friend WithEvents txtUser As TextBox
     Friend WithEvents lblCliManu As Label
     Friend WithEvents Label54 As Label
     Friend WithEvents GroupBox5 As GroupBox
@@ -3746,7 +3744,6 @@ Partial Class frmMain
     Friend WithEvents Label102 As Label
     Friend WithEvents Label96 As Label
     Friend WithEvents grpT As GroupBox
-    Friend WithEvents btnDel_二次過磅 As Button
     Friend WithEvents dgv二次過磅 As DataGridView
     Friend WithEvents tmr過磅 As Timer
     Friend WithEvents lblB As Label
@@ -3758,4 +3755,5 @@ Partial Class frmMain
     Friend WithEvents Label12 As Label
     Friend WithEvents Label11 As Label
     Friend WithEvents tpLogout As TabPage
+    Friend WithEvents btnDel_二次過磅 As Button
 End Class

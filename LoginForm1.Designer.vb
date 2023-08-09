@@ -36,6 +36,7 @@ Partial Class LoginForm1
         Me.txtPsw = New System.Windows.Forms.TextBox()
         Me.OK = New System.Windows.Forms.Button()
         Me.Cancel = New System.Windows.Forms.Button()
+        Me.cmbUser = New System.Windows.Forms.ComboBox()
         CType(Me.LogoPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -59,7 +60,7 @@ Partial Class LoginForm1
         '
         'PasswordLabel
         '
-        Me.PasswordLabel.Location = New System.Drawing.Point(172, 81)
+        Me.PasswordLabel.Location = New System.Drawing.Point(172, 80)
         Me.PasswordLabel.Name = "PasswordLabel"
         Me.PasswordLabel.Size = New System.Drawing.Size(220, 23)
         Me.PasswordLabel.TabIndex = 2
@@ -68,10 +69,11 @@ Partial Class LoginForm1
         '
         'txtPsw
         '
-        Me.txtPsw.Location = New System.Drawing.Point(174, 101)
+        Me.txtPsw.Font = New System.Drawing.Font("新細明體", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.txtPsw.Location = New System.Drawing.Point(174, 106)
         Me.txtPsw.Name = "txtPsw"
         Me.txtPsw.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
-        Me.txtPsw.Size = New System.Drawing.Size(220, 22)
+        Me.txtPsw.Size = New System.Drawing.Size(215, 30)
         Me.txtPsw.TabIndex = 3
         '
         'OK
@@ -91,6 +93,15 @@ Partial Class LoginForm1
         Me.Cancel.TabIndex = 5
         Me.Cancel.Text = "取消(&C)"
         '
+        'cmbUser
+        '
+        Me.cmbUser.Font = New System.Drawing.Font("新細明體", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.cmbUser.FormattingEnabled = True
+        Me.cmbUser.Location = New System.Drawing.Point(174, 50)
+        Me.cmbUser.Name = "cmbUser"
+        Me.cmbUser.Size = New System.Drawing.Size(215, 27)
+        Me.cmbUser.TabIndex = 6
+        '
         'LoginForm1
         '
         Me.AcceptButton = Me.OK
@@ -98,6 +109,7 @@ Partial Class LoginForm1
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel
         Me.ClientSize = New System.Drawing.Size(401, 192)
+        Me.Controls.Add(Me.cmbUser)
         Me.Controls.Add(Me.Cancel)
         Me.Controls.Add(Me.OK)
         Me.Controls.Add(Me.txtPsw)
@@ -110,11 +122,12 @@ Partial Class LoginForm1
         Me.Name = "LoginForm1"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "LoginForm1"
+        Me.Text = "登入"
         CType(Me.LogoPictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
+    Friend WithEvents cmbUser As ComboBox
 End Class
