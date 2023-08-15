@@ -25,6 +25,9 @@ Partial Class frmMain
         Me.components = New System.ComponentModel.Container()
         Me.tabMain = New System.Windows.Forms.TabControl()
         Me.tp過磅 = New System.Windows.Forms.TabPage()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.dgv過磅 = New System.Windows.Forms.DataGridView()
+        Me.btnDel_二次過磅 = New System.Windows.Forms.Button()
         Me.btnQuery_過磅 = New System.Windows.Forms.Button()
         Me.btnInsert_過磅 = New System.Windows.Forms.Button()
         Me.Label100 = New System.Windows.Forms.Label()
@@ -79,7 +82,6 @@ Partial Class frmMain
         Me.btnClear_過磅 = New System.Windows.Forms.Button()
         Me.btnDel_過磅 = New System.Windows.Forms.Button()
         Me.btnSave_過磅 = New System.Windows.Forms.Button()
-        Me.dgv過磅 = New System.Windows.Forms.DataGridView()
         Me.Label63 = New System.Windows.Forms.Label()
         Me.cmbProduct = New System.Windows.Forms.ComboBox()
         Me.Label58 = New System.Windows.Forms.Label()
@@ -297,16 +299,16 @@ Partial Class frmMain
         Me.tpLogout = New System.Windows.Forms.TabPage()
         Me.tmr過磅 = New System.Windows.Forms.Timer(Me.components)
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
-        Me.btnDel_二次過磅 = New System.Windows.Forms.Button()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
+        Me.GroupBox1.SuspendLayout()
+        CType(Me.dgv過磅, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpDecimal.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
         CType(Me.dgv二次過磅, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox5.SuspendLayout()
         Me.grpAutoManu.SuspendLayout()
         Me.grpInOut.SuspendLayout()
-        CType(Me.dgv過磅, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tp廠商.SuspendLayout()
         CType(Me.dgv廠商, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tp客戶.SuspendLayout()
@@ -356,6 +358,7 @@ Partial Class frmMain
         '
         'tp過磅
         '
+        Me.tp過磅.Controls.Add(Me.GroupBox1)
         Me.tp過磅.Controls.Add(Me.btnDel_二次過磅)
         Me.tp過磅.Controls.Add(Me.btnQuery_過磅)
         Me.tp過磅.Controls.Add(Me.btnInsert_過磅)
@@ -397,7 +400,6 @@ Partial Class frmMain
         Me.tp過磅.Controls.Add(Me.btnClear_過磅)
         Me.tp過磅.Controls.Add(Me.btnDel_過磅)
         Me.tp過磅.Controls.Add(Me.btnSave_過磅)
-        Me.tp過磅.Controls.Add(Me.dgv過磅)
         Me.tp過磅.Controls.Add(Me.Label63)
         Me.tp過磅.Controls.Add(Me.cmbProduct)
         Me.tp過磅.Controls.Add(Me.Label58)
@@ -410,6 +412,41 @@ Partial Class frmMain
         Me.tp過磅.TabIndex = 4
         Me.tp過磅.Text = "過磅作業"
         Me.tp過磅.UseVisualStyleBackColor = True
+        '
+        'GroupBox1
+        '
+        Me.GroupBox1.Controls.Add(Me.dgv過磅)
+        Me.GroupBox1.Location = New System.Drawing.Point(10, 292)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(982, 181)
+        Me.GroupBox1.TabIndex = 285
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "完成過磅車輛列表"
+        '
+        'dgv過磅
+        '
+        Me.dgv過磅.AllowUserToAddRows = False
+        Me.dgv過磅.AllowUserToDeleteRows = False
+        Me.dgv過磅.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgv過磅.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.dgv過磅.Location = New System.Drawing.Point(3, 29)
+        Me.dgv過磅.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
+        Me.dgv過磅.Name = "dgv過磅"
+        Me.dgv過磅.ReadOnly = True
+        Me.dgv過磅.RowTemplate.Height = 24
+        Me.dgv過磅.Size = New System.Drawing.Size(976, 149)
+        Me.dgv過磅.TabIndex = 229
+        '
+        'btnDel_二次過磅
+        '
+        Me.btnDel_二次過磅.AutoSize = True
+        Me.btnDel_二次過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnDel_二次過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_二次過磅.Location = New System.Drawing.Point(677, 577)
+        Me.btnDel_二次過磅.Name = "btnDel_二次過磅"
+        Me.btnDel_二次過磅.Size = New System.Drawing.Size(81, 81)
+        Me.btnDel_二次過磅.TabIndex = 233
+        Me.btnDel_二次過磅.UseVisualStyleBackColor = False
         '
         'btnQuery_過磅
         '
@@ -998,19 +1035,6 @@ Partial Class frmMain
         Me.btnSave_過磅.Size = New System.Drawing.Size(81, 81)
         Me.btnSave_過磅.TabIndex = 231
         Me.btnSave_過磅.UseVisualStyleBackColor = False
-        '
-        'dgv過磅
-        '
-        Me.dgv過磅.AllowUserToAddRows = False
-        Me.dgv過磅.AllowUserToDeleteRows = False
-        Me.dgv過磅.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgv過磅.Location = New System.Drawing.Point(11, 294)
-        Me.dgv過磅.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
-        Me.dgv過磅.Name = "dgv過磅"
-        Me.dgv過磅.ReadOnly = True
-        Me.dgv過磅.RowTemplate.Height = 24
-        Me.dgv過磅.Size = New System.Drawing.Size(978, 180)
-        Me.dgv過磅.TabIndex = 229
         '
         'Label63
         '
@@ -2145,7 +2169,9 @@ Partial Class frmMain
         '
         Me.dgv車籍.AllowUserToAddRows = False
         Me.dgv車籍.AllowUserToDeleteRows = False
-        Me.dgv車籍.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.dgv車籍.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgv車籍.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgv車籍.Location = New System.Drawing.Point(6, 221)
         Me.dgv車籍.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
@@ -3395,17 +3421,6 @@ Partial Class frmMain
         '
         Me.tmrScale.Interval = 500
         '
-        'btnDel_二次過磅
-        '
-        Me.btnDel_二次過磅.AutoSize = True
-        Me.btnDel_二次過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_二次過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
-        Me.btnDel_二次過磅.Location = New System.Drawing.Point(677, 577)
-        Me.btnDel_二次過磅.Name = "btnDel_二次過磅"
-        Me.btnDel_二次過磅.Size = New System.Drawing.Size(81, 81)
-        Me.btnDel_二次過磅.TabIndex = 233
-        Me.btnDel_二次過磅.UseVisualStyleBackColor = False
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3417,10 +3432,12 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V0.4"
+        Me.Text = "原綱衡器過磅系統 V0.5"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
+        Me.GroupBox1.ResumeLayout(False)
+        CType(Me.dgv過磅, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpDecimal.ResumeLayout(False)
         Me.grpDecimal.PerformLayout()
         Me.GroupBox6.ResumeLayout(False)
@@ -3431,7 +3448,6 @@ Partial Class frmMain
         Me.grpAutoManu.PerformLayout()
         Me.grpInOut.ResumeLayout(False)
         Me.grpInOut.PerformLayout()
-        CType(Me.dgv過磅, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tp廠商.ResumeLayout(False)
         Me.tp廠商.PerformLayout()
         CType(Me.dgv廠商, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3756,4 +3772,5 @@ Partial Class frmMain
     Friend WithEvents Label11 As Label
     Friend WithEvents tpLogout As TabPage
     Friend WithEvents btnDel_二次過磅 As Button
+    Friend WithEvents GroupBox1 As GroupBox
 End Class

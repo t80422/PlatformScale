@@ -86,35 +86,6 @@
     End Sub
 
     ''' <summary>
-    ''' 將DGV資料送至相應欄位
-    ''' </summary>
-    ''' <param name="tp"></param>
-    ''' <param name="row">dgv所選列</param>
-    <Obsolete("改成 GetDataToControls")>
-    Public Sub GetDGVValue(tp As TabPage, row As DataGridViewRow)
-        ClearControl(tp)
-        For Each col As DataGridViewColumn In row.DataGridView.Columns
-            For Each ctrl In tp.Controls.OfType(Of Control).Where(Function(ctrls) ctrls.Tag IsNot Nothing)
-                If TypeOf ctrl Is TextBox Then
-                    Dim txt = CType(ctrl, TextBox)
-                    If col.Name = txt.Tag.ToString Then
-                        txt.Text = If(IsDBNull(row.Cells(ctrl.Tag.ToString).Value), "", row.Cells(ctrl.Tag.ToString).Value)
-                        Exit For
-                    End If
-                ElseIf TypeOf ctrl Is GroupBox Then
-                    Dim grp = CType(ctrl, GroupBox)
-                    For Each txt In grp.Controls.OfType(Of TextBox)
-                        If col.Name = txt.Tag.ToString Then
-                            txt.Text = If(IsDBNull(row.Cells(txt.Tag.ToString).Value), "", row.Cells(txt.Tag.ToString).Value)
-                            Exit For
-                        End If
-                    Next
-                End If
-            Next
-        Next
-    End Sub
-
-    ''' <summary>
     ''' 將取得的資料傳至各控制項(控制項的Tag必須寫上表格欄位名稱)
     ''' </summary>
     ''' <param name="ctrls">父容器</param>
