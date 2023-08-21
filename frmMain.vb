@@ -78,25 +78,30 @@ Public Class frmMain
     ''' </summary>
     Private Sub SetComPort()
         Dim row = SelectTable("SELECT * FROM 通訊埠口資料表").Rows(0)
-        If row("埠口1") = 0 OrElse IsDBNull(row("埠口1") Then Exit Sub
-        serialPortA = New SerialPort("COM" + row("埠口1").ToString, 9600, Parity.None, 7, StopBits.One)
-        AddHandler serialPortA.DataReceived, AddressOf SerialPortA_DataReceived
-        Try
-            If serialPortA.IsOpen Then serialPortA.Close()
-            serialPortA.Open()
-            portClose = False
-        Catch ex As Exception
-            MsgBox(ex.Message)
-        End Try
-        serialPortB = New SerialPort("COM" + row("埠口2").ToString, 9600, Parity.None, 7, StopBits.One)
-        AddHandler serialPortB.DataReceived, AddressOf SerialPortB_DataReceived
-        Try
-            If serialPortB.IsOpen Then serialPortB.Close()
-            serialPortB.Open()
-            portClose = False
-        Catch ex As Exception
-            MsgBox(ex.Message)
-        End Try
+        If Not IsDBNull(row("埠口1")) AndAlso row("埠口1") <> 0 Then
+            serialPortA = New SerialPort("COM" + row("埠口1").ToString, 9600, Parity.None, 7, StopBits.One)
+            AddHandler serialPortA.DataReceived, AddressOf SerialPortA_DataReceived
+            Try
+                If serialPortA.IsOpen Then serialPortA.Close()
+                serialPortA.Open()
+                portClose = False
+            Catch ex As Exception
+                MsgBox(ex.Message)
+            End Try
+        End If
+
+        If Not IsDBNull(row("埠口2")) AndAlso row("埠口2") <> 0 Then
+            serialPortB = New SerialPort("COM" + row("埠口2").ToString, 9600, Parity.None, 7, StopBits.One)
+            AddHandler serialPortB.DataReceived, AddressOf SerialPortB_DataReceived
+            Try
+                If serialPortB.IsOpen Then serialPortB.Close()
+                serialPortB.Open()
+                portClose = False
+            Catch ex As Exception
+                MsgBox(ex.Message)
+            End Try
+        End If
+
     End Sub
 
     ''' <summary>
@@ -667,6 +672,7 @@ Public Class frmMain
                     table = "廠商資料表"
                     cm = enumWho.廠商
             End Select
+
             '檢查是否重複
             If SelectTable($"SELECT 簡稱 FROM {table} WHERE 簡稱 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
                 '取得代號
@@ -677,6 +683,7 @@ Public Class frmMain
                 Else
                     no = 1
                 End If
+
                 '全銜、簡稱一樣
                 Dim dic As New Dictionary(Of String, Object) From {
                     {"代號", no},
@@ -684,25 +691,24 @@ Public Class frmMain
                     {"全銜", cmbCliManu.Text}
                 }
                 InserTable(table, dic)
-                'SetCmbCliManu(cm)
+
                 '對應臨時客戶/廠商新增時要刷新
                 btnClear_Click(btnClear_客戶, e)
                 btnClear_Click(btnClear_廠商, e)
             End If
-        Else
-            GoTo Finish
         End If
 
         '臨時車號,新增到資料表
         If cmbCarNo.SelectedIndex = -1 Then
             '檢查是否重複
-            If SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}'").Rows.Count = 0 Then
+            If SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}' AND 車主 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
                 Dim dic As New Dictionary(Of String, Object) From {
                     {"車主", cmbCliManu.Text},
                     {"車號", cmbCarNo.Text}
                 }
                 InserTable("車籍資料表", dic)
             End If
+
             '對應臨時車號新增時要刷新
             btnClear_Click(btnClear_車籍, e)
         Else
@@ -790,11 +796,7 @@ Finish:
 
     '儲存-系統設定-Port設定
     Private Sub btnSave_Port_Click(sender As Object, e As EventArgs) Handles btnSave_Port.Click
-        'If String.IsNullOrWhiteSpace(txtPortA.Text) And String.IsNullOrWhiteSpace(txtPortB.Text) Then Exit Sub
-
         '輸入防呆
-        'If Not String.IsNullOrWhiteSpace(txtPortA.Text) AndAlso Not CheckPositiveNumber(txtPortA) Then Exit Sub
-        'If Not String.IsNullOrWhiteSpace(txtPortB.Text) AndAlso Not CheckPositiveNumber(txtPortB) Then Exit Sub
         If Not String.IsNullOrWhiteSpace(txtPortA.Text) AndAlso Not CheckPositiveNumber(txtPortA) Then
             MsgBox("請輸入正確的Port")
             txtPortA.Focus()
@@ -808,16 +810,19 @@ Finish:
 
         '檢查是否兩個Port設定一樣
         Dim row = SelectTable("SELECT * FROM 通訊埠口資料表").Rows(0)
-        If Not String.IsNullOrWhiteSpace(txtPortA.Text) AndAlso txtPortA.Text = row("埠口2") Then
-            MsgBox("不能與 埠口2 設定一樣")
-            Exit Sub
+        If Not String.IsNullOrWhiteSpace(txtPortA.Text) Then
+            If Not IsDBNull(row("埠口2")) AndAlso txtPortA.Text = row("埠口2") Then
+                MsgBox("不能與 埠口2 設定一樣")
+                Exit Sub
+            End If
         End If
-        If Not String.IsNullOrWhiteSpace(txtPortB.Text) AndAlso txtPortB.Text = row("埠口1") Then
-            MsgBox("不能與 埠口1 設定一樣")
-            Exit Sub
+        If Not String.IsNullOrWhiteSpace(txtPortB.Text) Then
+            If Not IsDBNull(row("埠口1")) AndAlso txtPortB.Text = row("埠口1") Then
+                MsgBox("不能與 埠口1 設定一樣")
+                Exit Sub
+            End If
         End If
 
-        'grpPort.Controls.OfType(Of TextBox).ToList.ForEach(Sub(t) dic.Add(t.Tag.ToString, t.Text))
         Dim dic As New Dictionary(Of String, String) From {
             {txtPortA.Tag, If(String.IsNullOrWhiteSpace(txtPortA.Text), 0, txtPortA.Text)},
             {txtPortB.Tag, If(String.IsNullOrWhiteSpace(txtPortB.Text), 0, txtPortB.Text)}
@@ -1218,4 +1223,10 @@ Finish:
         If String.IsNullOrWhiteSpace(txtEmptyCar.Text) Then txtLoudTime_Empty.Clear()
     End Sub
 
+    '系統設定-Poty設定-dgv點擊
+    Private Sub dgvPort_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvPort.CellMouseClick
+        Dim row = dgvPort.SelectedRows(0)
+        If row.Index = -1 Then Exit Sub
+        GetDataToControls(grpPort, row)
+    End Sub
 End Class

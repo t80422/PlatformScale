@@ -730,6 +730,7 @@ Partial Class frmMain
         Me.dtp過磅.Size = New System.Drawing.Size(160, 27)
         Me.dtp過磅.TabIndex = 262
         Me.dtp過磅.Tag = "過磅日期"
+        Me.dtp過磅.Value = New Date(2023, 8, 21, 0, 0, 0, 0)
         '
         'Label74
         '
@@ -3432,7 +3433,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V0.5"
+        Me.Text = "原綱衡器過磅系統 V0.5.2"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
