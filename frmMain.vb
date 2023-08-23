@@ -1,6 +1,14 @@
 ﻿Imports System.IO
 Imports System.Configuration
 Imports System.IO.Ports
+Imports System.Text.RegularExpressions
+Imports iText.Kernel.Pdf
+Imports iText.Html2pdf
+Imports iText.Kernel.Font
+Imports iText.IO.Font.Constants
+Imports iText.Layout
+Imports iText.IO.Font
+Imports iText.Html2pdf.Resolver.Font
 
 Public Class frmMain
     Public permissions As Integer '權限等級
@@ -24,16 +32,22 @@ Public Class frmMain
         InitDataGrid()
         Init車籍()
         Init過磅()
+
         '初始化權限設定的cmb權限
         With cmb權限.Items
             .Add("1")
             .Add("2")
             .Add("3")
         End With
+
         '讀取系統設定-遠端備份
         lblRemote.Text = SelectTable($"SELECT IP FROM 遠端備份資料表").Rows(0)("IP")
+
         '初始化 系統設定-Port設定
         dgvPort.DataSource = SelectTable("SELECT * FROM 通訊埠口資料表")
+
+        '校正dtp時間
+        dtp過磅.Value = Now
     End Sub
 
     Private Sub InitDataGrid()
@@ -314,11 +328,11 @@ Public Class frmMain
     ''' 取最新磅單序號
     ''' </summary>
     Private Function GetNewRecpNo() As String
-        Dim d = dtp過磅.Value
-        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " +
-                              "UNION " +
-                             $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " +
-                              "ORDER BY 磅單序號 DESC")
+        Dim d = Now
+        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+                                                "UNION " &
+                                              $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+                                               "ORDER BY 磅單序號 DESC")
         Dim num As String
         If dt.Rows.Count = 0 Then
             num = d.ToString("yyyyMMdd001")
@@ -341,16 +355,97 @@ Public Class frmMain
 
     '過磅作業-列印
     Private Sub btnPrint_過磅_Click(sender As Object, e As EventArgs) Handles btnPrint_過磅.Click
-        If dgv過磅.Rows.Count = 0 Then
-            MsgBox("無任何記錄可供列印！")
-            Exit Sub
-        End If
-        If String.IsNullOrEmpty(txtRcepNo.Text) Then
-            MsgBox("請選擇列印磅單")
+        Cursor = Cursors.WaitCursor
+        If dgv過磅.SelectedRows.Count = 0 Then
+            MsgBox("無磅單可列印")
             Exit Sub
         End If
 
+        Dim id As String = dgv過磅.SelectedRows(0).Cells("磅單序號").Value
+        Dim data = SelectTable($"SELECT * FROM 過磅資料表 a LEFT JOIN 車籍資料表 b ON a.車牌號碼 = b.車號 WHERE a.磅單序號 = '{id}'")
+
+        '=====測試用
+        'Dim type = ConfigurationManager.AppSettings("過磅單")
+        Dim type = InputBox("請輸入 A 或 B (A:直式 B:橫式)").ToUpper
+        '=====
+
+        Dim fileName As String
+
+        Select Case type
+            Case "A"
+                fileName = "直式.html"
+            Case "B"
+                fileName = "橫式.html"
+            Case Else
+                '=====測試用
+                'MsgBox("無此過磅單 請至Config修改")
+                MsgBox("輸入錯誤")
+                '=====
+
+                Exit Sub
+        End Select
+
+        Dim folder = Path.Combine(Application.StartupPath, "Rcep")
+        Dim filePath = Path.Combine(folder, fileName)
+        Dim pdfFilePath = Path.Combine(folder, "test.pdf")
+
+        '檢查PDF是否開啟,有就關閉
+        Dim processes = Process.GetProcessesByName("AcroRd32")
+        For Each process In processes
+            If pdfFilePath = process.MainModule.FileName Then
+                process.CloseMainWindow()
+                process.WaitForExit()
+            End If
+        Next
+
+        Using fs = New FileStream(filePath, FileMode.Open, FileAccess.Read)
+            Using sr = New StreamReader(fs)
+                Dim lines = sr.ReadToEnd
+
+                '取代文字
+                Dim regex As New Regex("\[\$(.*?)\]")
+                Dim matches = regex.Matches(lines)
+                For Each match As Match In matches
+                    Dim columnName = match.Groups(1).Value
+                    Dim value As String = GetColumnValue(data, columnName)
+                    lines = lines.Replace(match.Value, value)
+                Next
+
+                '另存成PDF
+                Using pdf = New PdfDocument(New PdfWriter(pdfFilePath))
+                    '設定中文字型
+                    Dim fontProvider = New DefaultFontProvider
+                    fontProvider.AddFont("c:/windows/Fonts/MSMINCHO.TTF")
+                    fontProvider.AddFont("c:/windows/Fonts/STSONG.TTF")
+                    Dim cp = New ConverterProperties
+                    cp.SetFontProvider(fontProvider)
+
+                    HtmlConverter.ConvertToPdf(lines, pdf, cp)
+                End Using
+            End Using
+        End Using
+
+        Process.Start(pdfFilePath)
+        Cursor = Cursors.Default
     End Sub
+
+    Private Function GetColumnValue(data As DataTable, columnName As String) As String
+        If Not data.Columns.Contains(columnName) Then
+            Dim inout As String = data.Rows(0)("進/出")
+            If columnName = "入廠時間" Then
+                columnName = If(inout = "進貨", "總重載入時間", "空重載入時間")
+            ElseIf columnName = "出廠時間" Then
+                columnName = If(inout = "進貨", "空重載入時間", "總重載入時間")
+            End If
+        End If
+
+        If IsDBNull(data.Rows(0)(columnName)) Then
+            Return ""
+        Else
+            Return data.Rows(0)(columnName).ToString()
+        End If
+
+    End Function
 
     '過磅作業-淨重、每米頓數-改變就計算總米數
     Private Sub txtNetWeight_TextChanged(sender As Object, e As EventArgs) Handles txtNetWeight.TextChanged, txtTPM.TextChanged
@@ -619,23 +714,34 @@ Public Class frmMain
             Exit Sub
         End If
 
+        '如果有空重時間與總重時間表示完成過磅
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) And Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then
             '檢查空重是否超過總重
-            If txtEmptyCar.Text > txtTotalWeight.Text Then
+            If Integer.Parse(txtEmptyCar.Text) > Integer.Parse(txtTotalWeight.Text) Then
                 MsgBox("空重不能大於總重")
                 Exit Sub
             End If
 
-            If SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE {txtRcepNo.Tag} = '{txtRcepNo.Text}'").Rows.Count > 0 Then
-                If MsgBox($"{txtRcepNo.Tag}:{txtRcepNo.Text} 已修改,是否覆蓋", MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
-            End If
+            '新增或修改
+            If SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE {txtRcepNo.Tag} = '{txtRcepNo.Text}'").Rows.Count = 0 Then
+                If Save過磅Data("過磅資料表", "insert") Then
+                    Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
+                    DeleteTable("二次過磅暫存資料表", dic)
+                Else
+                    Exit Sub
+                End If
 
-            DeleteTable("過磅資料表", $"{txtRcepNo.Tag} = '{txtRcepNo.Text}'")
-            If Insert過磅Data("過磅資料表") Then
-                Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
-                DeleteTable("二次過磅暫存資料表", dic)
             Else
-                Exit Sub
+                If MsgBox($"{txtRcepNo.Tag}:{txtRcepNo.Text} 已修改,是否覆蓋", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
+                    If Save過磅Data("過磅資料表", "update") Then
+                        Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
+                        DeleteTable("二次過磅暫存資料表", dic)
+                    Else
+                        Exit Sub
+                    End If
+                Else
+                    Exit Sub
+                End If
             End If
 
             '二次過磅(對象為未登錄空車重)
@@ -652,7 +758,7 @@ Public Class frmMain
                     DeleteTable("二次過磅暫存資料表", dic)
                 End If
             End If
-            If Not Insert過磅Data("二次過磅暫存資料表") Then Exit Sub
+            If Not Save過磅Data("二次過磅暫存資料表", "insert") Then Exit Sub
         Else
             MsgBox("請先檢查重量貨載入時間")
             Exit Sub
@@ -720,34 +826,53 @@ Finish:
         MsgBox("儲存成功")
     End Sub
 
-    Private Function Insert過磅Data(table As String) As Boolean
+    ''' <summary>
+    ''' 儲存過磅資料
+    ''' </summary>
+    ''' <param name="table">資料表</param>
+    ''' <param name="status">insert、update</param>
+    ''' <returns></returns>
+    Private Function Save過磅Data(table As String, status As String) As Boolean
         Dim dicRequired As New Dictionary(Of String, Object) From {
             {"廠商/客戶", cmbCliManu},
             {"產品名稱", cmbProduct},
             {"車號", cmbCarNo}
         }
         If Not CheckRequiredCol(dicRequired) Then Return False
-        Dim dicInsertData As New Dictionary(Of String, String)
+
+        Dim dicData As New Dictionary(Of String, String)
         For Each ctrl In tp過磅.Controls.OfType(Of Control).Where(Function(ctrls) ctrls.Tag IsNot Nothing AndAlso ctrls.Text <> "")
-            Select Case ctrl.GetType.Name
-                Case "TextBox"
-                    dicInsertData.Add(ctrl.Tag, ctrl.Text)
-                Case "ComboBox"
-                    dicInsertData.Add(ctrl.Tag, ctrl.Text)
+            Dim ctrlType = ctrl.GetType.Name
+            Dim ctrlTag = ctrl.Tag
+            Dim ctrlText = ctrl.Text
+
+            Select Case ctrlType
+                Case "TextBox", "ComboBox"
+                    dicData.Add(ctrlTag, ctrlText)
+
                 Case "DateTimePicker"
-                    Dim dtp As DateTimePicker = ctrl
-                    dicInsertData.Add(ctrl.Tag, dtp.Value.ToString("yyyy/MM/dd"))
+                    If status = "insert" Then
+                        dicData.Add(ctrlTag, DirectCast(ctrl, DateTimePicker).Value.ToString("yyyy/MM/dd"))
+                    End If
+
                 Case "Label"
-                    dicInsertData.Add(ctrl.Tag, ctrl.Text)
+                    If status = "insert" Then dicData.Add(ctrlTag, ctrlText)
             End Select
         Next
-        dicInsertData.Add(grpInOut.Tag, grpInOut.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text)
-        If InserTable(table, dicInsertData) Then
-            Return True
+
+        Dim inOutRadioButton = grpInOut.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked)
+        dicData.Add(grpInOut.Tag, inOutRadioButton.Text)
+
+        Dim success As Boolean = False
+        If status = "insert" Then
+            success = InserTable(table, dicData)
         Else
-            Return False
+            success = UpdateTable(table, dicData, $"磅單序號 = '{txtRcepNo.Text}'")
         End If
+
+        Return success
     End Function
+
 
     '儲存-貨品資料
     Private Sub btnModify_貨品_Click(sender As Object, e As EventArgs) Handles btnModify_貨品.Click
