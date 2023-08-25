@@ -154,7 +154,7 @@ Partial Class frmMain
         Me.btnInsert_客戶 = New System.Windows.Forms.Button()
         Me.btnPrint_客戶 = New System.Windows.Forms.Button()
         Me.btnClear_客戶 = New System.Windows.Forms.Button()
-        Me.btnDel_客戶 = New System.Windows.Forms.Button()
+        Me.btnDelete_客戶 = New System.Windows.Forms.Button()
         Me.btnQuery_客戶 = New System.Windows.Forms.Button()
         Me.tabData_Vehicle = New System.Windows.Forms.TabPage()
         Me.Label102 = New System.Windows.Forms.Label()
@@ -268,7 +268,9 @@ Partial Class frmMain
         Me.RadioButton15 = New System.Windows.Forms.RadioButton()
         Me.RadioButton14 = New System.Windows.Forms.RadioButton()
         Me.tpSystem = New System.Windows.Forms.TabPage()
-        Me.Label94 = New System.Windows.Forms.Label()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.cmbRcepStyle = New System.Windows.Forms.ComboBox()
+        Me.Label18 = New System.Windows.Forms.Label()
         Me.GroupBox16 = New System.Windows.Forms.GroupBox()
         Me.lblBackUping = New System.Windows.Forms.Label()
         Me.Label12 = New System.Windows.Forms.Label()
@@ -278,6 +280,7 @@ Partial Class frmMain
         Me.txtRemote = New System.Windows.Forms.TextBox()
         Me.btnRemote = New System.Windows.Forms.Button()
         Me.grp權限 = New System.Windows.Forms.GroupBox()
+        Me.Label94 = New System.Windows.Forms.Label()
         Me.btnSave_權限 = New System.Windows.Forms.Button()
         Me.btnInsert_權限 = New System.Windows.Forms.Button()
         Me.btnClear_權限 = New System.Windows.Forms.Button()
@@ -332,6 +335,7 @@ Partial Class frmMain
         Me.GroupBox8.SuspendLayout()
         Me.GroupBox7.SuspendLayout()
         Me.tpSystem.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
         Me.GroupBox16.SuspendLayout()
         Me.grp權限.SuspendLayout()
         Me.grpPort.SuspendLayout()
@@ -1507,7 +1511,7 @@ Partial Class frmMain
         Me.tp客戶.Controls.Add(Me.btnInsert_客戶)
         Me.tp客戶.Controls.Add(Me.btnPrint_客戶)
         Me.tp客戶.Controls.Add(Me.btnClear_客戶)
-        Me.tp客戶.Controls.Add(Me.btnDel_客戶)
+        Me.tp客戶.Controls.Add(Me.btnDelete_客戶)
         Me.tp客戶.Controls.Add(Me.btnQuery_客戶)
         Me.tp客戶.Location = New System.Drawing.Point(4, 31)
         Me.tp客戶.Name = "tp客戶"
@@ -1839,16 +1843,16 @@ Partial Class frmMain
         Me.btnClear_客戶.TabIndex = 293
         Me.btnClear_客戶.UseVisualStyleBackColor = False
         '
-        'btnDel_客戶
+        'btnDelete_客戶
         '
-        Me.btnDel_客戶.AutoSize = True
-        Me.btnDel_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_del
-        Me.btnDel_客戶.Location = New System.Drawing.Point(180, 6)
-        Me.btnDel_客戶.Name = "btnDel_客戶"
-        Me.btnDel_客戶.Size = New System.Drawing.Size(81, 81)
-        Me.btnDel_客戶.TabIndex = 292
-        Me.btnDel_客戶.UseVisualStyleBackColor = False
+        Me.btnDelete_客戶.AutoSize = True
+        Me.btnDelete_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnDelete_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDelete_客戶.Location = New System.Drawing.Point(180, 6)
+        Me.btnDelete_客戶.Name = "btnDelete_客戶"
+        Me.btnDelete_客戶.Size = New System.Drawing.Size(81, 81)
+        Me.btnDelete_客戶.TabIndex = 292
+        Me.btnDelete_客戶.UseVisualStyleBackColor = False
         '
         'btnQuery_客戶
         '
@@ -3086,7 +3090,7 @@ Partial Class frmMain
         '
         'tpSystem
         '
-        Me.tpSystem.Controls.Add(Me.Label94)
+        Me.tpSystem.Controls.Add(Me.GroupBox2)
         Me.tpSystem.Controls.Add(Me.GroupBox16)
         Me.tpSystem.Controls.Add(Me.grp權限)
         Me.tpSystem.Controls.Add(Me.grpPort)
@@ -3099,15 +3103,35 @@ Partial Class frmMain
         Me.tpSystem.Text = "系統設定"
         Me.tpSystem.UseVisualStyleBackColor = True
         '
-        'Label94
+        'GroupBox2
         '
-        Me.Label94.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
-        Me.Label94.Location = New System.Drawing.Point(6, 323)
-        Me.Label94.Name = "Label94"
-        Me.Label94.Size = New System.Drawing.Size(986, 120)
-        Me.Label94.TabIndex = 258
-        Me.Label94.Text = "權限 1 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可操作一般過磅與新增資料,但無法修改刪除及使用系統設定的功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 2 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可修改過磅與刪除過磅資料,亦可手動與自動過磅,但仍" &
-    "無法操作系統設定功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 3 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    系統設定的最高等級,可操作任何畫面與資料"
+        Me.GroupBox2.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
+        Me.GroupBox2.Controls.Add(Me.cmbRcepStyle)
+        Me.GroupBox2.Controls.Add(Me.Label18)
+        Me.GroupBox2.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.GroupBox2.Location = New System.Drawing.Point(678, 326)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(314, 114)
+        Me.GroupBox2.TabIndex = 258
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "過磅單樣式"
+        '
+        'cmbRcepStyle
+        '
+        Me.cmbRcepStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbRcepStyle.FormattingEnabled = True
+        Me.cmbRcepStyle.Location = New System.Drawing.Point(10, 55)
+        Me.cmbRcepStyle.Name = "cmbRcepStyle"
+        Me.cmbRcepStyle.Size = New System.Drawing.Size(295, 27)
+        Me.cmbRcepStyle.TabIndex = 252
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(528, 118)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(0, 19)
+        Me.Label18.TabIndex = 245
         '
         'GroupBox16
         '
@@ -3156,7 +3180,7 @@ Partial Class frmMain
         '
         'lblRemote
         '
-        Me.lblRemote.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.lblRemote.BackColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.lblRemote.Location = New System.Drawing.Point(85, 26)
         Me.lblRemote.Name = "lblRemote"
         Me.lblRemote.Size = New System.Drawing.Size(438, 30)
@@ -3195,6 +3219,7 @@ Partial Class frmMain
         'grp權限
         '
         Me.grp權限.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
+        Me.grp權限.Controls.Add(Me.Label94)
         Me.grp權限.Controls.Add(Me.btnSave_權限)
         Me.grp權限.Controls.Add(Me.btnInsert_權限)
         Me.grp權限.Controls.Add(Me.btnClear_權限)
@@ -3208,10 +3233,21 @@ Partial Class frmMain
         Me.grp權限.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.grp權限.Location = New System.Drawing.Point(8, 161)
         Me.grp權限.Name = "grp權限"
-        Me.grp權限.Size = New System.Drawing.Size(664, 159)
+        Me.grp權限.Size = New System.Drawing.Size(664, 279)
         Me.grp權限.TabIndex = 256
         Me.grp權限.TabStop = False
         Me.grp權限.Text = "權限設定"
+        '
+        'Label94
+        '
+        Me.Label94.BackColor = System.Drawing.Color.Transparent
+        Me.Label94.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label94.Location = New System.Drawing.Point(7, 161)
+        Me.Label94.Name = "Label94"
+        Me.Label94.Size = New System.Drawing.Size(647, 104)
+        Me.Label94.TabIndex = 258
+        Me.Label94.Text = "權限 1 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可操作一般過磅與新增資料,但無法修改刪除及使用系統設定的功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 2 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    可修改過磅與刪除過磅資料,亦可手動與自動過磅,但仍" &
+    "無法操作系統設定功能" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "權限 3 :" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    系統設定的最高等級,可操作任何畫面與資料"
         '
         'btnSave_權限
         '
@@ -3433,7 +3469,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V0.5.3"
+        Me.Text = "原綱衡器過磅系統 V0.6.0"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3486,6 +3522,8 @@ Partial Class frmMain
         Me.GroupBox7.ResumeLayout(False)
         Me.GroupBox7.PerformLayout()
         Me.tpSystem.ResumeLayout(False)
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
         Me.GroupBox16.ResumeLayout(False)
         Me.GroupBox16.PerformLayout()
         Me.grp權限.ResumeLayout(False)
@@ -3736,7 +3774,7 @@ Partial Class frmMain
     Friend WithEvents btnInsert_客戶 As Button
     Friend WithEvents btnPrint_客戶 As Button
     Friend WithEvents btnClear_客戶 As Button
-    Friend WithEvents btnDel_客戶 As Button
+    Friend WithEvents btnDelete_客戶 As Button
     Friend WithEvents btnQuery_客戶 As Button
     Friend WithEvents CheckBox3 As CheckBox
     Friend WithEvents txtInsert_車籍 As Button
@@ -3774,4 +3812,7 @@ Partial Class frmMain
     Friend WithEvents tpLogout As TabPage
     Friend WithEvents btnDel_二次過磅 As Button
     Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents cmbRcepStyle As ComboBox
+    Friend WithEvents Label18 As Label
 End Class

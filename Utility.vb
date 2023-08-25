@@ -176,7 +176,7 @@
             Case "過磅資料表"
                 Return "SELECT * FROM 過磅資料表"
             Case "二次過磅暫存資料表"
-                Return $"SELECT * FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{frmMain.dtp過磅.Value:yyyy/MM/dd}' ORDER BY 過磅時間"
+                Return $"SELECT * FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{Now:yyyy/MM/dd}' ORDER BY 過磅時間"
             Case "密碼資料表"
                 Return "SELECT * FROM 密碼資料表"
         End Select

@@ -1,13 +1,9 @@
 ﻿Imports System.IO
-Imports System.Configuration
 Imports System.IO.Ports
 Imports System.Text.RegularExpressions
 Imports iText.Kernel.Pdf
 Imports iText.Html2pdf
-Imports iText.Kernel.Font
-Imports iText.IO.Font.Constants
 Imports iText.Layout
-Imports iText.IO.Font
 Imports iText.Html2pdf.Resolver.Font
 
 Public Class frmMain
@@ -26,11 +22,14 @@ Public Class frmMain
     End Enum
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim folderPath As String = Path.Combine(Application.StartupPath, "Report")
         '檢查資料夾是否存在
+        Dim folderPath As String = Path.Combine(Application.StartupPath, "Report")
         If Not Directory.Exists(folderPath) Then Directory.CreateDirectory(folderPath)
+
         InitDataGrid()
+
         Init車籍()
+
         Init過磅()
 
         '初始化權限設定的cmb權限
@@ -48,6 +47,39 @@ Public Class frmMain
 
         '校正dtp時間
         dtp過磅.Value = Now
+
+        InitRcepStyle()
+    End Sub
+
+    ''' <summary>
+    ''' 初始化 系統設定-過磅單樣式
+    ''' </summary>
+    Private Sub InitRcepStyle()
+        '設定 系統設定-過磅單樣式 cmb
+        Dim dic = New Dictionary(Of String, String) From {
+            {"直式", "A"},
+            {"橫式", "B"}
+        }
+        With cmbRcepStyle
+            For Each kvp In dic
+                .Items.Add(kvp)
+            Next
+            .DisplayMember = "Key"
+        End With
+
+        '載入設定檔
+        Dim filePath = Path.Combine(Application.StartupPath, "RcrpStyle.set")
+        If Not File.Exists(filePath) Then
+            File.Create(filePath).Close()
+            Exit Sub
+        Else
+            For Each kvp In dic
+                If kvp.Value = File.ReadAllText(filePath) Then
+                    cmbRcepStyle.SelectedItem = kvp
+                    Exit For
+                End If
+            Next
+        End If
     End Sub
 
     Private Sub InitDataGrid()
@@ -355,34 +387,36 @@ Public Class frmMain
 
     '過磅作業-列印
     Private Sub btnPrint_過磅_Click(sender As Object, e As EventArgs) Handles btnPrint_過磅.Click
-        Cursor = Cursors.WaitCursor
         If dgv過磅.SelectedRows.Count = 0 Then
             MsgBox("無磅單可列印")
             Exit Sub
         End If
 
         Dim id As String = dgv過磅.SelectedRows(0).Cells("磅單序號").Value
+        PrintRcep(id)
+    End Sub
+
+    ''' <summary>
+    ''' 列印過磅單
+    ''' </summary>
+    ''' <param name="id">磅單序號</param>
+    Private Sub PrintRcep(id As String)
+        Cursor = Cursors.WaitCursor
+
+        If cmbRcepStyle.SelectedIndex = -1 Then
+            MsgBox("請到系統設定先設定過磅單樣式")
+            GoTo Finish
+        End If
+
+        Dim type = cmbRcepStyle.SelectedItem.value
         Dim data = SelectTable($"SELECT * FROM 過磅資料表 a LEFT JOIN 車籍資料表 b ON a.車牌號碼 = b.車號 WHERE a.磅單序號 = '{id}'")
-
-        '=====測試用
-        'Dim type = ConfigurationManager.AppSettings("過磅單")
-        Dim type = InputBox("請輸入 A 或 B (A:直式 B:橫式)").ToUpper
-        '=====
-
-        Dim fileName As String
+        Dim fileName As String = ""
 
         Select Case type
             Case "A"
                 fileName = "直式.html"
             Case "B"
                 fileName = "橫式.html"
-            Case Else
-                '=====測試用
-                'MsgBox("無此過磅單 請至Config修改")
-                MsgBox("輸入錯誤")
-                '=====
-
-                Exit Sub
         End Select
 
         Dim folder = Path.Combine(Application.StartupPath, "Rcep")
@@ -391,6 +425,7 @@ Public Class frmMain
 
         '檢查PDF是否開啟,有就關閉
         Dim processes = Process.GetProcessesByName("AcroRd32")
+
         For Each process In processes
             If pdfFilePath = process.MainModule.FileName Then
                 process.CloseMainWindow()
@@ -426,6 +461,7 @@ Public Class frmMain
         End Using
 
         Process.Start(pdfFilePath)
+Finish:
         Cursor = Cursors.Default
     End Sub
 
@@ -499,6 +535,41 @@ Public Class frmMain
         End If
     End Sub
 
+    '廠商資料-刪除
+    Private Sub btnDel_廠商_Click(sender As Object, e As EventArgs) Handles btnDel_廠商.Click
+        CommonDelete(txtNo_廠商, "廠商資料表")
+    End Sub
+
+    '客戶資料-刪除
+    Private Sub btnDel_客戶_Click(sender As Object, e As EventArgs) Handles btnDelete_客戶.Click
+        CommonDelete(txtNo_客戶, "客戶資料表")
+    End Sub
+
+    ''' <summary>
+    ''' 刪除鍵共同模組
+    ''' </summary>
+    ''' <param name="txt">編號的TextBox</param>
+    ''' <param name="table">對應的資料表</param>
+    Private Sub CommonDelete(txt As TextBox, table As String)
+        If permissions = 1 Then
+            MsgBox("權限不足,無法刪除")
+            Exit Sub
+        End If
+
+        If String.IsNullOrWhiteSpace(txt.Text) Then
+            MsgBox("請選擇刪除對象")
+            Exit Sub
+        End If
+
+        If MsgBox($"確定要刪除?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
+
+        If DeleteTable(table, $"{txt.Tag} = '{txt.Text}'") Then
+            txt.Parent.Controls.OfType(Of Button).First(Function(btn) btn.Name.Contains("btnClear")).PerformClick()
+            btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
+            MsgBox("刪除成功")
+        End If
+    End Sub
+
     '貨品資料-噸數設定-不設定
     Private Sub rdoTUnset_CheckedChanged(sender As Object, e As EventArgs) Handles rdoTUnset.CheckedChanged
         If rdoTUnset.Checked Then
@@ -534,6 +605,7 @@ Public Class frmMain
             .Columns("備註").Visible = False
             .Columns("過磅時間").Visible = False
         End With
+
         With dgv過磅
             .DataSource = SelectTable(GetTableAllData("過磅資料表") + $" WHERE 過磅日期 = '{Now:yyyy/MM/dd}' ORDER BY 磅單序號 DESC")
             .Columns("空重載入時間").DefaultCellStyle.Format = "HH:mm"
@@ -548,6 +620,7 @@ Public Class frmMain
             .Columns("單價").Visible = False
             .Columns("總價").Visible = False
         End With
+
         '設定cmb產品
         With cmbProduct
             .DataSource = SelectTable($"SELECT * FROM 產品資料表")
@@ -658,14 +731,8 @@ Public Class frmMain
         Dim carNo = GetCellData(selectRow, "車牌號碼")
         cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(carNo)
         cmbProduct.SelectedIndex = cmbProduct.FindStringExact(selectRow.Cells("產品名稱").Value)
-        tp過磅.Controls.OfType(Of TextBox).Where(Function(txt) txt.Tag IsNot Nothing AndAlso Not IsDBNull(selectRow.Cells(txt.Tag.ToString).Value)).ToList.ForEach(Sub(txt) txt.Text = selectRow.Cells(txt.Tag.ToString).Value)
-
-        'GetDataToControls(tp過磅, selectRow)
-        '因為會切換到選項的進出貨,就會觸發cmb重置,所以要再抓一次
-        'Dim value = GetCellData(selectRow, "客戶/廠商")
-        'cmbCliManu.SelectedIndex = cmbCliManu.FindStringExact(value)
-
-        'cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(carNo)
+        tp過磅.Controls.OfType(Of TextBox).Where(Function(txt) txt.Tag IsNot Nothing AndAlso Not IsDBNull(selectRow.Cells(txt.Tag.ToString).Value)).
+            ToList.ForEach(Sub(txt) txt.Text = selectRow.Cells(txt.Tag.ToString).Value)
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) Then txtLoudTime_Empty.Text = Date.Parse(txtLoudTime_Empty.Text).ToString("HH:mm")
         If Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then txtLoudTime_Total.Text = Date.Parse(txtLoudTime_Total.Text).ToString("HH:mm")
 
@@ -717,7 +784,7 @@ Public Class frmMain
         '如果有空重時間與總重時間表示完成過磅
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) And Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then
             '檢查空重是否超過總重
-            If Integer.Parse(txtEmptyCar.Text) > Integer.Parse(txtTotalWeight.Text) Then
+            If Double.Parse(txtEmptyCar.Text) > Double.Parse(txtTotalWeight.Text) Then
                 MsgBox("空重不能大於總重")
                 Exit Sub
             End If
@@ -727,6 +794,7 @@ Public Class frmMain
                 If Save過磅Data("過磅資料表", "insert") Then
                     Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", cmbCarNo.Text}}
                     DeleteTable("二次過磅暫存資料表", dic)
+                    If MsgBox("是否列印過磅單", MessageBoxButtons.YesNo) = MsgBoxResult.Yes Then PrintRcep(txtRcepNo.Text)
                 Else
                     Exit Sub
                 End If
@@ -816,7 +884,7 @@ Public Class frmMain
             End If
 
             '對應臨時車號新增時要刷新
-            btnClear_Click(btnClear_車籍, e)
+            btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
         Else
             GoTo Finish
         End If
@@ -1121,10 +1189,14 @@ Finish:
             MsgBox("權限不足,無法刪除")
             Exit Sub
         End If
+
         If dgv二次過磅.SelectedRows.Count = 0 Then Exit Sub
+
         If MsgBox("確定要刪除?", vbYesNo, "警告") = MsgBoxResult.No Then Exit Sub
+
         Dim row = dgv二次過磅.SelectedRows(0)
         Dim dic As New Dictionary(Of String, String) From {{"車牌號碼", row.Cells("車牌號碼").Value.ToString}}
+
         If DeleteTable("二次過磅暫存資料表", dic) Then
             btnClear_過磅.PerformClick()
             MsgBox("刪除成功")
@@ -1150,7 +1222,7 @@ Finish:
     End Sub
 
     '刪除-廠商資料,客戶資料,車籍資料,貨品資料,廠商資料-專案,客戶資料-工程
-    Private Sub btnDel_Click(sender As Object, e As EventArgs) Handles btnDel_廠商.Click, btnDel_客戶.Click, btnDel_車籍.Click, btnDel_貨品.Click
+    Private Sub btnDel_Click(sender As Object, e As EventArgs) Handles btnDel_車籍.Click, btnDel_貨品.Click
         If permissions = 1 Then
             MsgBox("權限不足,無法刪除")
             Exit Sub
@@ -1160,14 +1232,6 @@ Finish:
         Dim btn As Button = Nothing
         Dim condition() As String = {}
         Select Case ctrl.Text
-            Case "廠商資料"
-                table = "廠商資料表"
-                btn = btnClear_廠商
-                condition = {"代號", txtNo_廠商.Text}
-            Case "客戶資料"
-                table = "客戶資料表"
-                btn = btnClear_客戶
-                condition = {"代號", txtNo_客戶.Text}
             Case "車籍資料"
                 table = "車籍資料表"
                 btn = btnClear_車籍
@@ -1217,9 +1281,6 @@ Finish:
             Case "客戶資料"
                 table = "客戶資料表"
                 dgv = dgv客戶
-            Case "車籍資料"
-                table = "車籍資料表"
-                dgv = dgv車籍
             Case "貨品資料"
                 table = "產品資料表"
                 dgv = dgv貨品
@@ -1229,7 +1290,9 @@ Finish:
 
     '清除-車籍資料
     Private Sub btnClear_車籍_Click(sender As Object, e As EventArgs) Handles btnClear_車籍.Click
-        btnClear_Click(sender, e)
+        Dim btn As Button = sender
+        ClearControl(btn.Parent)
+        dgv車籍.DataSource = SelectTable(GetTableAllData("車籍資料表"))
         Init車籍()
     End Sub
 
@@ -1354,4 +1417,14 @@ Finish:
         If row.Index = -1 Then Exit Sub
         GetDataToControls(grpPort, row)
     End Sub
+
+    '系統設定-過磅單樣式
+    Private Sub cmbRcepStyle_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbRcepStyle.SelectionChangeCommitted
+        Dim filePath = Path.Combine(Application.StartupPath, "RcrpStyle.set")
+        If File.Exists(filePath) Then
+            Dim item = cmbRcepStyle.SelectedItem
+            File.WriteAllText(filePath, item.value)
+        End If
+    End Sub
+
 End Class

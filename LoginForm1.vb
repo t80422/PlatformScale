@@ -2,6 +2,7 @@ Public Class LoginForm1
     Dim dt As DataTable
 
     Private Sub OK_Click(sender As Object, e As EventArgs) Handles OK.Click
+        OK.Enabled = False
         Dim rows = dt.Select($"名稱 = '{cmbUser.Text}' AND 密碼 = '{txtPsw.Text}'")
         If rows.Count > 0 Then
             Select Case rows(0)("權限")
@@ -33,6 +34,7 @@ Public Class LoginForm1
         End If
         cmbUser.SelectedIndex = -1
         txtPsw.Clear()
+        OK.Enabled = True
     End Sub
 
     Private Sub Cancel_Click(sender As Object, e As EventArgs) Handles Cancel.Click
@@ -42,5 +44,9 @@ Public Class LoginForm1
     Private Sub LoginForm1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         dt = SelectTable("SELECT * FROM 密碼資料表")
         cmbUser.DataSource = dt.AsEnumerable.Select(Function(row) row("名稱")).ToList
+    End Sub
+
+    Private Sub LoginForm1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+        End
     End Sub
 End Class
