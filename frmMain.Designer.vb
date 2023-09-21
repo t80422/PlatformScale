@@ -203,6 +203,21 @@ Partial Class frmMain
         Me.txtName_貨品 = New System.Windows.Forms.TextBox()
         Me.dgv貨品 = New System.Windows.Forms.DataGridView()
         Me.btnQuery_貨品 = New System.Windows.Forms.Button()
+        Me.tpReport = New System.Windows.Forms.TabPage()
+        Me.grpType_report = New System.Windows.Forms.GroupBox()
+        Me.RadioButton6 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton7 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton8 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton5 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton3 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton4 = New System.Windows.Forms.RadioButton()
+        Me.btnPrint_report = New System.Windows.Forms.Button()
+        Me.grpDate_report = New System.Windows.Forms.GroupBox()
+        Me.dtpEnd = New System.Windows.Forms.DateTimePicker()
+        Me.dtpStart = New System.Windows.Forms.DateTimePicker()
+        Me.grpInOut_report = New System.Windows.Forms.GroupBox()
+        Me.RadioButton1 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton2 = New System.Windows.Forms.RadioButton()
         Me.tabReport = New System.Windows.Forms.TabPage()
         Me.Button24 = New System.Windows.Forms.Button()
         Me.Button23 = New System.Windows.Forms.Button()
@@ -321,6 +336,10 @@ Partial Class frmMain
         Me.tp貨品.SuspendLayout()
         Me.grpT.SuspendLayout()
         CType(Me.dgv貨品, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.tpReport.SuspendLayout()
+        Me.grpType_report.SuspendLayout()
+        Me.grpDate_report.SuspendLayout()
+        Me.grpInOut_report.SuspendLayout()
         Me.tabReport.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
@@ -350,6 +369,7 @@ Partial Class frmMain
         Me.tabMain.Controls.Add(Me.tp客戶)
         Me.tabMain.Controls.Add(Me.tabData_Vehicle)
         Me.tabMain.Controls.Add(Me.tp貨品)
+        Me.tabMain.Controls.Add(Me.tpReport)
         Me.tabMain.Controls.Add(Me.tabReport)
         Me.tabMain.Controls.Add(Me.tpSystem)
         Me.tabMain.Controls.Add(Me.tpLogout)
@@ -480,7 +500,7 @@ Partial Class frmMain
         Me.Label100.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label100.Location = New System.Drawing.Point(8, 95)
         Me.Label100.Name = "Label100"
-        Me.Label100.Size = New System.Drawing.Size(76, 16)
+        Me.Label100.Size = New System.Drawing.Size(75, 16)
         Me.Label100.TabIndex = 279
         Me.Label100.Text = "磅單序號"
         '
@@ -501,7 +521,7 @@ Partial Class frmMain
         Me.Label95.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label95.Location = New System.Drawing.Point(527, 95)
         Me.Label95.Name = "Label95"
-        Me.Label95.Size = New System.Drawing.Size(42, 16)
+        Me.Label95.Size = New System.Drawing.Size(41, 16)
         Me.Label95.TabIndex = 275
         Me.Label95.Text = "趟數"
         '
@@ -532,7 +552,7 @@ Partial Class frmMain
         Me.RadioButton13.Checked = True
         Me.RadioButton13.Location = New System.Drawing.Point(6, 18)
         Me.RadioButton13.Name = "RadioButton13"
-        Me.RadioButton13.Size = New System.Drawing.Size(62, 20)
+        Me.RadioButton13.Size = New System.Drawing.Size(61, 20)
         Me.RadioButton13.TabIndex = 259
         Me.RadioButton13.TabStop = True
         Me.RadioButton13.Text = "0.00"
@@ -543,7 +563,7 @@ Partial Class frmMain
         Me.RadioButton12.AutoSize = True
         Me.RadioButton12.Location = New System.Drawing.Point(74, 18)
         Me.RadioButton12.Name = "RadioButton12"
-        Me.RadioButton12.Size = New System.Drawing.Size(71, 20)
+        Me.RadioButton12.Size = New System.Drawing.Size(70, 20)
         Me.RadioButton12.TabIndex = 260
         Me.RadioButton12.Text = "0.000"
         Me.RadioButton12.UseVisualStyleBackColor = True
@@ -600,7 +620,7 @@ Partial Class frmMain
         Me.Label60.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label60.Location = New System.Drawing.Point(652, 208)
         Me.Label60.Name = "Label60"
-        Me.Label60.Size = New System.Drawing.Size(78, 16)
+        Me.Label60.Size = New System.Drawing.Size(77, 16)
         Me.Label60.TabIndex = 269
         Me.Label60.Text = "備    註"
         '
@@ -721,7 +741,7 @@ Partial Class frmMain
         Me.lblTime.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.lblTime.Location = New System.Drawing.Point(177, 134)
         Me.lblTime.Name = "lblTime"
-        Me.lblTime.Size = New System.Drawing.Size(80, 16)
+        Me.lblTime.Size = New System.Drawing.Size(79, 16)
         Me.lblTime.TabIndex = 263
         Me.lblTime.Tag = "過磅時間"
         Me.lblTime.Text = "10:11:12"
@@ -742,7 +762,7 @@ Partial Class frmMain
         Me.Label74.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label74.Location = New System.Drawing.Point(287, 245)
         Me.Label74.Name = "Label74"
-        Me.Label74.Size = New System.Drawing.Size(77, 16)
+        Me.Label74.Size = New System.Drawing.Size(76, 16)
         Me.Label74.TabIndex = 258
         Me.Label74.Text = "總 米 數"
         '
@@ -763,7 +783,7 @@ Partial Class frmMain
         Me.Label73.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label73.Location = New System.Drawing.Point(7, 225)
         Me.Label73.Name = "Label73"
-        Me.Label73.Size = New System.Drawing.Size(76, 16)
+        Me.Label73.Size = New System.Drawing.Size(75, 16)
         Me.Label73.TabIndex = 256
         Me.Label73.Text = "每米噸數"
         '
@@ -784,7 +804,7 @@ Partial Class frmMain
         Me.Label70.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label70.Location = New System.Drawing.Point(653, 172)
         Me.Label70.Name = "Label70"
-        Me.Label70.Size = New System.Drawing.Size(76, 16)
+        Me.Label70.Size = New System.Drawing.Size(75, 16)
         Me.Label70.TabIndex = 251
         Me.Label70.Text = "載入時間"
         '
@@ -804,7 +824,7 @@ Partial Class frmMain
         Me.Label69.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label69.Location = New System.Drawing.Point(653, 134)
         Me.Label69.Name = "Label69"
-        Me.Label69.Size = New System.Drawing.Size(76, 16)
+        Me.Label69.Size = New System.Drawing.Size(75, 16)
         Me.Label69.TabIndex = 249
         Me.Label69.Text = "載入時間"
         '
@@ -850,7 +870,7 @@ Partial Class frmMain
         Me.Label67.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label67.Location = New System.Drawing.Point(530, 208)
         Me.Label67.Name = "Label67"
-        Me.Label67.Size = New System.Drawing.Size(17, 16)
+        Me.Label67.Size = New System.Drawing.Size(16, 16)
         Me.Label67.TabIndex = 245
         Me.Label67.Text = "T"
         '
@@ -860,7 +880,7 @@ Partial Class frmMain
         Me.Label68.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label68.Location = New System.Drawing.Point(287, 208)
         Me.Label68.Name = "Label68"
-        Me.Label68.Size = New System.Drawing.Size(78, 16)
+        Me.Label68.Size = New System.Drawing.Size(77, 16)
         Me.Label68.TabIndex = 244
         Me.Label68.Text = "淨    重"
         '
@@ -881,7 +901,7 @@ Partial Class frmMain
         Me.Label65.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label65.Location = New System.Drawing.Point(530, 171)
         Me.Label65.Name = "Label65"
-        Me.Label65.Size = New System.Drawing.Size(17, 16)
+        Me.Label65.Size = New System.Drawing.Size(16, 16)
         Me.Label65.TabIndex = 242
         Me.Label65.Text = "T"
         '
@@ -891,7 +911,7 @@ Partial Class frmMain
         Me.Label66.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label66.Location = New System.Drawing.Point(287, 172)
         Me.Label66.Name = "Label66"
-        Me.Label66.Size = New System.Drawing.Size(78, 16)
+        Me.Label66.Size = New System.Drawing.Size(77, 16)
         Me.Label66.TabIndex = 241
         Me.Label66.Text = "總    重"
         '
@@ -912,7 +932,7 @@ Partial Class frmMain
         Me.Label64.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label64.Location = New System.Drawing.Point(530, 134)
         Me.Label64.Name = "Label64"
-        Me.Label64.Size = New System.Drawing.Size(17, 16)
+        Me.Label64.Size = New System.Drawing.Size(16, 16)
         Me.Label64.TabIndex = 239
         Me.Label64.Text = "T"
         '
@@ -922,7 +942,7 @@ Partial Class frmMain
         Me.Label57.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label57.Location = New System.Drawing.Point(286, 134)
         Me.Label57.Name = "Label57"
-        Me.Label57.Size = New System.Drawing.Size(76, 16)
+        Me.Label57.Size = New System.Drawing.Size(75, 16)
         Me.Label57.TabIndex = 238
         Me.Label57.Text = "空車重量"
         '
@@ -1047,7 +1067,7 @@ Partial Class frmMain
         Me.Label63.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label63.Location = New System.Drawing.Point(7, 193)
         Me.Label63.Name = "Label63"
-        Me.Label63.Size = New System.Drawing.Size(76, 16)
+        Me.Label63.Size = New System.Drawing.Size(75, 16)
         Me.Label63.TabIndex = 228
         Me.Label63.Text = "產品名稱"
         '
@@ -1069,7 +1089,7 @@ Partial Class frmMain
         Me.Label58.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label58.Location = New System.Drawing.Point(653, 95)
         Me.Label58.Name = "Label58"
-        Me.Label58.Size = New System.Drawing.Size(77, 16)
+        Me.Label58.Size = New System.Drawing.Size(76, 16)
         Me.Label58.TabIndex = 218
         Me.Label58.Text = "承 辦 人"
         '
@@ -1090,7 +1110,7 @@ Partial Class frmMain
         Me.lblCliManu.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.lblCliManu.Location = New System.Drawing.Point(8, 163)
         Me.lblCliManu.Name = "lblCliManu"
-        Me.lblCliManu.Size = New System.Drawing.Size(78, 16)
+        Me.lblCliManu.Size = New System.Drawing.Size(77, 16)
         Me.lblCliManu.TabIndex = 203
         Me.lblCliManu.Text = "客    戶"
         '
@@ -1100,7 +1120,7 @@ Partial Class frmMain
         Me.Label54.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label54.Location = New System.Drawing.Point(287, 95)
         Me.Label54.Name = "Label54"
-        Me.Label54.Size = New System.Drawing.Size(78, 16)
+        Me.Label54.Size = New System.Drawing.Size(77, 16)
         Me.Label54.TabIndex = 200
         Me.Label54.Text = "車    號"
         '
@@ -2408,6 +2428,177 @@ Partial Class frmMain
         Me.btnQuery_貨品.TabIndex = 303
         Me.btnQuery_貨品.UseVisualStyleBackColor = False
         '
+        'tpReport
+        '
+        Me.tpReport.Controls.Add(Me.grpType_report)
+        Me.tpReport.Controls.Add(Me.btnPrint_report)
+        Me.tpReport.Controls.Add(Me.grpDate_report)
+        Me.tpReport.Controls.Add(Me.grpInOut_report)
+        Me.tpReport.Location = New System.Drawing.Point(4, 31)
+        Me.tpReport.Name = "tpReport"
+        Me.tpReport.Padding = New System.Windows.Forms.Padding(3)
+        Me.tpReport.Size = New System.Drawing.Size(1000, 666)
+        Me.tpReport.TabIndex = 8
+        Me.tpReport.Text = "報   表"
+        Me.tpReport.UseVisualStyleBackColor = True
+        '
+        'grpType_report
+        '
+        Me.grpType_report.Controls.Add(Me.RadioButton6)
+        Me.grpType_report.Controls.Add(Me.RadioButton7)
+        Me.grpType_report.Controls.Add(Me.RadioButton8)
+        Me.grpType_report.Controls.Add(Me.RadioButton5)
+        Me.grpType_report.Controls.Add(Me.RadioButton3)
+        Me.grpType_report.Controls.Add(Me.RadioButton4)
+        Me.grpType_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.grpType_report.Location = New System.Drawing.Point(113, 6)
+        Me.grpType_report.Name = "grpType_report"
+        Me.grpType_report.Size = New System.Drawing.Size(696, 207)
+        Me.grpType_report.TabIndex = 2
+        Me.grpType_report.TabStop = False
+        Me.grpType_report.Text = "種類"
+        '
+        'RadioButton6
+        '
+        Me.RadioButton6.AutoSize = True
+        Me.RadioButton6.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton6.Location = New System.Drawing.Point(144, 142)
+        Me.RadioButton6.Name = "RadioButton6"
+        Me.RadioButton6.Size = New System.Drawing.Size(174, 23)
+        Me.RadioButton6.TabIndex = 5
+        Me.RadioButton6.Text = "日報統計明細表"
+        Me.RadioButton6.UseVisualStyleBackColor = True
+        '
+        'RadioButton7
+        '
+        Me.RadioButton7.AutoSize = True
+        Me.RadioButton7.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton7.Location = New System.Drawing.Point(144, 113)
+        Me.RadioButton7.Name = "RadioButton7"
+        Me.RadioButton7.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton7.TabIndex = 4
+        Me.RadioButton7.Text = "月份對帳單"
+        Me.RadioButton7.UseVisualStyleBackColor = True
+        '
+        'RadioButton8
+        '
+        Me.RadioButton8.AutoSize = True
+        Me.RadioButton8.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton8.Location = New System.Drawing.Point(144, 84)
+        Me.RadioButton8.Name = "RadioButton8"
+        Me.RadioButton8.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton8.TabIndex = 3
+        Me.RadioButton8.Text = "年度對帳單"
+        Me.RadioButton8.UseVisualStyleBackColor = True
+        '
+        'RadioButton5
+        '
+        Me.RadioButton5.AutoSize = True
+        Me.RadioButton5.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton5.Location = New System.Drawing.Point(6, 84)
+        Me.RadioButton5.Name = "RadioButton5"
+        Me.RadioButton5.Size = New System.Drawing.Size(111, 23)
+        Me.RadioButton5.TabIndex = 2
+        Me.RadioButton5.Text = "日對帳單"
+        Me.RadioButton5.UseVisualStyleBackColor = True
+        '
+        'RadioButton3
+        '
+        Me.RadioButton3.AutoSize = True
+        Me.RadioButton3.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton3.Location = New System.Drawing.Point(6, 55)
+        Me.RadioButton3.Name = "RadioButton3"
+        Me.RadioButton3.Size = New System.Drawing.Size(111, 23)
+        Me.RadioButton3.TabIndex = 1
+        Me.RadioButton3.Text = "月對帳單"
+        Me.RadioButton3.UseVisualStyleBackColor = True
+        '
+        'RadioButton4
+        '
+        Me.RadioButton4.AutoSize = True
+        Me.RadioButton4.Checked = True
+        Me.RadioButton4.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton4.Location = New System.Drawing.Point(6, 26)
+        Me.RadioButton4.Name = "RadioButton4"
+        Me.RadioButton4.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton4.TabIndex = 0
+        Me.RadioButton4.TabStop = True
+        Me.RadioButton4.Text = "年度對帳單"
+        Me.RadioButton4.UseVisualStyleBackColor = True
+        '
+        'btnPrint_report
+        '
+        Me.btnPrint_report.AutoSize = True
+        Me.btnPrint_report.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnPrint_report.Image = Global.PlatformScale.My.Resources.Resources.button_print
+        Me.btnPrint_report.Location = New System.Drawing.Point(911, 6)
+        Me.btnPrint_report.Name = "btnPrint_report"
+        Me.btnPrint_report.Size = New System.Drawing.Size(81, 81)
+        Me.btnPrint_report.TabIndex = 309
+        Me.btnPrint_report.UseVisualStyleBackColor = False
+        '
+        'grpDate_report
+        '
+        Me.grpDate_report.Controls.Add(Me.dtpEnd)
+        Me.grpDate_report.Controls.Add(Me.dtpStart)
+        Me.grpDate_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.grpDate_report.Location = New System.Drawing.Point(8, 219)
+        Me.grpDate_report.Name = "grpDate_report"
+        Me.grpDate_report.Size = New System.Drawing.Size(826, 159)
+        Me.grpDate_report.TabIndex = 2
+        Me.grpDate_report.TabStop = False
+        Me.grpDate_report.Text = "日期"
+        '
+        'dtpEnd
+        '
+        Me.dtpEnd.Location = New System.Drawing.Point(219, 37)
+        Me.dtpEnd.Name = "dtpEnd"
+        Me.dtpEnd.Size = New System.Drawing.Size(162, 27)
+        Me.dtpEnd.TabIndex = 4
+        '
+        'dtpStart
+        '
+        Me.dtpStart.Location = New System.Drawing.Point(19, 37)
+        Me.dtpStart.Name = "dtpStart"
+        Me.dtpStart.Size = New System.Drawing.Size(162, 27)
+        Me.dtpStart.TabIndex = 3
+        '
+        'grpInOut_report
+        '
+        Me.grpInOut_report.Controls.Add(Me.RadioButton1)
+        Me.grpInOut_report.Controls.Add(Me.RadioButton2)
+        Me.grpInOut_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.grpInOut_report.Location = New System.Drawing.Point(8, 6)
+        Me.grpInOut_report.Name = "grpInOut_report"
+        Me.grpInOut_report.Size = New System.Drawing.Size(99, 86)
+        Me.grpInOut_report.TabIndex = 1
+        Me.grpInOut_report.TabStop = False
+        Me.grpInOut_report.Text = "客戶/廠商"
+        '
+        'RadioButton1
+        '
+        Me.RadioButton1.AutoSize = True
+        Me.RadioButton1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton1.Location = New System.Drawing.Point(6, 55)
+        Me.RadioButton1.Name = "RadioButton1"
+        Me.RadioButton1.Size = New System.Drawing.Size(69, 23)
+        Me.RadioButton1.TabIndex = 1
+        Me.RadioButton1.Text = "進貨"
+        Me.RadioButton1.UseVisualStyleBackColor = True
+        '
+        'RadioButton2
+        '
+        Me.RadioButton2.AutoSize = True
+        Me.RadioButton2.Checked = True
+        Me.RadioButton2.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton2.Location = New System.Drawing.Point(6, 26)
+        Me.RadioButton2.Name = "RadioButton2"
+        Me.RadioButton2.Size = New System.Drawing.Size(69, 23)
+        Me.RadioButton2.TabIndex = 0
+        Me.RadioButton2.TabStop = True
+        Me.RadioButton2.Text = "出貨"
+        Me.RadioButton2.UseVisualStyleBackColor = True
+        '
         'tabReport
         '
         Me.tabReport.Controls.Add(Me.Button24)
@@ -2419,7 +2610,7 @@ Partial Class frmMain
         Me.tabReport.Name = "tabReport"
         Me.tabReport.Size = New System.Drawing.Size(1000, 666)
         Me.tabReport.TabIndex = 5
-        Me.tabReport.Text = "報   表"
+        Me.tabReport.Text = "報   表(舊)"
         Me.tabReport.UseVisualStyleBackColor = True
         '
         'Button24
@@ -2526,7 +2717,7 @@ Partial Class frmMain
         Me.Label93.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label93.Location = New System.Drawing.Point(435, 281)
         Me.Label93.Name = "Label93"
-        Me.Label93.Size = New System.Drawing.Size(110, 16)
+        Me.Label93.Size = New System.Drawing.Size(109, 16)
         Me.Label93.TabIndex = 28
         Me.Label93.Text = "報表排序等級"
         '
@@ -2545,7 +2736,7 @@ Partial Class frmMain
         Me.Label92.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label92.Location = New System.Drawing.Point(222, 281)
         Me.Label92.Name = "Label92"
-        Me.Label92.Size = New System.Drawing.Size(110, 16)
+        Me.Label92.Size = New System.Drawing.Size(109, 16)
         Me.Label92.TabIndex = 26
         Me.Label92.Text = "報表排序等級"
         '
@@ -2564,7 +2755,7 @@ Partial Class frmMain
         Me.Label91.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label91.Location = New System.Drawing.Point(9, 281)
         Me.Label91.Name = "Label91"
-        Me.Label91.Size = New System.Drawing.Size(110, 16)
+        Me.Label91.Size = New System.Drawing.Size(109, 16)
         Me.Label91.TabIndex = 24
         Me.Label91.Text = "報表排序等級"
         '
@@ -3499,6 +3690,13 @@ Partial Class frmMain
         Me.grpT.ResumeLayout(False)
         Me.grpT.PerformLayout()
         CType(Me.dgv貨品, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.tpReport.ResumeLayout(False)
+        Me.tpReport.PerformLayout()
+        Me.grpType_report.ResumeLayout(False)
+        Me.grpType_report.PerformLayout()
+        Me.grpDate_report.ResumeLayout(False)
+        Me.grpInOut_report.ResumeLayout(False)
+        Me.grpInOut_report.PerformLayout()
         Me.tabReport.ResumeLayout(False)
         Me.tabReport.PerformLayout()
         Me.TabControl1.ResumeLayout(False)
@@ -3815,4 +4013,19 @@ Partial Class frmMain
     Friend WithEvents GroupBox2 As GroupBox
     Friend WithEvents cmbRcepStyle As ComboBox
     Friend WithEvents Label18 As Label
+    Friend WithEvents tpReport As TabPage
+    Friend WithEvents grpType_report As GroupBox
+    Friend WithEvents RadioButton6 As RadioButton
+    Friend WithEvents RadioButton7 As RadioButton
+    Friend WithEvents RadioButton8 As RadioButton
+    Friend WithEvents RadioButton5 As RadioButton
+    Friend WithEvents RadioButton3 As RadioButton
+    Friend WithEvents RadioButton4 As RadioButton
+    Friend WithEvents btnPrint_report As Button
+    Friend WithEvents grpDate_report As GroupBox
+    Friend WithEvents grpInOut_report As GroupBox
+    Friend WithEvents RadioButton1 As RadioButton
+    Friend WithEvents RadioButton2 As RadioButton
+    Friend WithEvents dtpEnd As DateTimePicker
+    Friend WithEvents dtpStart As DateTimePicker
 End Class

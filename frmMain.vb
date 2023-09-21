@@ -5,6 +5,9 @@ Imports iText.Kernel.Pdf
 Imports iText.Html2pdf
 Imports iText.Layout
 Imports iText.Html2pdf.Resolver.Font
+Imports Microsoft.Office.Interop.Excel
+Imports System.Windows.Forms.Application
+Imports System.Runtime.InteropServices
 
 Public Class frmMain
     Public permissions As Integer '權限等級
@@ -23,7 +26,7 @@ Public Class frmMain
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         '檢查資料夾是否存在
-        Dim folderPath As String = Path.Combine(Application.StartupPath, "Report")
+        Dim folderPath As String = Path.Combine(StartupPath, "Report")
         If Not Directory.Exists(folderPath) Then Directory.CreateDirectory(folderPath)
 
         InitDataGrid()
@@ -68,7 +71,7 @@ Public Class frmMain
         End With
 
         '載入設定檔
-        Dim filePath = Path.Combine(Application.StartupPath, "RcrpStyle.set")
+        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
         If Not File.Exists(filePath) Then
             File.Create(filePath).Close()
             Exit Sub
@@ -419,7 +422,7 @@ Public Class frmMain
                 fileName = "橫式.html"
         End Select
 
-        Dim folder = Path.Combine(Application.StartupPath, "Rcep")
+        Dim folder = Path.Combine(StartupPath, "Rcep")
         Dim filePath = Path.Combine(folder, fileName)
         Dim pdfFilePath = Path.Combine(folder, "test.pdf")
 
@@ -584,8 +587,9 @@ Finish:
     End Sub
 
     '清除-過磅作業
-    Private Sub btnClear_過磅_Click(sender As Button, e As EventArgs) Handles btnClear_過磅.Click
-        ClearControl(sender.Parent.Controls.OfType(Of Control).Where(Function(ctrl) TypeOf ctrl IsNot GroupBox))
+    Private Sub btnClear_過磅_Click(sender As Object, e As EventArgs) Handles btnClear_過磅.Click
+        Dim btn As ButtonBase = sender
+        ClearControl(btn.Parent.Controls.OfType(Of Control).Where(Function(ctrl) TypeOf ctrl IsNot GroupBox))
         '刷新當日在場內車輛列表
         With dgv二次過磅
             .DataSource = SelectTable(GetTableAllData("二次過磅暫存資料表"))
@@ -1046,7 +1050,7 @@ Finish:
         Dim dbPath = lblRemote.Text + "\db4UGWS.mdb"
         Dim logPath = lblRemote.Text + "\DBBackUp.log"
         Try
-            File.Copy(Application.StartupPath + "\db4UGWS.mdb", dbPath, True)
+            File.Copy(StartupPath + "\db4UGWS.mdb", dbPath, True)
             File.AppendAllText(logPath, Now.ToString("yyyy/MM/dd HH:mm:ss") & vbCrLf)
             MsgBox("備份成功")
         Catch ex As Exception
@@ -1420,11 +1424,324 @@ Finish:
 
     '系統設定-過磅單樣式
     Private Sub cmbRcepStyle_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbRcepStyle.SelectionChangeCommitted
-        Dim filePath = Path.Combine(Application.StartupPath, "RcrpStyle.set")
+        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
         If File.Exists(filePath) Then
             Dim item = cmbRcepStyle.SelectedItem
             File.WriteAllText(filePath, item.value)
         End If
     End Sub
 
+    '報表-列印
+    Private Sub btnPrint_report_Click(sender As Object, e As EventArgs) Handles btnPrint_report.Click
+        btnPrint_report.Enabled = False
+        Cursor = Cursors.WaitCursor
+
+        Dim inOut = grpInOut_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
+        Dim type = grpType_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
+        Dim dStart As String = ""
+        Dim dEnd As String = ""
+        Dim dt As Data.DataTable
+        Dim exl As New Application
+        Dim wb As Workbook = Nothing
+
+        Try
+            '將範本檔的Sheet複製到新的Excel檔
+            Dim orgWb As Workbook = exl.Workbooks.Open("C:\Users\t8042\Desktop\報表.xlsx")
+            Dim orgWs As Worksheet = orgWb.Worksheets(type)
+            wb = exl.Workbooks.Add
+            orgWs.Copy(wb.Sheets(1))
+            orgWb.Close(False)
+            wb.Sheets(2).Delete
+
+            Dim ws As Worksheet = wb.Worksheets(type)
+            Dim cells As Range = ws.Cells
+            Dim rowIndex As Integer = 0
+
+            Select Case type
+                Case "年度對帳單"
+                    '撈資料
+                    dStart = dtpStart.Value.Year.ToString
+                    dt = SelectTable(
+                        "SELECT 過磅日期, [客戶/廠商], 產品名稱, 車牌號碼, 淨重, 米數, 總價 FROM 過磅資料表 " &
+                       $"WHERE YEAR(CDATE(過磅日期)) = '{dStart}' " &
+                       $"AND [進/出] = '{inOut}'"
+                                    )
+
+                    '寫入Excel
+                    '標題
+                    cells(1, 1) = $"{dStart} 年度 {inOut} 對帳單"
+
+                    '撈所有月份
+                    Dim monthes = (
+                        From row In dt
+                        Select Date.Parse(row("過磅日期")).Month
+                    ).Distinct
+                    rowIndex = 3
+
+                    For Each m In monthes
+                        rowIndex = YearlyData(dt, m, cells, rowIndex)
+                    Next
+
+                Case "月對帳單"
+                    '撈資料
+                    Dim year As Integer = dtpStart.Value.Year
+                    Dim month As Integer = dtpStart.Value.Month
+                    dt = SelectTable(
+                        "SELECT 過磅日期, [客戶/廠商], 磅單序號, 空重, 總重, 單價, 每米噸數, 淨重, 米數, 總價, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
+                        $"WHERE YEAR(CDATE(過磅日期)) = '{year}' " &
+                        $"AND MONTH(CDATE(過磅日期)) = '{month}' " &
+                        $"AND [進/出] = '{inOut}'"
+                    )
+
+                    '寫入Excel
+                    '標題
+                    cells(1, 1) = $"{year} 年 {month} 月 {inOut} 對帳單"
+
+                    ' 撈取當月客戶購買的產品所使用的車的資料
+                    Dim datas = dt.AsEnumerable().
+                        GroupBy(Function(row) New With {
+                            .Customer = row("客戶/廠商"),
+                            .Product = row("產品名稱"),
+                            .LicensePlate = row("車牌號碼")
+                        }).
+                        Select(Function(group) New With {
+                            group.Key.Customer,
+                            group.Key.Product,
+                            group.Key.LicensePlate,
+                            .Data = group.Select(Function(row) New With {
+                                .Date = row("過磅日期"),
+                                .ID = row("磅單序號"),
+                                .Empty = Math.Round(row("空重"), 3),
+                                .Weight = Math.Round(row("總重"), 3),
+                                .UnitPrice = row("單價"),
+                                .TPM = row("每米噸數"),
+                                .NetWeight = Math.Round(row("淨重"), 3),
+                                .Meter = Math.Round(row("米數"), 3),
+                                .Price = Math.Round(row("總價"), 3)
+                            })
+                        })
+
+                    rowIndex = 3
+
+                    For Each item In datas
+                        ' 客戶、產品、車號
+                        cells(rowIndex, 1) = item.Customer
+                        cells(rowIndex, 2) = item.Product
+                        cells(rowIndex, 3) = item.LicensePlate
+                        BottomLine_Cell(cells(rowIndex, 1))
+                        BottomLine_Cell(cells(rowIndex, 2))
+                        BottomLine_Cell(cells(rowIndex, 3))
+                        rowIndex += 1
+
+                        For Each d In item.Data
+                            cells(rowIndex, 1) = d.Date
+                            cells(rowIndex, 2) = d.ID
+                            cells(rowIndex, 3) = d.Empty
+                            cells(rowIndex, 4) = d.Weight
+                            cells(rowIndex, 5) = d.UnitPrice
+                            cells(rowIndex, 6) = d.TPM
+                            cells(rowIndex, 7) = d.NetWeight
+                            cells(rowIndex, 8) = d.Meter
+                            cells(rowIndex, 9) = d.Price
+
+                            rowIndex += 1
+                        Next
+
+                        '畫線
+                        For i As Integer = 1 To 9
+                            BottomLine_Cell(cells(rowIndex - 1, i))
+                        Next
+
+                        ' 小計
+                        cells(rowIndex, 3).Value = "(小計)"
+                        cells(rowIndex, 7).Value = item.Data.Sum(Function(d) d.NetWeight)
+                        cells(rowIndex, 8).Value = item.Data.Sum(Function(d) d.Meter)
+
+                        rowIndex += 2
+                    Next
+
+                Case "日對帳單"
+                    '撈資料
+                    Dim dateSelect As String = dtpStart.Value.ToString("yyyy/MM/dd")
+
+                    dt = SelectTable(
+                        "SELECT 過磅日期, [客戶/廠商], 磅單序號, 空重, 總重, 單價, 每米噸數, 淨重, 米數, 總價, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
+                        $"WHERE 過磅日期 = '{dateSelect}' " &
+                        $"AND [進/出] = '{inOut}'"
+                    )
+
+                    '寫入Excel
+                    '標題
+                    cells(1, 1) = $"{dtpStart.Value.Year} 年 {dtpStart.Value.Month} 月 {dtpStart.Value.Day} 日 {inOut} 對帳單"
+
+                    ' 撈取當月客戶購買的產品所使用的車的資料
+                    Dim datas = dt.AsEnumerable().
+                        GroupBy(Function(row) New With {
+                            .Customer = row("客戶/廠商"),
+                            .Product = row("產品名稱"),
+                            .LicensePlate = row("車牌號碼")
+                        }).
+                        Select(Function(group) New With {
+                            group.Key.Customer,
+                            group.Key.Product,
+                            group.Key.LicensePlate,
+                            .Data = group.Select(Function(row) New With {
+                                .Date = row("過磅日期"),
+                                .ID = row("磅單序號"),
+                                .Empty = Math.Round(row("空重"), 3),
+                                .Weight = Math.Round(row("總重"), 3),
+                                .UnitPrice = row("單價"),
+                                .TPM = row("每米噸數"),
+                                .NetWeight = Math.Round(row("淨重"), 3),
+                                .Meter = Math.Round(row("米數"), 3),
+                                .Price = Math.Round(row("總價"), 3)
+                            })
+                        })
+
+                    rowIndex = 3
+
+                    For Each item In datas
+                        ' 客戶、產品、車號
+                        cells(rowIndex, 1) = item.Customer
+                        cells(rowIndex, 2) = item.Product
+                        cells(rowIndex, 3) = item.LicensePlate
+                        BottomLine_Cell(cells(rowIndex, 1))
+                        BottomLine_Cell(cells(rowIndex, 2))
+                        BottomLine_Cell(cells(rowIndex, 3))
+                        rowIndex += 1
+
+                        For Each d In item.Data
+                            cells(rowIndex, 1) = d.Date
+                            cells(rowIndex, 2) = d.ID
+                            cells(rowIndex, 3) = d.Empty
+                            cells(rowIndex, 4) = d.Weight
+                            cells(rowIndex, 5) = d.UnitPrice
+                            cells(rowIndex, 6) = d.TPM
+                            cells(rowIndex, 7) = d.NetWeight
+                            cells(rowIndex, 8) = d.Meter
+                            cells(rowIndex, 9) = d.Price
+
+                            rowIndex += 1
+                        Next
+
+                        '畫線
+                        For i As Integer = 1 To 9
+                            BottomLine_Cell(cells(rowIndex - 1, i))
+                        Next
+
+                        ' 小計
+                        cells(rowIndex, 3).Value = "(小計)"
+                        cells(rowIndex, 7).Value = item.Data.Sum(Function(d) d.NetWeight)
+                        cells(rowIndex, 8).Value = item.Data.Sum(Function(d) d.Meter)
+
+                        rowIndex += 2
+                    Next
+
+                Case Else
+                    MsgBox("無效的選項", MsgBoxStyle.Exclamation, Title:="報表-列印")
+                    Exit Sub
+            End Select
+
+            ws.SaveAs("C:\Users\t8042\Desktop\test.xlsx")
+            Marshal.ReleaseComObject(ws)
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+
+        Finally
+            If wb IsNot Nothing Then
+                wb.Close(False)
+                Marshal.ReleaseComObject(wb)
+            End If
+
+            exl.Quit()
+            Marshal.ReleaseComObject(exl)
+
+            btnPrint_report.Enabled = True
+            Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' 將儲存格加上細的下框線
+    ''' </summary>
+    ''' <param name="cell">目標儲存格</param>
+    Private Sub BottomLine_Cell(cell As Range)
+        cell.Borders(XlBordersIndex.xlEdgeBottom).LineStyle = XlLineStyle.xlContinuous
+        cell.Borders(XlBordersIndex.xlEdgeBottom).Weight = XlBorderWeight.xlThin
+    End Sub
+
+    ''' <summary>
+    ''' 將儲存格加上細的上框線
+    ''' </summary>
+    ''' <param name="cell"></param>
+    Private Sub TopLine_Cell(cell As Range)
+        cell.Borders(XlBordersIndex.xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
+        cell.Borders(XlBordersIndex.xlEdgeTop).Weight = XlBorderWeight.xlThin
+    End Sub
+
+    Private Function YearlyData(dt As Data.DataTable, month As Integer, cells As Range, startRowIndex As Integer) As Integer
+        ' 月份
+        cells(startRowIndex, 1) = month & " 月"
+        BottomLine_Cell(cells(startRowIndex, 1))
+
+        Dim rowIndex = startRowIndex + 1
+
+        ' 撈取當月客戶購買的產品所使用的車的資料
+        Dim datas = dt.AsEnumerable().
+            Where(Function(row) Date.Parse(row("過磅日期")).Month = month).
+            GroupBy(Function(row) New With {
+                .Customer = row("客戶/廠商"),
+                .Product = row("產品名稱"),
+                .LicensePlate = row("車牌號碼")
+            }).
+            Select(Function(group) New With {
+                group.Key.Customer,
+                group.Key.Product,
+                group.Key.LicensePlate,
+                .Data = group.Select(Function(row) New With {
+                    .Weight = Math.Round(row("淨重"), 3),
+                    .Meters = Math.Round(row("米數"), 3),
+                    .Price = Math.Round(row("總價"), 3)
+                })
+            })
+
+        For Each item In datas
+            ' 客戶、產品、車號
+            cells(rowIndex, 1) = item.Customer
+            cells(rowIndex, 2) = item.Product
+            cells(rowIndex, 3) = item.LicensePlate
+            BottomLine_Cell(cells(rowIndex, 1))
+            BottomLine_Cell(cells(rowIndex, 2))
+            BottomLine_Cell(cells(rowIndex, 3))
+            rowIndex += 1
+
+            For Each d In item.Data
+                ' 資料
+                Dim wt = d.Weight
+                Dim mt = d.Meters
+                Dim pc = d.Price
+
+                cells(rowIndex, 4).Value = wt
+                cells(rowIndex, 5).Value = mt
+                cells(rowIndex, 6).Value = pc
+                rowIndex += 1
+            Next
+
+            ' 小計
+            cells(rowIndex, 3).Value = "(小計)"
+            cells(rowIndex, 4).Value = item.Data.Sum(Function(d) d.Weight)
+            TopLine_Cell(cells(rowIndex, 4))
+            cells(rowIndex, 5).Value = item.Data.Sum(Function(d) d.Meters)
+            TopLine_Cell(cells(rowIndex, 5))
+            cells(rowIndex, 6).Value = item.Data.Sum(Function(d) d.Price)
+            TopLine_Cell(cells(rowIndex, 6))
+            cells(rowIndex, 7).Value = item.Data.Count()
+            TopLine_Cell(cells(rowIndex, 7))
+
+            rowIndex += 2
+        Next
+
+        Return rowIndex
+    End Function
 End Class

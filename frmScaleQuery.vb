@@ -1,6 +1,4 @@
-﻿Imports System.Text
-
-Public Class frmScaleQuery
+﻿Public Class frmScaleQuery
     Private Sub ScaleQuery_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         cmbCustomer.DataSource = SelectTable("SELECT 代號, 簡稱 FROM 客戶資料表")
         cmbCustomer.DisplayMember = "簡稱"
