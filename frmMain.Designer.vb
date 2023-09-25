@@ -205,6 +205,9 @@ Partial Class frmMain
         Me.btnQuery_貨品 = New System.Windows.Forms.Button()
         Me.tpReport = New System.Windows.Forms.TabPage()
         Me.grpType_report = New System.Windows.Forms.GroupBox()
+        Me.RadioButton11 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton10 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton9 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.RadioButton7 = New System.Windows.Forms.RadioButton()
         Me.RadioButton8 = New System.Windows.Forms.RadioButton()
@@ -2444,6 +2447,9 @@ Partial Class frmMain
         '
         'grpType_report
         '
+        Me.grpType_report.Controls.Add(Me.RadioButton11)
+        Me.grpType_report.Controls.Add(Me.RadioButton10)
+        Me.grpType_report.Controls.Add(Me.RadioButton9)
         Me.grpType_report.Controls.Add(Me.RadioButton6)
         Me.grpType_report.Controls.Add(Me.RadioButton7)
         Me.grpType_report.Controls.Add(Me.RadioButton8)
@@ -2458,37 +2464,70 @@ Partial Class frmMain
         Me.grpType_report.TabStop = False
         Me.grpType_report.Text = "種類"
         '
+        'RadioButton11
+        '
+        Me.RadioButton11.AutoSize = True
+        Me.RadioButton11.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton11.Location = New System.Drawing.Point(253, 84)
+        Me.RadioButton11.Name = "RadioButton11"
+        Me.RadioButton11.Size = New System.Drawing.Size(174, 23)
+        Me.RadioButton11.TabIndex = 8
+        Me.RadioButton11.Text = "過磅單日統計表"
+        Me.RadioButton11.UseVisualStyleBackColor = True
+        '
+        'RadioButton10
+        '
+        Me.RadioButton10.AutoSize = True
+        Me.RadioButton10.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton10.Location = New System.Drawing.Point(253, 55)
+        Me.RadioButton10.Name = "RadioButton10"
+        Me.RadioButton10.Size = New System.Drawing.Size(195, 23)
+        Me.RadioButton10.TabIndex = 7
+        Me.RadioButton10.Text = "日客戶產品統計表"
+        Me.RadioButton10.UseVisualStyleBackColor = True
+        '
+        'RadioButton9
+        '
+        Me.RadioButton9.AutoSize = True
+        Me.RadioButton9.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton9.Location = New System.Drawing.Point(253, 26)
+        Me.RadioButton9.Name = "RadioButton9"
+        Me.RadioButton9.Size = New System.Drawing.Size(195, 23)
+        Me.RadioButton9.TabIndex = 6
+        Me.RadioButton9.Text = "日產品客戶統計表"
+        Me.RadioButton9.UseVisualStyleBackColor = True
+        '
         'RadioButton6
         '
         Me.RadioButton6.AutoSize = True
         Me.RadioButton6.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton6.Location = New System.Drawing.Point(144, 142)
+        Me.RadioButton6.Location = New System.Drawing.Point(6, 171)
         Me.RadioButton6.Name = "RadioButton6"
-        Me.RadioButton6.Size = New System.Drawing.Size(174, 23)
+        Me.RadioButton6.Size = New System.Drawing.Size(153, 23)
         Me.RadioButton6.TabIndex = 5
-        Me.RadioButton6.Text = "日報統計明細表"
+        Me.RadioButton6.Text = "日產品統計表"
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
         'RadioButton7
         '
         Me.RadioButton7.AutoSize = True
         Me.RadioButton7.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton7.Location = New System.Drawing.Point(144, 113)
+        Me.RadioButton7.Location = New System.Drawing.Point(6, 142)
         Me.RadioButton7.Name = "RadioButton7"
-        Me.RadioButton7.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton7.Size = New System.Drawing.Size(153, 23)
         Me.RadioButton7.TabIndex = 4
-        Me.RadioButton7.Text = "月份對帳單"
+        Me.RadioButton7.Text = "月產品統計表"
         Me.RadioButton7.UseVisualStyleBackColor = True
         '
         'RadioButton8
         '
         Me.RadioButton8.AutoSize = True
         Me.RadioButton8.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton8.Location = New System.Drawing.Point(144, 84)
+        Me.RadioButton8.Location = New System.Drawing.Point(6, 113)
         Me.RadioButton8.Name = "RadioButton8"
-        Me.RadioButton8.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton8.Size = New System.Drawing.Size(111, 23)
         Me.RadioButton8.TabIndex = 3
-        Me.RadioButton8.Text = "年度對帳單"
+        Me.RadioButton8.Text = "月統計表"
         Me.RadioButton8.UseVisualStyleBackColor = True
         '
         'RadioButton5
@@ -2562,6 +2601,7 @@ Partial Class frmMain
         Me.dtpStart.Name = "dtpStart"
         Me.dtpStart.Size = New System.Drawing.Size(162, 27)
         Me.dtpStart.TabIndex = 3
+        Me.dtpStart.Value = New Date(2017, 5, 27, 0, 0, 0, 0)
         '
         'grpInOut_report
         '
@@ -4028,4 +4068,7 @@ Partial Class frmMain
     Friend WithEvents RadioButton2 As RadioButton
     Friend WithEvents dtpEnd As DateTimePicker
     Friend WithEvents dtpStart As DateTimePicker
+    Friend WithEvents RadioButton9 As RadioButton
+    Friend WithEvents RadioButton10 As RadioButton
+    Friend WithEvents RadioButton11 As RadioButton
 End Class

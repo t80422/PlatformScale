@@ -206,6 +206,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="modAuthorized.vb" />
+    <Compile Include="Models\ReportData.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -228,6 +229,8 @@
     <Compile Include="frmScaleQuery.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ReportGenerators\ExcelReportGenerator.vb" />
+    <Compile Include="ReportService.vb" />
     <Compile Include="Utility.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -311,6 +314,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

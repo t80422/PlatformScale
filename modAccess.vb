@@ -33,6 +33,24 @@ Module modAccess
         Return dt
     End Function
 
+    Public Function SelectTable(query As String, parameters As Dictionary(Of String, Object)) As DataTable
+        Dim dt As New DataTable()
+        Try
+            conn.Open()
+            Using cmd As New OleDbCommand(query, conn)
+                parameters.ToList.ForEach(Function(p) cmd.Parameters.AddWithValue(p.Key, p.Value))
+
+                Dim adapter As New OleDbDataAdapter(cmd)
+
+                adapter.Fill(dt)
+            End Using
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Exclamation, title)
+        End Try
+        conn.Close()
+        Return dt
+    End Function
+
     ''' <summary>
     ''' 檢查必填欄位
     ''' </summary>
