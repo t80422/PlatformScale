@@ -1,4 +1,6 @@
-﻿Imports System.Runtime.InteropServices
+﻿Imports System.IO
+Imports System.Runtime.InteropServices
+Imports System.Text
 Imports Microsoft.Office.Interop.Excel
 
 Namespace ReportGenerators
@@ -7,111 +9,21 @@ Namespace ReportGenerators
         Private wb As Workbook
         Private ws As Worksheet
         Private cells As Range
-        Private templatePath As String = "C:\Users\t8042\Desktop\報表.xlsx"
-        Private savePath As String = "C:\Users\t8042\Desktop\test.xlsx"
+        Private _filePath As String
+        Private _saveExcel As Boolean
 
-        Public Sub New()
+        Public Sub New(filePath As String, Optional saveExcel As Boolean = False)
+            _filePath = filePath
             exl = New Application
+            _saveExcel = saveExcel
         End Sub
-
-        'Public Sub GenerateYearlyStatement(dtp As DateTimePicker, inOut As String, a As String)
-        '    Dim year = dtp.Value.Year
-        '    Dim dt = SelectTable(
-        '        "SELECT 過磅日期, [客戶/廠商], 產品名稱, 車牌號碼, 淨重, 米數, 總價 FROM 過磅資料表 " &
-        '       $"WHERE YEAR(CDATE(過磅日期)) = '{year}' " &
-        '       $"AND [進/出] = '{inOut}'"
-        '                    )
-
-        '    '寫入Excel
-        '    '標題
-        '    cells(1, 1) = $"{year} 年度 {inOut} 對帳單"
-
-        '    '撈所有月份
-        '    Dim monthes = (
-        '        From row In dt
-        '        Select Date.Parse(row("過磅日期")).Month
-        '    ).Distinct
-
-        '    Dim rowIndex = 3
-
-        '    For Each m In monthes
-        '        rowIndex = YearlyData(dt, m, cells, rowIndex)
-        '    Next
-        'End Sub
-
-        'Private Function YearlyData(dt As Data.DataTable, month As Integer, cells As Range, startRowIndex As Integer) As Integer
-        '    ' 月份
-        '    cells(startRowIndex, 1) = month & " 月"
-        '    BottomLine_Cell(cells(startRowIndex, 1))
-
-        '    Dim rowIndex = startRowIndex + 1
-
-        '    ' 撈取當月客戶購買的產品所使用的車的資料
-        '    Dim datas = dt.AsEnumerable().
-        '    Where(Function(row) Date.Parse(row("過磅日期")).Month = month).
-        '    GroupBy(Function(row) New With {
-        '        .Customer = row("客戶/廠商"),
-        '        .Product = row("產品名稱"),
-        '        .LicensePlate = row("車牌號碼")
-        '    }).
-        '    Select(Function(group) New With {
-        '        group.Key.Customer,
-        '        group.Key.Product,
-        '        group.Key.LicensePlate,
-        '        .Data = group.Select(Function(row) New With {
-        '            .Weight = Math.Round(row("淨重"), 3),
-        '            .Meters = Math.Round(row("米數"), 3),
-        '            .Price = Math.Round(row("總價"), 3)
-        '        })
-        '    })
-
-        '    For Each item In datas
-        '        ' 客戶、產品、車號
-        '        cells(rowIndex, 1) = item.Customer
-        '        cells(rowIndex, 2) = item.Product
-        '        cells(rowIndex, 3) = item.LicensePlate
-        '        BottomLine_Cell(cells(rowIndex, 1))
-        '        BottomLine_Cell(cells(rowIndex, 2))
-        '        BottomLine_Cell(cells(rowIndex, 3))
-        '        rowIndex += 1
-
-        '        For Each d In item.Data
-        '            ' 資料
-        '            Dim wt = d.Weight
-        '            Dim mt = d.Meters
-        '            Dim pc = d.Price
-
-        '            cells(rowIndex, 4).Value = wt
-        '            cells(rowIndex, 5).Value = mt
-        '            cells(rowIndex, 6).Value = pc
-        '            rowIndex += 1
-        '        Next
-
-        '        ' 小計
-        '        cells(rowIndex, 3).Value = "(小計)"
-        '        cells(rowIndex, 4).Value = item.Data.Sum(Function(d) d.Weight)
-        '        TopLine_Cell(cells(rowIndex, 4))
-        '        cells(rowIndex, 5).Value = item.Data.Sum(Function(d) d.Meters)
-        '        TopLine_Cell(cells(rowIndex, 5))
-        '        cells(rowIndex, 6).Value = item.Data.Sum(Function(d) d.Price)
-        '        TopLine_Cell(cells(rowIndex, 6))
-        '        cells(rowIndex, 7).Value = item.Data.Count()
-        '        TopLine_Cell(cells(rowIndex, 7))
-
-        '        rowIndex += 2
-        '    Next
-
-        '    Return rowIndex
-        'End Function
 
         ''' <summary>
         ''' 年度對帳單
         ''' </summary>
-        ''' <param name="dtp"></param>
+        ''' <param name="year"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateYearlyStatement(dtp As DateTimePicker, inOut As String)
-            Dim year = dtp.Value.Year
-
+        Public Sub GenerateYearlyStatement(year As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '寫入標題
             cells(1, 1) = $"{year} 年度 {inOut} 對帳單"
 
@@ -121,12 +33,11 @@ Namespace ReportGenerators
                 {"inOut", inOut}
             }
 
-            Dim dt = SelectTable(
-                "SELECT 過磅日期, [客戶/廠商], 產品名稱, 車牌號碼, 淨重, 米數, 總價 FROM 過磅資料表 " &
-                "WHERE 過磅日期 BETWEEN @startYear AND @endYear " &
-                "AND [進/出] = @inOut",
-                dic
-            )
+            Dim sql = "SELECT 過磅日期, [客戶/廠商], 產品名稱, 車牌號碼, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startYear AND @endYear " &
+                      "AND [進/出] = @inOut "
+
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
             Dim groupData = dt.AsEnumerable().
                 GroupBy(Function(row) New With {
@@ -142,75 +53,46 @@ Namespace ReportGenerators
                     group.Key.CarNo,
                     .Data = group.Select(Function(row) New With {
                         .Weight = Math.Round(row("淨重"), 3),
-                        .Meters = Math.Round(row("米數"), 3),
-                        .Price = Math.Round(row("總價"), 3)
+                        .Meters = Math.Round(row("米數"), 3)
                         }).ToList()
                 }).ToList()
 
-            'Dim rowIndex = 3
-
             ' 建立 DataTable
-            Dim table As New Data.DataTable()
-            With table
-                .Columns.Add("客戶")
-                .Columns.Add("產品")
-                .Columns.Add("車號")
-                .Columns.Add("淨重和")
-                .Columns.Add("米數和")
-                .Columns.Add("總價和")
-                .Columns.Add("車次計數")
-            End With
+            Dim table As New System.Data.DataTable()
+            For i As Integer = 1 To 6
+                table.Columns.Add()
+            Next
+
 
             For Each monthGroup In groupData.GroupBy(Function(x) x.Month).OrderBy(Function(x) x.Key)
                 '寫入月份
-                'cells(rowIndex, 1) = monthGroup.Key & "月"
-                'BottomLine_Cell(cells(rowIndex, 1))
-                'rowIndex += 1
                 table.Rows.Add(monthGroup.Key & "月")
 
                 For Each customerGroup In monthGroup.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
                     For Each productGroup In customerGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
                         For Each CarNoGroup In customerGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
-
-                            'cells(rowIndex, 1) = customerGroup.Key
-                            'cells(rowIndex, 2) = productGroup.Key
-                            'cells(rowIndex, 3) = CarNoGroup.Key
                             '寫入          客戶               產品              車號
                             table.Rows.Add(customerGroup.Key, productGroup.Key, CarNoGroup.Key)
-
-                            'BottomLine_Cell(rowIndex, 1, 3)
-
-                            'rowIndex += 1
 
                             For Each carNoItem In CarNoGroup
                                 For Each record In carNoItem.Data
                                     ' 寫入每條記錄的詳細資料
-                                    'cells(rowIndex, 4) = record.Weight
-                                    'cells(rowIndex, 5) = record.Meters
-                                    'cells(rowIndex, 6) = record.Price
-                                    table.Rows.Add("", "", "", record.Weight, record.Meters, record.Price)
-                                    'rowIndex += 1
+                                    table.Rows.Add("", "", "", record.Weight, record.Meters)
                                 Next
                             Next
 
                             ' 寫入小計
-                            'cells(rowIndex, 3) = "(小計)"
-                            'cells(rowIndex, 4) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Weight)))
-                            'cells(rowIndex, 5) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meters)))
-                            'cells(rowIndex, 6) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Price)))
-                            'cells(rowIndex, 7) = CarNoGroup.Count
-                            table.Rows.Add("", "", "(小計)", CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Weight))), CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meters))) _
-                                       , CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Price))), CarNoGroup.Count)
+                            table.Rows.Add("", "", "(小計)", CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Weight))),
+                                           CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meters))), CarNoGroup.Count)
 
-                            'TopLine_Cell(rowIndex, 3, 7)
-                            ' 記住剛剛添加的「小計」行的行號
-                            Dim subtotalRowIndex As Integer = table.Rows.Count
+                            '' 記住剛剛添加的「小計」行的行號
+                            'Dim subtotalRowIndex As Integer = table.Rows.Count
 
-                            ' 添加上邊框到「小計」所在的行
-                            Dim topBorderRange As Range = ws.Range(ws.Cells(subtotalRowIndex + 2, 1), ws.Cells(subtotalRowIndex + 2, table.Columns.Count))
-                            topBorderRange.Borders(XlBordersIndex.xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
-                            topBorderRange.Borders(XlBordersIndex.xlEdgeTop).Weight = XlBorderWeight.xlThin
-                            'rowIndex += 2
+                            '' 添加上邊框到「小計」所在的行
+                            'Dim topBorderRange As Range = ws.Range(ws.Cells(subtotalRowIndex + 2, 1), ws.Cells(subtotalRowIndex + 2, table.Columns.Count))
+                            'topBorderRange.Borders(XlBordersIndex.xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
+                            'topBorderRange.Borders(XlBordersIndex.xlEdgeTop).Weight = XlBorderWeight.xlThin
+
                             table.Rows.Add()
                         Next
                     Next
@@ -238,10 +120,9 @@ Namespace ReportGenerators
         ''' </summary>
         ''' <param name="dtp"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateMonthlyStatement(dtp As DateTimePicker, inOut As String)
+        Public Sub GenerateMonthlyStatement(year As Integer, month As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '撈資料
-            Dim dtpValue = dtp.Value
-            Dim startDate As New Date(dtpValue.Year, dtpValue.Month, 1)
+            Dim startDate As New Date(year, month, 1)
             Dim endDate = startDate.AddMonths(1).AddDays(-1)
 
             Dim dic As New Dictionary(Of String, Object) From {
@@ -250,12 +131,11 @@ Namespace ReportGenerators
                 {"inOut", inOut}
             }
 
-            Dim dt = SelectTable(
-                "SELECT 過磅日期, [客戶/廠商], 磅單序號, 空重, 總重, 單價, 每米噸數, 淨重, 米數, 總價, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
-                "WHERE 過磅日期 BETWEEN @endDate AND @startDate " &
-                $"AND [進/出] = @inOut",
-                dic
-            )
+            Dim sql = "SELECT [客戶/廠商], 產品代號, 磅單序號, 空重, 總重, 每米噸數, 淨重, 米數, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @endDate AND @startDate " &
+                      "AND [進/出] = @inOut "
+
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
             '標題
             cells(1, 1) = $"{startDate:yyyy年MM月} {inOut} 對帳單"
@@ -272,308 +152,278 @@ Namespace ReportGenerators
                     group.Key.Product,
                     group.Key.CarNo,
                     .Data = group.Select(Function(row) New With {
-                        .Date = row("過磅日期"),
                         .ID = row("磅單序號"),
+                        .ProductID = row("產品代號"),
                         .Empty = Math.Round(row("空重"), 3),
                         .Weight = Math.Round(row("總重"), 3),
-                        .UnitPrice = row("單價"),
-                        .TPM = row("每米噸數"),
                         .NetWeight = Math.Round(row("淨重"), 3),
                         .Meter = Math.Round(row("米數"), 3),
-                        .Price = Math.Round(row("總價"), 3)
+                        .TPM = row("每米噸數")
                     }).ToList
                 }).ToList
 
-            Dim rowIndex = 3
+            ' 建立 DataTable
+            Dim table As New System.Data.DataTable()
+            For i As Integer = 1 To 7
+                table.Columns.Add()
+            Next
 
             For Each customerGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
                 '寫入客戶
-                cells(rowIndex, 1) = "客戶:" & customerGroup.Key
-                BottomLine_Cell(rowIndex, 1, 1)
-                rowIndex += 1
+                table.Rows.Add("客戶:" & customerGroup.Key)
 
                 For Each productGroup In customerGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
                     '寫入產品
-                    cells(rowIndex, 1) = "產品:" & productGroup.Key
-                    BottomLine_Cell(rowIndex, 1, 1)
-                    rowIndex += 1
+                    table.Rows.Add("產品:" & productGroup.Key)
 
                     For Each CarNoGroup In customerGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
                         '寫入車號
-                        cells(rowIndex, 1) = "車號:" & CarNoGroup.Key
-                        BottomLine_Cell(rowIndex, 1, 1)
-                        rowIndex += 1
-
+                        table.Rows.Add("車號:" & CarNoGroup.Key)
+                        table.Rows.Add()
                         For Each carNoItem In CarNoGroup
                             For Each record In carNoItem.Data
                                 '寫入每條記錄的詳細資料
-                                cells(rowIndex, 1) = record.Date
-                                cells(rowIndex, 2) = record.ID
-                                cells(rowIndex, 3) = record.Empty
-                                cells(rowIndex, 4) = record.Weight
-                                cells(rowIndex, 5) = record.UnitPrice
-                                cells(rowIndex, 6) = record.TPM
-                                cells(rowIndex, 7) = record.NetWeight
-                                cells(rowIndex, 8) = record.Meter
-                                cells(rowIndex, 9) = record.Price
-                                rowIndex += 1
+                                table.Rows.Add(record.ID, record.ProductID, record.Empty, record.Weight, record.NetWeight, record.Meter, record.TPM)
                             Next
                         Next
 
                         ' 寫入小計
-                        cells(rowIndex, 6) = "(小計)"
-                        cells(rowIndex, 7) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.NetWeight)))
-                        cells(rowIndex, 8) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
-                        cells(rowIndex, 9) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Price)))
-
-                        TopLine_Cell(rowIndex, 6, 9)
-
-                        rowIndex += 2
+                        Dim totalNetWeight = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.NetWeight)))
+                        Dim totalMeter = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
+                        table.Rows.Add("", "", "", "(小計)", totalNetWeight, totalMeter, CarNoGroup.Count & "輛")
+                        table.Rows.Add()
                     Next
                 Next
             Next
+
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
         End Sub
 
         ''' <summary>
-        ''' 日度對帳單
+        ''' 日報統計明細表
         ''' </summary>
-        ''' <param name="dtp"></param>
+        ''' <param name="year"></param>
+        ''' <param name="month"></param>
+        ''' <param name="startDay"></param>
+        ''' <param name="endDay"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateDailyStatement(dtp As DateTimePicker, inOut As String)
+        Public Sub GenerateDailyStatement(year As Integer, month As Integer, startDay As Integer, endDay As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '撈資料
-            Dim dateSelect As String = dtp.Value.ToString("yyyy/MM/dd")
-
+            Dim startDate = New Date(year, month, startDay).ToString("yyyy/MM/dd")
             Dim dic As New Dictionary(Of String, Object) From {
-                {"date", dateSelect},
+                {"startDate", startDate},
+                {"endDate", New Date(year, month, endDay).ToString("yyyy/MM/dd")},
                 {"inOut", inOut}
             }
-
-            Dim dt = SelectTable(
-                "SELECT 過磅日期, [客戶/廠商], 磅單序號, 空重, 總重, 單價, 每米噸數, 淨重, 米數, 總價, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
-                $"WHERE 過磅日期 = @date " &
-                $"AND [進/出] = @inOut",
-                dic
-            )
+            Dim sql = "SELECT 過磅日期, [客戶/廠商], 產品名稱, 車牌號碼, 磅單序號, 空重, 總重, 淨重, 米數, 每米噸數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
             '標題
-            cells(1, 1) = $"{dateSelect} {inOut} 對帳單"
+            cells(1, 1) = $"{startDate}~{endDay} {inOut} 產品統計表"
 
-            ' 撈取當月客戶購買的產品所使用的車的資料
+            '撈取當月客戶購買的產品所使用的車的資料
             Dim datas = dt.AsEnumerable().
                 GroupBy(Function(row) New With {
+                    .Day = row("過磅日期"),
                     .Customer = row("客戶/廠商"),
                     .Product = row("產品名稱"),
                     .CarNo = row("車牌號碼")
                 }).
                 Select(Function(group) New With {
+                    group.Key.Day,
                     group.Key.Customer,
                     group.Key.Product,
                     group.Key.CarNo,
                     .Data = group.Select(Function(row) New With {
-                        .Date = row("過磅日期"),
                         .ID = row("磅單序號"),
                         .Empty = Math.Round(row("空重"), 3),
                         .Weight = Math.Round(row("總重"), 3),
-                        .UnitPrice = row("單價"),
-                        .TPM = row("每米噸數"),
                         .NetWeight = Math.Round(row("淨重"), 3),
                         .Meter = Math.Round(row("米數"), 3),
-                        .Price = Math.Round(row("總價"), 3)
+                        .TPM = row("每米噸數")
                     })
                 })
 
-            Dim rowIndex = 3
+            ' 建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 6
+                table.Columns.Add()
+            Next
 
-            For Each customerGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
-                '寫入客戶
-                cells(rowIndex, 1) = "客戶:" & customerGroup.Key
-                BottomLine_Cell(rowIndex, 1, 1)
-                rowIndex += 1
+            For Each dayGroup In datas.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
+                '寫入日期
+                table.Rows.Add("日期:" & dayGroup.Key)
 
-                For Each productGroup In customerGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
-                    '寫入產品
-                    cells(rowIndex, 1) = "產品:" & productGroup.Key
-                    BottomLine_Cell(rowIndex, 1, 1)
-                    rowIndex += 1
+                For Each customerGroup In dayGroup.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
+                    '寫入客戶
+                    table.Rows.Add("客戶:" & customerGroup.Key)
 
-                    For Each CarNoGroup In customerGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
-                        '寫入車號
-                        cells(rowIndex, 1) = "車號:" & CarNoGroup.Key
-                        BottomLine_Cell(rowIndex, 1, 1)
-                        rowIndex += 1
+                    For Each productGroup In customerGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
+                        '寫入產品
+                        table.Rows.Add("產品:" & productGroup.Key)
 
-                        For Each carNoItem In CarNoGroup
-                            For Each record In carNoItem.Data
-                                '寫入每條記錄的詳細資料
-                                cells(rowIndex, 1) = record.Date
-                                cells(rowIndex, 2) = record.ID
-                                cells(rowIndex, 3) = record.Empty
-                                cells(rowIndex, 4) = record.Weight
-                                cells(rowIndex, 5) = record.UnitPrice
-                                cells(rowIndex, 6) = record.TPM
-                                cells(rowIndex, 7) = record.NetWeight
-                                cells(rowIndex, 8) = record.Meter
-                                cells(rowIndex, 9) = record.Price
-                                rowIndex += 1
+                        For Each CarNoGroup In productGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
+                            '寫入車號
+                            table.Rows.Add("車號:" & CarNoGroup.Key)
+
+                            For Each carNoItem In CarNoGroup
+                                For Each record In carNoItem.Data
+                                    '寫入每條記錄的詳細資料
+                                    table.Rows.Add(record.ID, record.Empty, record.Weight, record.NetWeight, record.Meter, record.TPM)
+                                Next
                             Next
+
+                            ' 寫入小計
+                            Dim sumNetWeight = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.NetWeight)))
+                            Dim sumMeter = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
+
+                            table.Rows.Add("", "", "(小計)", sumNetWeight, sumMeter, CarNoGroup.Count & "輛")
                         Next
-
-                        ' 寫入小計
-                        cells(rowIndex, 6) = "(小計)"
-                        cells(rowIndex, 7) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.NetWeight)))
-                        cells(rowIndex, 8) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
-                        cells(rowIndex, 9) = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Price)))
-
-                        TopLine_Cell(rowIndex, 6, 9)
-
-                        rowIndex += 2
                     Next
                 Next
             Next
-        End Sub
 
-        ''' <summary>
-        ''' 月統計表
-        ''' </summary>
-        ''' <param name="dtp"></param>
-        ''' <param name="inOut"></param>
-        Public Sub GenerateMonthlyReport(dtp As DateTimePicker, inOut As String)
-            '撈資料
-            Dim dtpStart = dtp.Value
-            Dim year As Integer = dtpStart.Year
-            Dim month As Integer = dtpStart.Month
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
 
-            '標題
-            cells(1, 1) = $"{year} 年 {month} 月 {inOut} 統計表"
-
-            '抓出當月所有客戶
-            Dim dtCus = SelectTable(
-                "SELECT DISTINCT [客戶/廠商] FROM 過磅資料表 " &
-               $"WHERE YEAR(CDate(過磅日期)) = '{year}' " &
-               $"AND MONTH(CDate(過磅日期)) = '{month}' " &
-               $"AND [進/出] = '{inOut}'"
-                )
-
-            Dim rowIndex = 3
-
-            For Each cus As DataRow In dtCus.Rows
-                '列出客戶
-                cells(rowIndex, 1) = "客戶:" & cus("客戶/廠商")
-                BottomLine_Cell(cells(rowIndex, 1))
-                rowIndex += 1
-
-                '抓出所有車號
-                Dim dtCarNo = SelectTable(
-                    "SELECT DISTINCT 車牌號碼 FROM 過磅資料表 " &
-                    $"WHERE YEAR(CDate(過磅日期)) = '{year}' " &
-                    $"AND MONTH(CDate(過磅日期)) = '{month}' " &
-                    $"AND [進/出] = '{inOut}' " &
-                    $"AND [客戶/廠商] = '{cus("客戶/廠商")}'"
-                )
-
-                For Each carNo In dtCarNo.Rows
-                    '列出車號
-                    cells(rowIndex, 1) = "車號:" & carNo("車牌號碼")
-                    BottomLine_Cell(cells(rowIndex, 1))
-                    rowIndex += 1
-
-                    '抓出產品
-                    Dim dt = SelectTable(
-                        "SELECT DISTINCT 產品名稱 FROM 過磅資料表 " &
-                        $"WHERE YEAR(CDate(過磅日期)) = '{year}' " &
-                        $"AND MONTH(CDate(過磅日期)) = '{month}' " &
-                        $"AND [進/出] = '{inOut}' " &
-                        $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                        $"AND 車牌號碼 = '{carNo("車牌號碼")}'"
-                    )
-
-                    Dim sumCarCount As Integer = 0
-                    Dim sumWeight As Double = 0
-                    Dim sumMeter As Double = 0
-                    Dim sumPrice As Double = 0
-
-                    For Each product In dt.Rows
-                        '抓出車次、總出貨量(噸、米)、總金額
-                        dt = SelectTable(
-                            "SELECT SUM(淨重) AS total_weight, SUM(米數) AS total_meter, SUM(總價) AS total_price FROM 過磅資料表 " &
-                            $"WHERE YEAR(CDate(過磅日期)) = '{year}' " &
-                            $"AND MONTH(CDate(過磅日期)) = '{month}' " &
-                            $"AND [進/出] = '{inOut}' " &
-                            $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                            $"AND 車牌號碼 = '{carNo("車牌號碼")}'" &
-                            $"AND 產品名稱 = '{product("產品名稱")}' "
-                        )
-
-                        '列出產品
-                        cells(rowIndex, 1) = product("產品名稱")
-                        '車次
-                        Dim carCout = dt.Rows.Count
-                        cells(rowIndex, 2) = carCout
-                        '總出貨量(噸)
-                        Dim weight = dt.Rows(0)("total_weight")
-                        cells(rowIndex, 3) = Math.Round(weight, 3)
-                        '總出貨量(米)
-                        Dim meter = dt.Rows(0)("total_meter")
-                        cells(rowIndex, 4) = Math.Round(meter, 3)
-                        '總金額
-                        Dim price = dt.Rows(0)("total_price")
-                        cells(rowIndex, 5) = Math.Round(price, 3)
-                        '列出車次
-
-                        sumCarCount += carCout
-                        sumWeight += weight
-                        sumMeter += meter
-                        sumPrice += price
-
-                        rowIndex += 1
-                    Next
-
-                    For i As Integer = 1 To 5
-                        TopLine_Cell(cells(rowIndex, i))
-                    Next
-
-                    cells(rowIndex, 1) = "(小計)"
-                    cells(rowIndex, 2) = Math.Round(sumCarCount, 3)
-                    cells(rowIndex, 3) = Math.Round(sumWeight, 3)
-                    cells(rowIndex, 4) = Math.Round(sumMeter, 3)
-                    cells(rowIndex, 5) = Math.Round(sumPrice, 3)
-
-                    rowIndex += 2
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
                 Next
             Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
         End Sub
 
         ''' <summary>
-        ''' 月產品統計表
+        ''' 月報統計表(總量)
         ''' </summary>
-        ''' <param name="dtp"></param>
+        ''' <param name="year"></param>
+        ''' <param name="month"></param>
+        ''' <param name="dayStart"></param>
+        ''' <param name="dayEnd"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateMonthlyProductStats(dtp As DateTimePicker, inOut As String)
+        Public Sub GenerateMonthlyReport(year As Integer, month As Integer, dayStart As Integer, dayEnd As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
+            '列標題
+            cells(1, 1) = $"{year}年 {month}月 {dayStart}~{dayEnd} {inOut} 月份統計表(總量)"
+
             '撈資料
-            Dim dtpStart = dtp.Value
-            Dim year As Integer = dtpStart.Year
-            Dim month As Integer = dtpStart.Month
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", New Date(year, month, dayStart).ToString("yyyy/MM/dd")},
+                {"endDate", New Date(year, month, dayEnd).ToString("yyyy/MM/dd")},
+                {"inOut", inOut}
+            }
+            Dim sql = "SELECT [客戶/廠商], 車牌號碼, 產品名稱, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @endDate AND @startDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
+            '建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 6
+                table.Columns.Add()
+            Next
+
+            '撈取當月客戶購買的產品所使用的車的資料
+            Dim datas = dt.AsEnumerable().
+                GroupBy(Function(row) New With {
+                    .Customer = row("客戶/廠商"),
+                    .CarNo = row("車牌號碼"),
+                    .Product = row("產品名稱")
+                }).
+                Select(Function(group) New With {
+                    group.Key.Customer,
+                    group.Key.CarNo,
+                    group.Key.Product,
+                    .SumNetWeight = group.Sum(Function(row) Convert.ToDouble(row("淨重"))),
+                    .SumMeter = group.Sum(Function(row) Convert.ToDouble(row("米數")))
+                }).ToList()
+
+            For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
+                table.Rows.Add($"客戶/廠商:{cusGroup.Key}")
+
+                For Each carGroup In cusGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
+                    table.Rows.Add($"車牌:{carGroup.Key}")
+
+                    Dim totalNetWeight As Double = 0.0
+                    Dim totalMeter As Double = 0.0
+                    Dim totalCount As Integer = 0
+
+                    For Each prodGroup In carGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
+                        Dim sumNetWeight = Math.Round(prodGroup.First().SumNetWeight, 3)
+                        Dim sumMeter = Math.Round(prodGroup.First().SumMeter, 3)
+                        table.Rows.Add(prodGroup.Key, prodGroup.Count, sumNetWeight, sumMeter)
+
+                        totalNetWeight += sumNetWeight
+                        totalMeter += sumMeter
+                        totalCount += prodGroup.Count
+                    Next
+
+                    table.Rows.Add("(小計)", totalCount, totalNetWeight, totalMeter)
+                    table.Rows.Add()
+                Next
+            Next
+
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
+        End Sub
+
+        ''' <summary>
+        ''' 月報統計表(產品)
+        ''' </summary>
+        ''' <param name="year"></param>
+        ''' <param name="month"></param>
+        ''' <param name="inOut"></param>
+        Public Sub GenerateMonthlyProductStats(year As Integer, month As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '標題
-            cells(1, 1) = $"{year} 年 {month} 月 產品 {inOut} 統計表"
+            cells(1, 1) = $"{year}年{month}月 產品 {inOut} 統計表"
 
-            '抓出當月產品
-            Dim dt = SelectTable(
-                "SELECT 產品名稱, COUNT(*) AS 車次, SUM(總重) AS 總重, SUM(米數) AS 米, SUM(總價) AS 總價 FROM 過磅資料表 " &
-               $"WHERE YEAR(過磅日期) = {year} " &
-               $"AND MONTH(過磅日期) = {month} " &
-               $"AND [進/出] = '{inOut}' " &
-                "GROUP BY 產品名稱 " &
-                "ORDER BY 產品名稱"
-                )
+            '撈資料
+            Dim sql = "SELECT 產品名稱, COUNT(*) AS 車次, SUM(總重) AS 總重, SUM(米數) AS 米 FROM 過磅資料表 " &
+                      $"WHERE YEAR(過磅日期) = {year} " &
+                      $"AND MONTH(過磅日期) = {month} " &
+                      $"AND [進/出] = '{inOut}' "
+
+            sql = AppendConditionsToSQL(sql, dicCondition) &
+                  "GROUP BY 產品名稱 " &
+                  "ORDER BY 產品名稱"
+
+            Dim dt = SelectTable(sql)
 
             Dim rowIndex = 3
 
             Dim sumCarCount As Integer = 0
             Dim sumWeight As Double = 0
             Dim sumMeter As Double = 0
-            Dim sumPrice As Double = 0
-
+            'todo 改善寫入速度
             For Each row As DataRow In dt.Rows
                 cells(rowIndex, 1) = row("產品名稱")
                 cells(rowIndex, 2) = row("車次")
@@ -582,8 +432,6 @@ Namespace ReportGenerators
                 sumWeight += row("總重")
                 cells(rowIndex, 4) = Math.Round(row("米"), 3)
                 sumMeter += row("米")
-                cells(rowIndex, 5) = Math.Round(row("總價"), 3)
-                sumPrice += row("總價")
 
                 rowIndex += 1
             Next
@@ -596,78 +444,92 @@ Namespace ReportGenerators
             cells(rowIndex, 2) = Math.Round(sumCarCount, 3)
             cells(rowIndex, 3) = Math.Round(sumWeight, 3)
             cells(rowIndex, 4) = Math.Round(sumMeter, 3)
-            cells(rowIndex, 5) = Math.Round(sumPrice, 3)
         End Sub
 
         ''' <summary>
-        ''' 日產品統計表
+        ''' 日報統計表(產品)
         ''' </summary>
-        ''' <param name="dtp"></param>
+        ''' <param name="startDate"></param>
+        ''' <param name="endDate"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateDailyProductStats(dtp As DateTimePicker, inOut As String)
-            '撈資料
-            Dim d = dtp.Value
-
+        Public Sub GenerateDailyProductStats(startDate As String, endDate As String, inOut As String, dicCondition As Dictionary(Of String, String))
             '標題
-            cells(1, 1) = $"{d.Year} 年 {d.Month} 月 {d.Day} 日 產品 {inOut} 統計表"
+            cells(1, 1) = $"產品每月(日) {inOut} 統計表"
 
-            '抓出當日產品
-            Dim dt = SelectTable(
-                "SELECT 產品名稱, COUNT(*) AS 車次, SUM(總重) AS 總重, SUM(米數) AS 米, SUM(總價) AS 總價 FROM 過磅資料表 " &
-               $"WHERE DATEVALUE(過磅日期) = #{d.Date:yyyy/MM/dd}# " &
-               $"AND [進/出] = '{inOut}' " &
-                "GROUP BY 產品名稱 " &
-                "ORDER BY 產品名稱"
-                )
+            '撈資料
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", startDate},
+                {"endDate", endDate},
+                {"inOut", inOut}
+            }
+            Dim sql = "SELECT 過磅日期, 產品名稱, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
-            Dim rowIndex = 3
+            '分類資料
+            Dim datas = dt.AsEnumerable().
+                GroupBy(Function(row) New With {
+                    .Day = row("過磅日期"),
+                    .Product = row("產品名稱")
+                }).
+                Select(Function(group) New With {
+                    group.Key.Day,
+                    group.Key.Product,
+                    .SumNetWeight = Math.Round(group.Sum(Function(row) Double.Parse(row("淨重"))), 3),
+                    .SumMeter = Math.Round(group.Sum(Function(row) Double.Parse(row("米數"))), 3)
+                })
 
-            Dim sumCarCount As Integer = 0
-            Dim sumWeight As Double = 0
-            Dim sumMeter As Double = 0
-            Dim sumPrice As Double = 0
-
-            For Each row As DataRow In dt.Rows
-                Dim weight As Double = Math.Round(row("總重"), 3)
-                Dim meter As Double = Math.Round(row("米"), 3)
-                Dim price As Double = Math.Round(row("總價"), 3)
-
-                cells(rowIndex, 1) = row("產品名稱")
-                cells(rowIndex, 2) = row("車次")
-                sumCarCount += row("車次")
-                cells(rowIndex, 3) = weight
-                sumWeight += weight
-                cells(rowIndex, 4) = meter
-                sumMeter += meter
-                cells(rowIndex, 5) = price
-                sumPrice += price
-
-                rowIndex += 1
+            '建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 6
+                table.Columns.Add()
             Next
 
-            For i As Integer = 1 To 5
-                TopLine_Cell(cells(rowIndex, i))
+            For Each dayGroup In datas.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
+                table.Rows.Add("日期:" & dayGroup.Key)
+
+                Dim totalNetWeight As Double = 0.0
+                Dim totalMeter As Double = 0.0
+                Dim totalCount As Integer = 0
+
+                For Each prodGroup In dayGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
+                    Dim sumNetWeight = prodGroup.First().SumNetWeight
+                    Dim sumMeter = prodGroup.First().SumMeter
+                    table.Rows.Add(prodGroup.Key, prodGroup.Count, sumNetWeight, sumMeter)
+
+                    totalNetWeight += sumNetWeight
+                    totalMeter += sumMeter
+                    totalCount += prodGroup.Count
+                Next
+
+                table.Rows.Add("(小計)", totalCount, totalNetWeight, totalMeter)
+                table.Rows.Add()
             Next
 
-            cells(rowIndex, 1) = "(總計)"
-            cells(rowIndex, 2) = sumCarCount
-            cells(rowIndex, 3) = sumWeight
-            cells(rowIndex, 4) = sumMeter
-            cells(rowIndex, 5) = sumPrice
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
 
-            rowIndex += 2
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
         End Sub
 
         ''' <summary>
-        ''' 日產品客戶統計表
+        ''' 日統計明細表(產品 客戶)
         ''' </summary>
-        ''' <param name="dtpStart"></param>
-        ''' <param name="dtpEnd"></param>
+        ''' <param name="startDate"></param>
+        ''' <param name="endDate"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateDailyProductCustomerStats(dtpStart As DateTimePicker, dtpEnd As DateTimePicker, inOut As String)
-            '撈資料
-            Dim dStart = dtpStart.Value
-            Dim dEnd = dtpEnd.Value
+        Public Sub GenerateDailyProductCustomerStats(startDate As String, endDate As String, inOut As String, dicCondition As Dictionary(Of String, String))
+            '標題
             Dim person As String = ""
 
             Select Case inOut
@@ -676,97 +538,87 @@ Namespace ReportGenerators
                 Case "出貨"
                     person = "客戶"
                 Case Else
-                    Exit Select
+
             End Select
 
-            '標題
-            cells(1, 1) = $"{dStart:yyyy/MM/dd} ~ {dEnd:yyyy/MM/dd} 產品{person} {inOut} 統計表"
+            cells(1, 1) = $"{person}每日 {inOut} 產品統計表"
 
-            '抓出當日產品
-            Dim dtCus = SelectTable(
-                "SELECT DISTINCT [客戶/廠商] FROM 過磅資料表 " &
-               $"WHERE DATEVALUE(過磅日期) >= #{dStart.Date:yyyy/MM/dd}# " &
-               $"AND DATEVALUE(過磅日期) <= #{dEnd.Date:yyyy/MM/dd}# " &
-               $"AND [進/出] = '{inOut}' "
-                )
+            '撈資料
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", startDate},
+                {"endDate", endDate},
+                {"inOut", inOut}
+            }
+            Dim sql = "SELECT [客戶/廠商], 過磅日期, 產品名稱, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
-            Dim rowIndex = 3
+            Dim datas = dt.AsEnumerable.
+                GroupBy(Function(row) New With {
+                    .Customer = row("客戶/廠商"),
+                    .Day = row("過磅日期")
+                }).
+                Select(Function(group) New With {
+                    group.Key.Customer,
+                    group.Key.Day,
+                    .Data = group.Select(Function(row) New With {
+                        .Product = row("產品名稱"),
+                        .NetWeight = Math.Round(row("淨重"), 3),
+                        .Meter = Math.Round(row("米數"), 3)
+                    })
+                })
 
-            For Each cus As DataRow In dtCus.Rows
-                '列出客戶
-                cells(rowIndex, 1) = $"{person}:{cus("客戶/廠商")}"
-                BottomLine_Cell(cells(rowIndex, 1))
-                rowIndex += 1
+            ' 建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 3
+                table.Columns.Add()
+            Next
 
-                '抓出日期
-                Dim dtDate = SelectTable(
-                    "SELECT DISTINCT 過磅日期 FROM 過磅資料表 " &
-                   $"WHERE DATEVALUE(過磅日期) >= #{dStart.Date:yyyy/MM/dd}# " &
-                   $"AND DATEVALUE(過磅日期) <= #{dEnd.Date:yyyy/MM/dd}# " &
-                   $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                   $"AND [進/出] = '{inOut}' "
-                    )
+            For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
+                table.Rows.Add("客戶:" & cusGroup.Key)
 
-                For Each d As DataRow In dtDate.Rows
-                    '列出日期
-                    cells(rowIndex, 1) = $"日期:{d("過磅日期")}"
-                    BottomLine_Cell(cells(rowIndex, 1))
-                    rowIndex += 1
+                For Each dayGroup In cusGroup.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
+                    table.Rows.Add("日期:" & dayGroup.Key)
 
-                    Dim dt = SelectTable(
-                        "SELECT 產品名稱, SUM(淨重) AS 總淨重, SUM(米數) AS 總米數, SUM(總價) AS 總金額 FROM 過磅資料表 " &
-                        "WHERE DATEVALUE(過磅日期) = #" & CDate(d("過磅日期")).ToString("yyyy/MM/dd") & "# " &
-                       $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                       $"AND [進/出] = '{inOut}' " &
-                       "GROUP BY 產品名稱 " &
-                       "ORDER BY 產品名稱"
-                        )
-
-                    Dim sumWeight As Double = 0
-                    Dim sumMeter As Double = 0
-                    Dim sumPrice As Double = 0
-
-                    For Each row As DataRow In dt.Rows
-                        Dim weight As Double = Math.Round(row("總淨重"), 3)
-                        Dim meter As Double = Math.Round(row("總米數"), 3)
-                        Dim price As Double = Math.Round(row("總金額"), 3)
-
-                        cells(rowIndex, 1) = row("產品名稱")
-                        cells(rowIndex, 2) = weight
-                        sumWeight += weight
-                        cells(rowIndex, 3) = meter
-                        sumMeter += meter
-                        cells(rowIndex, 4) = price
-                        sumPrice += price
-
-                        rowIndex += 1
+                    For Each dayItem In dayGroup
+                        For Each d In dayItem.Data
+                            table.Rows.Add(d.Product, d.NetWeight, d.Meter)
+                        Next
                     Next
 
-                    For i As Integer = 1 To 4
-                        TopLine_Cell(cells(rowIndex, i))
-                    Next
+                    ' 寫入小計
+                    Dim sumNetWeight = dayGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.NetWeight)))
+                    Dim sumMeter = dayGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
 
-                    cells(rowIndex, 1) = "(總計)"
-                    cells(rowIndex, 2) = sumWeight
-                    cells(rowIndex, 3) = sumMeter
-                    cells(rowIndex, 4) = sumPrice
-
-                    rowIndex += 2
+                    table.Rows.Add("(小計)", sumNetWeight, sumMeter)
+                    table.Rows.Add()
                 Next
             Next
+
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
         End Sub
 
         ''' <summary>
-        ''' 日客戶產品統計表
+        ''' 日報統計表(客戶 產品)
         ''' </summary>
-        ''' <param name="dtpStart"></param>
-        ''' <param name="dtpEnd"></param>
+        ''' <param name="startDate"></param>
+        ''' <param name="endDate"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateDailyCustomerProductStats(dtpStart As DateTimePicker, dtpEnd As DateTimePicker, inOut As String)
-            '撈資料
-            Dim dStart = dtpStart.Value
-            Dim dEnd = dtpEnd.Value
-
+        Public Sub GenerateDailyCustomerProductStats(startDate As String, endDate As String, inOut As String, dicCondition As Dictionary(Of String, String))
+            '標題
             Dim person As String = ""
 
             Select Case inOut
@@ -775,110 +627,109 @@ Namespace ReportGenerators
                 Case "出貨"
                     person = "客戶"
                 Case Else
-                    Exit Select
+
             End Select
 
-            '標題
-            cells(1, 1) = $"{dStart:yyyy/MM/dd} ~ {dEnd:yyyy/MM/dd} {person}產品 {inOut} 統計表"
+            cells(1, 1) = $"{person}每日 {inOut} 產品統計表"
 
-            '抓出區間內的客戶
-            Dim dtCus = SelectTable(
-                "SELECT DISTINCT [客戶/廠商] FROM 過磅資料表 " &
-               $"WHERE DATEVALUE(過磅日期) >= #{dStart.Date:yyyy/MM/dd}# " &
-               $"AND DATEVALUE(過磅日期) <= #{dEnd.Date:yyyy/MM/dd}# " &
-               $"AND [進/出] = '{inOut}' "
-                )
+            '撈資料
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", startDate},
+                {"endDate", endDate},
+                {"inOut", inOut}
+            }
+            Dim sql = "SELECT [客戶/廠商], 過磅日期, 產品名稱, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
-            Dim rowIndex = 3
+            '分類資料
+            Dim datas = dt.AsEnumerable().
+                GroupBy(Function(row) New With {
+                    .Customer = row("客戶/廠商"),
+                    .Day = row("過磅日期"),
+                    .Product = row("產品名稱")
+                }).
+                Select(Function(group) New With {
+                    group.Key.Customer,
+                    group.Key.Day,
+                    group.Key.Product,
+                    .SumNetWeight = Math.Round(group.Sum(Function(row) Double.Parse(row("淨重"))), 3),
+                    .SumMeter = Math.Round(group.Sum(Function(row) Double.Parse(row("米數"))), 3)
+                })
 
-            For Each cus As DataRow In dtCus.Rows
+            '建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 6
+                table.Columns.Add()
+            Next
+
+            For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
                 '列出客戶
-                cells(rowIndex, 1) = $"{person}:{cus("客戶/廠商")}"
-                BottomLine_Cell(cells(rowIndex, 1))
-                rowIndex += 1
+                table.Rows.Add("客戶:" & cusGroup.Key)
 
-                '抓出日期
-                Dim dtDate = SelectTable(
-                    "SELECT DISTINCT 過磅日期 FROM 過磅資料表 " &
-                   $"WHERE DATEVALUE(過磅日期) >= #{dStart.Date:yyyy/MM/dd}# " &
-                   $"AND DATEVALUE(過磅日期) <= #{dEnd.Date:yyyy/MM/dd}# " &
-                   $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                   $"AND [進/出] = '{inOut}' "
-                    )
-
-                For Each d As DataRow In dtDate.Rows
+                For Each dayGroup In cusGroup.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
                     '列出日期
-                    cells(rowIndex, 1) = $"日期:{d("過磅日期")}"
-                    BottomLine_Cell(cells(rowIndex, 1))
-                    rowIndex += 1
+                    table.Rows.Add("日期:" & dayGroup.Key)
 
-                    Dim dt = SelectTable(
-                        "SELECT 產品名稱, COUNT(*) AS 車次, SUM(淨重) AS 總淨重, SUM(米數) AS 總米數, SUM(總價) AS 總金額 FROM 過磅資料表 " &
-                        "WHERE DATEVALUE(過磅日期) = #" & CDate(d("過磅日期")).ToString("yyyy/MM/dd") & "# " &
-                       $"AND [客戶/廠商] = '{cus("客戶/廠商")}' " &
-                       $"AND [進/出] = '{inOut}' " &
-                       "GROUP BY 產品名稱 " &
-                       "ORDER BY 產品名稱"
-                        )
+                    Dim totalCount As Integer = 0
+                    Dim totalNetWeight As Double = 0
+                    Dim totalMeter As Double = 0
 
-                    Dim sumCarCount As Integer = 0
-                    Dim sumWeight As Double = 0
-                    Dim sumMeter As Double = 0
-                    Dim sumPrice As Double = 0
+                    For Each prodGroup In dayGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
+                        Dim sumNetWeight = prodGroup.First().SumNetWeight
+                        Dim sumMeter = prodGroup.First().SumMeter
+                        table.Rows.Add(prodGroup.Key, prodGroup.Count, sumNetWeight, sumMeter)
 
-                    For Each row As DataRow In dt.Rows
-                        Dim weight As Double = Math.Round(row("總淨重"), 3)
-                        Dim meter As Double = Math.Round(row("總米數"), 3)
-                        Dim price As Double = Math.Round(row("總金額"), 3)
-
-                        cells(rowIndex, 1) = row("產品名稱")
-                        cells(rowIndex, 2) = row("車次")
-                        sumCarCount += row("車次")
-                        cells(rowIndex, 3) = weight
-                        sumWeight += weight
-                        cells(rowIndex, 4) = meter
-                        sumMeter += meter
-                        cells(rowIndex, 5) = price
-                        sumPrice += price
-
-                        rowIndex += 1
+                        totalNetWeight += sumNetWeight
+                        totalMeter += sumMeter
+                        totalCount += prodGroup.Count
                     Next
 
-                    For i As Integer = 1 To 5
-                        TopLine_Cell(cells(rowIndex, i))
-                    Next
-
-                    cells(rowIndex, 1) = "(總計)"
-                    cells(rowIndex, 2) = sumCarCount
-                    cells(rowIndex, 3) = sumWeight
-                    cells(rowIndex, 4) = sumMeter
-                    cells(rowIndex, 5) = sumPrice
-
-                    rowIndex += 2
+                    table.Rows.Add("(小計)", totalCount, totalNetWeight, totalMeter)
+                    table.Rows.Add()
                 Next
             Next
+
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
+            range.Value = objectArray
         End Sub
 
         ''' <summary>
         ''' 過磅單日統計表
         ''' </summary>
-        ''' <param name="dtpStart"></param>
-        ''' <param name="dtpEnd"></param>
-        Public Sub GenerateWeighingDailyReport(dtpStart As DateTimePicker, dtpEnd As DateTimePicker)
-            '撈資料
-            Dim dStart = dtpStart.Value
-            Dim dEnd = dtpEnd.Value
-
+        ''' <param name="year"></param>
+        ''' <param name="month"></param>
+        ''' <param name="strartDay"></param>
+        ''' <param name="endDay"></param>
+        ''' <param name="inOut"></param>
+        Public Sub GenerateWeighingDailyReport(year As Integer, month As Integer, startDay As Integer, endDay As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '標題
-            cells(1, 1) = $"{dStart:yyyy/MM/dd} ~ {dEnd:yyyy/MM/dd} 過磅單統計表"
+            cells(1, 1) = $"{year}年{month}月{startDay}~{endDay} {inOut} 每日過磅明細表"
 
-            '抓出區間內的資料
-            Dim dt = SelectTable(
-                "SELECT 磅單序號, [進/出], [客戶/廠商], 車牌號碼, 產品名稱, 總重, 空重, 淨重, 米數 FROM 過磅資料表 " &
-               $"WHERE DATEVALUE(過磅日期) >= #{dStart.Date:yyyy/MM/dd}# " &
-               $"AND DATEVALUE(過磅日期) <= #{dEnd.Date:yyyy/MM/dd}# " &
-               "ORDER BY 磅單序號"
-                )
+            '撈資料
+            Dim startDate = New Date(year, month, startDay).ToString("yyyy/MM/dd")
+            Dim endDate = New Date(year, month, endDay).ToString("yyyy/MM/dd")
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", startDate},
+                {"endDate", endDate},
+                {"inOut", inOut}
+            }
+            Dim sql = "SELECT 磅單序號, [客戶/廠商], 車牌號碼, 產品名稱, 總重, 空重, 淨重, 米數 FROM 過磅資料表 " &
+                      "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                      "AND [進/出] = @inOut "
+            Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
             Dim rowIndex = 3
 
@@ -887,6 +738,7 @@ Namespace ReportGenerators
             Dim sumNetWeight As Double = 0
             Dim sumMeter As Double = 0
 
+            'todo 改善寫入速度
             For Each row As DataRow In dt.Rows
                 Dim weight As Double = Math.Round(row("總重"), 3)
                 Dim emptyWeight As Double = Math.Round(row("空重"), 3)
@@ -894,35 +746,30 @@ Namespace ReportGenerators
                 Dim meter As Double = Math.Round(row("米數"), 3)
 
                 cells(rowIndex, 1) = row("磅單序號")
-                cells(rowIndex, 2) = row("進/出")
-                cells(rowIndex, 3) = row("客戶/廠商")
-                cells(rowIndex, 4) = row("車牌號碼")
-                cells(rowIndex, 5) = row("產品名稱")
-                cells(rowIndex, 6) = weight
+                cells(rowIndex, 2) = row("客戶/廠商")
+                cells(rowIndex, 3) = row("車牌號碼")
+                cells(rowIndex, 4) = row("產品名稱")
+                cells(rowIndex, 5) = weight
                 sumWeight += weight
-                cells(rowIndex, 7) = emptyWeight
+                cells(rowIndex, 6) = emptyWeight
                 sumEmptyWeight += emptyWeight
-                cells(rowIndex, 8) = netWeight
+                cells(rowIndex, 7) = netWeight
                 sumNetWeight += netWeight
-                cells(rowIndex, 9) = meter
+                cells(rowIndex, 8) = meter
                 sumMeter += meter
 
                 rowIndex += 1
             Next
 
-            For i As Integer = 1 To 9
-                TopLine_Cell(cells(rowIndex, i))
-            Next
-
-            cells(rowIndex, 5) = "(總計)"
-            cells(rowIndex, 6) = sumWeight
-            cells(rowIndex, 7) = sumEmptyWeight
-            cells(rowIndex, 8) = sumNetWeight
-            cells(rowIndex, 9) = sumMeter
+            cells(rowIndex, 4) = "(總計)"
+            cells(rowIndex, 5) = sumWeight
+            cells(rowIndex, 6) = sumEmptyWeight
+            cells(rowIndex, 7) = sumNetWeight
+            cells(rowIndex, 8) = sumMeter
         End Sub
 
         Public Sub CreateNewReport(sheetName As String)
-            Dim orgWb As Workbook = exl.Workbooks.Open(templatePath)
+            Dim orgWb As Workbook = exl.Workbooks.Open(Path.Combine(_filePath, "Report", "報表範本檔.xlsx"))
             Dim orgWs As Worksheet = orgWb.Worksheets(sheetName)
             wb = exl.Workbooks.Add
             orgWs.Copy(wb.Sheets(1))
@@ -932,8 +779,14 @@ Namespace ReportGenerators
             cells = ws.Cells
         End Sub
 
-        Public Sub SaveReport()
-            ws.SaveAs(savePath)
+        Public Sub SaveReport(sheet As String)
+            Dim pdfFilePath = Path.Combine(_filePath, "Report", $"{sheet}.pdf")
+            Dim exlFilePath = Path.Combine(_filePath, "Report", $"{sheet}.xlsx")
+
+            If _saveExcel Then ws.SaveAs(exlFilePath)
+
+            ws.ExportAsFixedFormat(XlFixedFormatType.xlTypePDF, pdfFilePath)
+            Process.Start(pdfFilePath)
             Close()
         End Sub
 
@@ -976,17 +829,14 @@ Namespace ReportGenerators
         ''' <summary>
         ''' 將儲存格加上細的下框線
         ''' </summary>
-        ''' <param name="cell">目標儲存格</param>
+        ''' <param name="row"></param>
+        ''' <param name="colStart"></param>
+        ''' <param name="colEnd"></param>
         Protected Sub BottomLine_Cell(row As Integer, colStart As Integer, colEnd As Integer)
             For i = colStart To colEnd
                 cells(row, i).Borders(XlBordersIndex.xlEdgeBottom).LineStyle = XlLineStyle.xlContinuous
                 cells(row, i).Borders(XlBordersIndex.xlEdgeBottom).Weight = XlBorderWeight.xlThin
             Next
-        End Sub
-        <Obsolete>
-        Protected Sub BottomLine_Cell(cell As Range)
-            cell.Borders(XlBordersIndex.xlEdgeBottom).LineStyle = XlLineStyle.xlContinuous
-            cell.Borders(XlBordersIndex.xlEdgeBottom).Weight = XlBorderWeight.xlThin
         End Sub
 
         ''' <summary>
@@ -997,6 +847,7 @@ Namespace ReportGenerators
             cell.Borders(XlBordersIndex.xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
             cell.Borders(XlBordersIndex.xlEdgeTop).Weight = XlBorderWeight.xlThin
         End Sub
+
         Protected Sub TopLine_Cell(row As Integer, colStart As Integer, colEnd As Integer)
             For i = colStart To colEnd
                 cells(row, i).Borders(XlBordersIndex.xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
@@ -1004,5 +855,15 @@ Namespace ReportGenerators
 
             Next
         End Sub
+
+        Private Function AppendConditionsToSQL(sql As String, dicCondition As Dictionary(Of String, String)) As String
+            Dim sb As New StringBuilder(sql)
+
+            For Each kvp In dicCondition
+                If kvp.Value <> "全部" Then sb.Append($"AND {kvp.Key} = '{kvp.Value}' ")
+            Next
+
+            Return sb.ToString
+        End Function
     End Class
 End Namespace

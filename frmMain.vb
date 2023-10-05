@@ -1,14 +1,15 @@
 ﻿Imports System.IO
 Imports System.IO.Ports
 Imports System.Text.RegularExpressions
-Imports iText.Kernel.Pdf
-Imports iText.Html2pdf
-Imports iText.Layout
-Imports iText.Html2pdf.Resolver.Font
-Imports Microsoft.Office.Interop.Excel
 Imports System.Windows.Forms.Application
-Imports System.Runtime.InteropServices
+Imports iText.Html2pdf
+Imports iText.Html2pdf.Resolver.Font
+Imports iText.Kernel.Pdf
+Imports iText.Layout
+Imports Microsoft.Office.Interop.Excel
 Imports PlatformScale.ReportGenerators
+Imports TextBox = System.Windows.Forms.TextBox
+Imports DataTable = System.Data.DataTable
 
 Public Class frmMain
     Public permissions As Integer '權限等級
@@ -53,6 +54,21 @@ Public Class frmMain
         dtp過磅.Value = Now
 
         InitRcepStyle()
+
+        InitReportCombobox()
+    End Sub
+
+    Private Sub InitReportCombobox()
+        cmbProduct_report.Items.Add("全部")
+        cmbProduct_report.Items.AddRange(SelectTable("SELECT 品名 FROM 產品資料表").AsEnumerable().Select(Function(row) row("品名")).ToArray())
+        cmbProduct_report.SelectedIndex = 0
+
+        cmbCliSup_report.Items.Add("全部")
+        cmbCliSup_report.Items.AddRange(SelectTable($"SELECT 簡稱 FROM 客戶資料表").AsEnumerable().Select(Function(row) row("簡稱")).ToArray())
+        cmbCliSup_report.SelectedIndex = 0
+
+        cmbCarNo_report.Items.Add("全部")
+        cmbCarNo_report.SelectedIndex = 0
     End Sub
 
     ''' <summary>
@@ -256,7 +272,7 @@ Public Class frmMain
         LoadWeight(txtTotalWeight, txtLoudTime_Total)
     End Sub
 
-    Private Sub LoadWeight(weight As TextBox, time As TextBox)
+    Private Sub LoadWeight(weight As TextBox, time As System.Windows.Forms.TextBox)
         Dim value = GetWeight()
         weight.Text = value
         time.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
@@ -590,7 +606,9 @@ Finish:
     '清除-過磅作業
     Private Sub btnClear_過磅_Click(sender As Object, e As EventArgs) Handles btnClear_過磅.Click
         Dim btn As ButtonBase = sender
-        ClearControl(btn.Parent.Controls.OfType(Of Control).Where(Function(ctrl) TypeOf ctrl IsNot GroupBox))
+
+        ClearControl(btn.Parent.Controls.OfType(Of Control).Where(Function(ctrl) ctrl.GetType.Name <> "GroupBox"))
+
         '刷新當日在場內車輛列表
         With dgv二次過磅
             .DataSource = SelectTable(GetTableAllData("二次過磅暫存資料表"))
@@ -728,16 +746,23 @@ Finish:
     'dgv點擊-過磅作業-場內車輛列表(二次過磅)、過磅
     Private Sub dgv過磅_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv二次過磅.CellMouseClick, dgv過磅.CellMouseClick
         Dim dgv As DataGridView = sender
+
         If dgv.SelectedRows.Count < 1 Then Exit Sub
+
         ClearControl(dgv.Parent.Controls.OfType(Of Control).Where(Function(ctrl) TypeOf ctrl IsNot GroupBox))
+
         Dim selectRow = dgv.SelectedRows(0)
+
         grpInOut.Controls.OfType(Of RadioButton).Where(Function(rdo) rdo.Text = selectRow.Cells("進/出").Value).ToList.ForEach(Sub(x) x.Checked = True)
         cmbCliManu.SelectedIndex = cmbCliManu.FindStringExact(selectRow.Cells("客戶/廠商").Value)
+
         Dim carNo = GetCellData(selectRow, "車牌號碼")
+
         cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(carNo)
         cmbProduct.SelectedIndex = cmbProduct.FindStringExact(selectRow.Cells("產品名稱").Value)
         tp過磅.Controls.OfType(Of TextBox).Where(Function(txt) txt.Tag IsNot Nothing AndAlso Not IsDBNull(selectRow.Cells(txt.Tag.ToString).Value)).
             ToList.ForEach(Sub(txt) txt.Text = selectRow.Cells(txt.Tag.ToString).Value)
+
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) Then txtLoudTime_Empty.Text = Date.Parse(txtLoudTime_Empty.Text).ToString("HH:mm")
         If Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then txtLoudTime_Total.Text = Date.Parse(txtLoudTime_Total.Text).ToString("HH:mm")
 
@@ -1436,39 +1461,109 @@ Finish:
         Cursor = Cursors.WaitCursor
         btnPrint_report.Enabled = False
 
-        Dim exlReport As New ExcelReportGenerator()
-        Dim inOut = grpInOut_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
-        Dim type = grpType_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
+        Dim exlReport As New ExcelReportGenerator(StartupPath, chkExcel.Checked)
+        Dim dic As New Dictionary(Of String, String) From {
+            {"產品名稱", cmbProduct_report.Text},
+            {"[客戶/廠商]", cmbCliSup_report.Text},
+            {"車牌號碼", cmbCarNo_report.Text}
+        }
 
-        exlReport.CreateNewReport(type)
+        Try
+            Dim inOut = grpInOut_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
+            Dim type = grpType_report.Controls.OfType(Of RadioButton).First(Function(rdo) rdo.Checked).Text
 
-        Select Case type
-            Case "年度對帳單"
-                exlReport.GenerateYearlyStatement(dtpStart, inOut)
-            Case "月對帳單"
-                exlReport.GenerateMonthlyStatement(dtpStart, inOut)
-            Case "日對帳單"
-                exlReport.GenerateDailyStatement(dtpStart, inOut)
-            Case "月統計表"
-                exlReport.GenerateMonthlyReport(dtpStart, inOut)
-            Case "月產品統計表"
-                exlReport.GenerateMonthlyProductStats(dtpStart, inOut)
-            Case "日產品統計表"
-                exlReport.GenerateDailyProductStats(dtpStart, inOut)
-            Case "日產品客戶統計表"
-                exlReport.GenerateDailyProductCustomerStats(dtpStart, dtpEnd, inOut)
-            Case "日客戶產品統計表"
-                exlReport.GenerateDailyCustomerProductStats(dtpStart, dtpEnd, inOut)
-            Case "過磅單日統計表"
-                exlReport.GenerateWeighingDailyReport(dtpStart, dtpEnd)
-            Case Else
+            exlReport.CreateNewReport(type)
 
-        End Select
+            Select Case type
+                Case "年度對帳單"
+                    exlReport.GenerateYearlyStatement(nudYear.Value, inOut, dic)
 
-        exlReport.SaveReport()
+                Case "月對帳單"
+                    exlReport.GenerateMonthlyStatement(nudYear.Value, nudMonth.Value, inOut, dic)
+
+                Case "日報統計明細表"
+                    exlReport.GenerateDailyStatement(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
+
+                Case "月報統計表(總量)"
+                    exlReport.GenerateMonthlyReport(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
+
+                Case "月報統計表(產品)"
+                    exlReport.GenerateMonthlyProductStats(nudYear.Value, nudMonth.Value, inOut, dic)
+
+                Case "日報統計表(產品)"
+                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, 1)
+                    Dim endDate = startDate.AddMonths(1).AddDays(-1)
+
+                    exlReport.GenerateDailyProductStats(startDate.ToString("yyyy/MM/dd"), endDate.ToString("yyyy/MM/dd"), inOut, dic)
+
+                Case "日統計明細表(產品 客戶)"
+                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value).ToString("yyyy/MM/dd")
+                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value).ToString("yyyy/MM/dd")
+
+                    exlReport.GenerateDailyProductCustomerStats(startDate, endDate, inOut, dic)
+
+                Case "日報統計表(客戶 產品)"
+                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value).ToString("yyyy/MM/dd")
+                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value).ToString("yyyy/MM/dd")
+
+                    exlReport.GenerateDailyCustomerProductStats(startDate, endDate, inOut, dic)
+
+                Case "過磅單日統計表"
+                    exlReport.GenerateWeighingDailyReport(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
+
+                Case Else
+
+            End Select
+
+            exlReport.SaveReport(type)
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+
         exlReport.Close()
+        MsgBox("完成")
 
         btnPrint_report.Enabled = True
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub nudYearMonth_ValueChanged(sender As Object, e As EventArgs) Handles nudMonth.ValueChanged, nudYear.ValueChanged
+        If nudYear.Value = 0 OrElse nudMonth.Value = 0 Then Exit Sub
+
+        nudDay_start.Maximum = Date.DaysInMonth(nudYear.Value, nudMonth.Value)
+        nudDay_end.Maximum = Date.DaysInMonth(nudYear.Value, nudMonth.Value)
+    End Sub
+
+    Private Sub CliSupButton_CheckedChanged(sender As Object, e As EventArgs) Handles rdoCustomer.CheckedChanged, rdoSupplier.CheckedChanged
+        Dim rdo As RadioButton = sender
+
+        If String.IsNullOrEmpty(rdo.Text) OrElse Not rdo.Checked Then Exit Sub
+
+        Dim table As String = ""
+
+        Select Case rdo.Text
+            Case "出貨"
+                lblCliSup.Text = "客戶"
+                table = "客戶資料表"
+            Case "進貨"
+                lblCliSup.Text = "廠商"
+                table = "廠商資料表"
+        End Select
+
+        cmbCliSup_report.Items.Clear()
+        cmbCliSup_report.Items.Add("全部")
+        cmbCliSup_report.Items.AddRange(SelectTable($"SELECT 簡稱 FROM {table}").AsEnumerable().Select(Function(row) row("簡稱")).ToArray())
+        cmbCliSup_report.SelectedIndex = 0
+    End Sub
+
+    Private Sub cmbCliSup_report_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbCliSup_report.SelectionChangeCommitted
+        cmbCarNo_report.Items.Clear()
+        cmbCarNo_report.Items.Add("全部")
+        cmbCarNo_report.SelectedIndex = 0
+
+        If cmbCliSup_report.Text <> "全部" Then
+            cmbCarNo_report.Items.AddRange(SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車主 = '{cmbCliSup_report.Text}'").AsEnumerable().Select(Function(row) row("車號")).ToArray())
+        End If
     End Sub
 End Class

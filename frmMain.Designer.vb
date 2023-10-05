@@ -23,6 +23,7 @@ Partial Class frmMain
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.tabMain = New System.Windows.Forms.TabControl()
         Me.tp過磅 = New System.Windows.Forms.TabPage()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
@@ -204,6 +205,22 @@ Partial Class frmMain
         Me.dgv貨品 = New System.Windows.Forms.DataGridView()
         Me.btnQuery_貨品 = New System.Windows.Forms.Button()
         Me.tpReport = New System.Windows.Forms.TabPage()
+        Me.Label56 = New System.Windows.Forms.Label()
+        Me.cmbCarNo_report = New System.Windows.Forms.ComboBox()
+        Me.lblCliSup = New System.Windows.Forms.Label()
+        Me.cmbCliSup_report = New System.Windows.Forms.ComboBox()
+        Me.Label53 = New System.Windows.Forms.Label()
+        Me.cmbProduct_report = New System.Windows.Forms.ComboBox()
+        Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.Label52 = New System.Windows.Forms.Label()
+        Me.Label51 = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.nudDay_end = New System.Windows.Forms.NumericUpDown()
+        Me.nudDay_start = New System.Windows.Forms.NumericUpDown()
+        Me.nudMonth = New System.Windows.Forms.NumericUpDown()
+        Me.nudYear = New System.Windows.Forms.NumericUpDown()
+        Me.Label19 = New System.Windows.Forms.Label()
+        Me.Label20 = New System.Windows.Forms.Label()
         Me.grpType_report = New System.Windows.Forms.GroupBox()
         Me.RadioButton11 = New System.Windows.Forms.RadioButton()
         Me.RadioButton10 = New System.Windows.Forms.RadioButton()
@@ -215,76 +232,9 @@ Partial Class frmMain
         Me.RadioButton3 = New System.Windows.Forms.RadioButton()
         Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.btnPrint_report = New System.Windows.Forms.Button()
-        Me.grpDate_report = New System.Windows.Forms.GroupBox()
-        Me.dtpEnd = New System.Windows.Forms.DateTimePicker()
-        Me.dtpStart = New System.Windows.Forms.DateTimePicker()
         Me.grpInOut_report = New System.Windows.Forms.GroupBox()
-        Me.RadioButton1 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton2 = New System.Windows.Forms.RadioButton()
-        Me.tabReport = New System.Windows.Forms.TabPage()
-        Me.Button24 = New System.Windows.Forms.Button()
-        Me.Button23 = New System.Windows.Forms.Button()
-        Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.TabPage1 = New System.Windows.Forms.TabPage()
-        Me.DataGridView6 = New System.Windows.Forms.DataGridView()
-        Me.ComboBox8 = New System.Windows.Forms.ComboBox()
-        Me.ComboBox7 = New System.Windows.Forms.ComboBox()
-        Me.ComboBox11 = New System.Windows.Forms.ComboBox()
-        Me.Label93 = New System.Windows.Forms.Label()
-        Me.ComboBox10 = New System.Windows.Forms.ComboBox()
-        Me.Label92 = New System.Windows.Forms.Label()
-        Me.ComboBox9 = New System.Windows.Forms.ComboBox()
-        Me.Label91 = New System.Windows.Forms.Label()
-        Me.Button55 = New System.Windows.Forms.Button()
-        Me.Button54 = New System.Windows.Forms.Button()
-        Me.Button53 = New System.Windows.Forms.Button()
-        Me.ListBox4 = New System.Windows.Forms.ListBox()
-        Me.ListBox3 = New System.Windows.Forms.ListBox()
-        Me.ListBox2 = New System.Windows.Forms.ListBox()
-        Me.Label90 = New System.Windows.Forms.Label()
-        Me.Label87 = New System.Windows.Forms.Label()
-        Me.ComboBox6 = New System.Windows.Forms.ComboBox()
-        Me.Label59 = New System.Windows.Forms.Label()
-        Me.GroupBox14 = New System.Windows.Forms.GroupBox()
-        Me.DateTimePicker7 = New System.Windows.Forms.DateTimePicker()
-        Me.GroupBox10 = New System.Windows.Forms.GroupBox()
-        Me.RadioButton28 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton29 = New System.Windows.Forms.RadioButton()
-        Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.DataGridView7 = New System.Windows.Forms.DataGridView()
-        Me.ComboBox12 = New System.Windows.Forms.ComboBox()
-        Me.ComboBox13 = New System.Windows.Forms.ComboBox()
-        Me.Button56 = New System.Windows.Forms.Button()
-        Me.Button57 = New System.Windows.Forms.Button()
-        Me.Button58 = New System.Windows.Forms.Button()
-        Me.ListBox5 = New System.Windows.Forms.ListBox()
-        Me.ListBox6 = New System.Windows.Forms.ListBox()
-        Me.ListBox7 = New System.Windows.Forms.ListBox()
-        Me.Label97 = New System.Windows.Forms.Label()
-        Me.Label98 = New System.Windows.Forms.Label()
-        Me.ComboBox17 = New System.Windows.Forms.ComboBox()
-        Me.Label99 = New System.Windows.Forms.Label()
-        Me.GroupBox13 = New System.Windows.Forms.GroupBox()
-        Me.RadioButton24 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton25 = New System.Windows.Forms.RadioButton()
-        Me.GroupBox12 = New System.Windows.Forms.GroupBox()
-        Me.Label88 = New System.Windows.Forms.Label()
-        Me.Label89 = New System.Windows.Forms.Label()
-        Me.DateTimePicker4 = New System.Windows.Forms.DateTimePicker()
-        Me.DateTimePicker5 = New System.Windows.Forms.DateTimePicker()
-        Me.GroupBox9 = New System.Windows.Forms.GroupBox()
-        Me.RadioButton22 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton23 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton20 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton21 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton18 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton19 = New System.Windows.Forms.RadioButton()
-        Me.GroupBox8 = New System.Windows.Forms.GroupBox()
-        Me.RadioButton16 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton17 = New System.Windows.Forms.RadioButton()
-        Me.GroupBox7 = New System.Windows.Forms.GroupBox()
-        Me.RadioButton15 = New System.Windows.Forms.RadioButton()
-        Me.RadioButton14 = New System.Windows.Forms.RadioButton()
+        Me.rdoSupplier = New System.Windows.Forms.RadioButton()
+        Me.rdoCustomer = New System.Windows.Forms.RadioButton()
         Me.tpSystem = New System.Windows.Forms.TabPage()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.cmbRcepStyle = New System.Windows.Forms.ComboBox()
@@ -320,6 +270,7 @@ Partial Class frmMain
         Me.tpLogout = New System.Windows.Forms.TabPage()
         Me.tmr過磅 = New System.Windows.Forms.Timer(Me.components)
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
+        Me.chkExcel = New System.Windows.Forms.CheckBox()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -340,22 +291,13 @@ Partial Class frmMain
         Me.grpT.SuspendLayout()
         CType(Me.dgv貨品, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tpReport.SuspendLayout()
+        Me.GroupBox3.SuspendLayout()
+        CType(Me.nudDay_end, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nudDay_start, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nudMonth, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.nudYear, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpType_report.SuspendLayout()
-        Me.grpDate_report.SuspendLayout()
         Me.grpInOut_report.SuspendLayout()
-        Me.tabReport.SuspendLayout()
-        Me.TabControl1.SuspendLayout()
-        Me.TabPage1.SuspendLayout()
-        CType(Me.DataGridView6, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox14.SuspendLayout()
-        Me.GroupBox10.SuspendLayout()
-        Me.TabPage2.SuspendLayout()
-        CType(Me.DataGridView7, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox13.SuspendLayout()
-        Me.GroupBox12.SuspendLayout()
-        Me.GroupBox9.SuspendLayout()
-        Me.GroupBox8.SuspendLayout()
-        Me.GroupBox7.SuspendLayout()
         Me.tpSystem.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox16.SuspendLayout()
@@ -373,7 +315,6 @@ Partial Class frmMain
         Me.tabMain.Controls.Add(Me.tabData_Vehicle)
         Me.tabMain.Controls.Add(Me.tp貨品)
         Me.tabMain.Controls.Add(Me.tpReport)
-        Me.tabMain.Controls.Add(Me.tabReport)
         Me.tabMain.Controls.Add(Me.tpSystem)
         Me.tabMain.Controls.Add(Me.tpLogout)
         Me.tabMain.Dock = System.Windows.Forms.DockStyle.Fill
@@ -468,7 +409,7 @@ Partial Class frmMain
         '
         Me.btnDel_二次過磅.AutoSize = True
         Me.btnDel_二次過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_二次過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_二次過磅.Image = CType(resources.GetObject("btnDel_二次過磅.Image"), System.Drawing.Image)
         Me.btnDel_二次過磅.Location = New System.Drawing.Point(677, 577)
         Me.btnDel_二次過磅.Name = "btnDel_二次過磅"
         Me.btnDel_二次過磅.Size = New System.Drawing.Size(81, 81)
@@ -479,7 +420,7 @@ Partial Class frmMain
         '
         Me.btnQuery_過磅.AutoSize = True
         Me.btnQuery_過磅.BackColor = System.Drawing.Color.Lime
-        Me.btnQuery_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_search
+        Me.btnQuery_過磅.Image = CType(resources.GetObject("btnQuery_過磅.Image"), System.Drawing.Image)
         Me.btnQuery_過磅.Location = New System.Drawing.Point(351, 3)
         Me.btnQuery_過磅.Name = "btnQuery_過磅"
         Me.btnQuery_過磅.Size = New System.Drawing.Size(81, 81)
@@ -490,7 +431,7 @@ Partial Class frmMain
         '
         Me.btnInsert_過磅.AutoSize = True
         Me.btnInsert_過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnInsert_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_scale
+        Me.btnInsert_過磅.Image = CType(resources.GetObject("btnInsert_過磅.Image"), System.Drawing.Image)
         Me.btnInsert_過磅.Location = New System.Drawing.Point(3, 3)
         Me.btnInsert_過磅.Name = "btnInsert_過磅"
         Me.btnInsert_過磅.Size = New System.Drawing.Size(81, 81)
@@ -641,7 +582,7 @@ Partial Class frmMain
         '
         Me.btnPrint_過磅.AutoSize = True
         Me.btnPrint_過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnPrint_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_print
+        Me.btnPrint_過磅.Image = CType(resources.GetObject("btnPrint_過磅.Image"), System.Drawing.Image)
         Me.btnPrint_過磅.Location = New System.Drawing.Point(438, 3)
         Me.btnPrint_過磅.Name = "btnPrint_過磅"
         Me.btnPrint_過磅.Size = New System.Drawing.Size(81, 81)
@@ -1035,7 +976,7 @@ Partial Class frmMain
         '
         Me.btnClear_過磅.AutoSize = True
         Me.btnClear_過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_過磅.Image = CType(resources.GetObject("btnClear_過磅.Image"), System.Drawing.Image)
         Me.btnClear_過磅.Location = New System.Drawing.Point(264, 3)
         Me.btnClear_過磅.Name = "btnClear_過磅"
         Me.btnClear_過磅.Size = New System.Drawing.Size(81, 81)
@@ -1046,7 +987,7 @@ Partial Class frmMain
         '
         Me.btnDel_過磅.AutoSize = True
         Me.btnDel_過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_過磅.Image = CType(resources.GetObject("btnDel_過磅.Image"), System.Drawing.Image)
         Me.btnDel_過磅.Location = New System.Drawing.Point(177, 3)
         Me.btnDel_過磅.Name = "btnDel_過磅"
         Me.btnDel_過磅.Size = New System.Drawing.Size(81, 81)
@@ -1057,7 +998,7 @@ Partial Class frmMain
         '
         Me.btnSave_過磅.AutoSize = True
         Me.btnSave_過磅.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnSave_過磅.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnSave_過磅.Image = CType(resources.GetObject("btnSave_過磅.Image"), System.Drawing.Image)
         Me.btnSave_過磅.Location = New System.Drawing.Point(90, 3)
         Me.btnSave_過磅.Name = "btnSave_過磅"
         Me.btnSave_過磅.Size = New System.Drawing.Size(81, 81)
@@ -1175,7 +1116,7 @@ Partial Class frmMain
         '
         Me.btnModify_廠商.AutoSize = True
         Me.btnModify_廠商.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnModify_廠商.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnModify_廠商.Image = CType(resources.GetObject("btnModify_廠商.Image"), System.Drawing.Image)
         Me.btnModify_廠商.Location = New System.Drawing.Point(93, 6)
         Me.btnModify_廠商.Name = "btnModify_廠商"
         Me.btnModify_廠商.Size = New System.Drawing.Size(81, 81)
@@ -1186,7 +1127,7 @@ Partial Class frmMain
         '
         Me.btnInsert_廠商.AutoSize = True
         Me.btnInsert_廠商.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnInsert_廠商.Image = Global.PlatformScale.My.Resources.Resources.button_add
+        Me.btnInsert_廠商.Image = CType(resources.GetObject("btnInsert_廠商.Image"), System.Drawing.Image)
         Me.btnInsert_廠商.Location = New System.Drawing.Point(6, 6)
         Me.btnInsert_廠商.Name = "btnInsert_廠商"
         Me.btnInsert_廠商.Size = New System.Drawing.Size(81, 81)
@@ -1197,7 +1138,7 @@ Partial Class frmMain
         '
         Me.Button60.AutoSize = True
         Me.Button60.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.Button60.Image = Global.PlatformScale.My.Resources.Resources.button_print
+        Me.Button60.Image = CType(resources.GetObject("Button60.Image"), System.Drawing.Image)
         Me.Button60.Location = New System.Drawing.Point(441, 6)
         Me.Button60.Name = "Button60"
         Me.Button60.Size = New System.Drawing.Size(81, 81)
@@ -1208,7 +1149,7 @@ Partial Class frmMain
         '
         Me.btnClear_廠商.AutoSize = True
         Me.btnClear_廠商.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_廠商.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_廠商.Image = CType(resources.GetObject("btnClear_廠商.Image"), System.Drawing.Image)
         Me.btnClear_廠商.Location = New System.Drawing.Point(267, 6)
         Me.btnClear_廠商.Name = "btnClear_廠商"
         Me.btnClear_廠商.Size = New System.Drawing.Size(81, 81)
@@ -1219,7 +1160,7 @@ Partial Class frmMain
         '
         Me.btnDel_廠商.AutoSize = True
         Me.btnDel_廠商.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_廠商.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_廠商.Image = CType(resources.GetObject("btnDel_廠商.Image"), System.Drawing.Image)
         Me.btnDel_廠商.Location = New System.Drawing.Point(180, 6)
         Me.btnDel_廠商.Name = "btnDel_廠商"
         Me.btnDel_廠商.Size = New System.Drawing.Size(81, 81)
@@ -1494,7 +1435,7 @@ Partial Class frmMain
         '
         Me.btnQuery_廠商.AutoSize = True
         Me.btnQuery_廠商.BackColor = System.Drawing.Color.Lime
-        Me.btnQuery_廠商.Image = Global.PlatformScale.My.Resources.Resources.button_search
+        Me.btnQuery_廠商.Image = CType(resources.GetObject("btnQuery_廠商.Image"), System.Drawing.Image)
         Me.btnQuery_廠商.Location = New System.Drawing.Point(354, 6)
         Me.btnQuery_廠商.Name = "btnQuery_廠商"
         Me.btnQuery_廠商.Size = New System.Drawing.Size(81, 81)
@@ -1548,7 +1489,7 @@ Partial Class frmMain
         '
         Me.btnModify_客戶.AutoSize = True
         Me.btnModify_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnModify_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnModify_客戶.Image = CType(resources.GetObject("btnModify_客戶.Image"), System.Drawing.Image)
         Me.btnModify_客戶.Location = New System.Drawing.Point(93, 6)
         Me.btnModify_客戶.Name = "btnModify_客戶"
         Me.btnModify_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1837,7 +1778,7 @@ Partial Class frmMain
         '
         Me.btnInsert_客戶.AutoSize = True
         Me.btnInsert_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnInsert_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_add
+        Me.btnInsert_客戶.Image = CType(resources.GetObject("btnInsert_客戶.Image"), System.Drawing.Image)
         Me.btnInsert_客戶.Location = New System.Drawing.Point(6, 6)
         Me.btnInsert_客戶.Name = "btnInsert_客戶"
         Me.btnInsert_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1848,7 +1789,7 @@ Partial Class frmMain
         '
         Me.btnPrint_客戶.AutoSize = True
         Me.btnPrint_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnPrint_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_print
+        Me.btnPrint_客戶.Image = CType(resources.GetObject("btnPrint_客戶.Image"), System.Drawing.Image)
         Me.btnPrint_客戶.Location = New System.Drawing.Point(441, 6)
         Me.btnPrint_客戶.Name = "btnPrint_客戶"
         Me.btnPrint_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1859,7 +1800,7 @@ Partial Class frmMain
         '
         Me.btnClear_客戶.AutoSize = True
         Me.btnClear_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_客戶.Image = CType(resources.GetObject("btnClear_客戶.Image"), System.Drawing.Image)
         Me.btnClear_客戶.Location = New System.Drawing.Point(267, 6)
         Me.btnClear_客戶.Name = "btnClear_客戶"
         Me.btnClear_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1870,7 +1811,7 @@ Partial Class frmMain
         '
         Me.btnDelete_客戶.AutoSize = True
         Me.btnDelete_客戶.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDelete_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDelete_客戶.Image = CType(resources.GetObject("btnDelete_客戶.Image"), System.Drawing.Image)
         Me.btnDelete_客戶.Location = New System.Drawing.Point(180, 6)
         Me.btnDelete_客戶.Name = "btnDelete_客戶"
         Me.btnDelete_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1881,7 +1822,7 @@ Partial Class frmMain
         '
         Me.btnQuery_客戶.AutoSize = True
         Me.btnQuery_客戶.BackColor = System.Drawing.Color.Lime
-        Me.btnQuery_客戶.Image = Global.PlatformScale.My.Resources.Resources.button_search
+        Me.btnQuery_客戶.Image = CType(resources.GetObject("btnQuery_客戶.Image"), System.Drawing.Image)
         Me.btnQuery_客戶.Location = New System.Drawing.Point(354, 6)
         Me.btnQuery_客戶.Name = "btnQuery_客戶"
         Me.btnQuery_客戶.Size = New System.Drawing.Size(81, 81)
@@ -1948,7 +1889,7 @@ Partial Class frmMain
         '
         Me.btnModify_車籍.AutoSize = True
         Me.btnModify_車籍.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnModify_車籍.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnModify_車籍.Image = CType(resources.GetObject("btnModify_車籍.Image"), System.Drawing.Image)
         Me.btnModify_車籍.Location = New System.Drawing.Point(93, 6)
         Me.btnModify_車籍.Name = "btnModify_車籍"
         Me.btnModify_車籍.Size = New System.Drawing.Size(81, 81)
@@ -1959,7 +1900,7 @@ Partial Class frmMain
         '
         Me.txtInsert_車籍.AutoSize = True
         Me.txtInsert_車籍.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.txtInsert_車籍.Image = Global.PlatformScale.My.Resources.Resources.button_add
+        Me.txtInsert_車籍.Image = CType(resources.GetObject("txtInsert_車籍.Image"), System.Drawing.Image)
         Me.txtInsert_車籍.Location = New System.Drawing.Point(6, 6)
         Me.txtInsert_車籍.Name = "txtInsert_車籍"
         Me.txtInsert_車籍.Size = New System.Drawing.Size(81, 81)
@@ -1970,7 +1911,7 @@ Partial Class frmMain
         '
         Me.btnClear_車籍.AutoSize = True
         Me.btnClear_車籍.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_車籍.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_車籍.Image = CType(resources.GetObject("btnClear_車籍.Image"), System.Drawing.Image)
         Me.btnClear_車籍.Location = New System.Drawing.Point(267, 6)
         Me.btnClear_車籍.Name = "btnClear_車籍"
         Me.btnClear_車籍.Size = New System.Drawing.Size(81, 81)
@@ -1981,7 +1922,7 @@ Partial Class frmMain
         '
         Me.btnDel_車籍.AutoSize = True
         Me.btnDel_車籍.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_車籍.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_車籍.Image = CType(resources.GetObject("btnDel_車籍.Image"), System.Drawing.Image)
         Me.btnDel_車籍.Location = New System.Drawing.Point(180, 6)
         Me.btnDel_車籍.Name = "btnDel_車籍"
         Me.btnDel_車籍.Size = New System.Drawing.Size(81, 81)
@@ -1992,7 +1933,7 @@ Partial Class frmMain
         '
         Me.btnQuery_車籍.AutoSize = True
         Me.btnQuery_車籍.BackColor = System.Drawing.Color.Lime
-        Me.btnQuery_車籍.Image = Global.PlatformScale.My.Resources.Resources.button_search
+        Me.btnQuery_車籍.Image = CType(resources.GetObject("btnQuery_車籍.Image"), System.Drawing.Image)
         Me.btnQuery_車籍.Location = New System.Drawing.Point(354, 6)
         Me.btnQuery_車籍.Name = "btnQuery_車籍"
         Me.btnQuery_車籍.Size = New System.Drawing.Size(81, 81)
@@ -2273,7 +2214,7 @@ Partial Class frmMain
         '
         Me.btnModify_貨品.AutoSize = True
         Me.btnModify_貨品.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnModify_貨品.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnModify_貨品.Image = CType(resources.GetObject("btnModify_貨品.Image"), System.Drawing.Image)
         Me.btnModify_貨品.Location = New System.Drawing.Point(93, 6)
         Me.btnModify_貨品.Name = "btnModify_貨品"
         Me.btnModify_貨品.Size = New System.Drawing.Size(81, 81)
@@ -2284,7 +2225,7 @@ Partial Class frmMain
         '
         Me.btnInsert_貨品.AutoSize = True
         Me.btnInsert_貨品.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnInsert_貨品.Image = Global.PlatformScale.My.Resources.Resources.button_add
+        Me.btnInsert_貨品.Image = CType(resources.GetObject("btnInsert_貨品.Image"), System.Drawing.Image)
         Me.btnInsert_貨品.Location = New System.Drawing.Point(6, 6)
         Me.btnInsert_貨品.Name = "btnInsert_貨品"
         Me.btnInsert_貨品.Size = New System.Drawing.Size(81, 81)
@@ -2295,7 +2236,7 @@ Partial Class frmMain
         '
         Me.btnClear_貨品.AutoSize = True
         Me.btnClear_貨品.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_貨品.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_貨品.Image = CType(resources.GetObject("btnClear_貨品.Image"), System.Drawing.Image)
         Me.btnClear_貨品.Location = New System.Drawing.Point(267, 6)
         Me.btnClear_貨品.Name = "btnClear_貨品"
         Me.btnClear_貨品.Size = New System.Drawing.Size(81, 81)
@@ -2306,7 +2247,7 @@ Partial Class frmMain
         '
         Me.btnDel_貨品.AutoSize = True
         Me.btnDel_貨品.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_貨品.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_貨品.Image = CType(resources.GetObject("btnDel_貨品.Image"), System.Drawing.Image)
         Me.btnDel_貨品.Location = New System.Drawing.Point(180, 6)
         Me.btnDel_貨品.Name = "btnDel_貨品"
         Me.btnDel_貨品.Size = New System.Drawing.Size(81, 81)
@@ -2424,7 +2365,7 @@ Partial Class frmMain
         '
         Me.btnQuery_貨品.AutoSize = True
         Me.btnQuery_貨品.BackColor = System.Drawing.Color.Lime
-        Me.btnQuery_貨品.Image = Global.PlatformScale.My.Resources.Resources.button_search
+        Me.btnQuery_貨品.Image = CType(resources.GetObject("btnQuery_貨品.Image"), System.Drawing.Image)
         Me.btnQuery_貨品.Location = New System.Drawing.Point(354, 6)
         Me.btnQuery_貨品.Name = "btnQuery_貨品"
         Me.btnQuery_貨品.Size = New System.Drawing.Size(81, 81)
@@ -2433,9 +2374,16 @@ Partial Class frmMain
         '
         'tpReport
         '
+        Me.tpReport.Controls.Add(Me.chkExcel)
+        Me.tpReport.Controls.Add(Me.Label56)
+        Me.tpReport.Controls.Add(Me.cmbCarNo_report)
+        Me.tpReport.Controls.Add(Me.lblCliSup)
+        Me.tpReport.Controls.Add(Me.cmbCliSup_report)
+        Me.tpReport.Controls.Add(Me.Label53)
+        Me.tpReport.Controls.Add(Me.cmbProduct_report)
+        Me.tpReport.Controls.Add(Me.GroupBox3)
         Me.tpReport.Controls.Add(Me.grpType_report)
         Me.tpReport.Controls.Add(Me.btnPrint_report)
-        Me.tpReport.Controls.Add(Me.grpDate_report)
         Me.tpReport.Controls.Add(Me.grpInOut_report)
         Me.tpReport.Location = New System.Drawing.Point(4, 31)
         Me.tpReport.Name = "tpReport"
@@ -2444,6 +2392,177 @@ Partial Class frmMain
         Me.tpReport.TabIndex = 8
         Me.tpReport.Text = "報   表"
         Me.tpReport.UseVisualStyleBackColor = True
+        '
+        'Label56
+        '
+        Me.Label56.AutoSize = True
+        Me.Label56.Location = New System.Drawing.Point(622, 272)
+        Me.Label56.Name = "Label56"
+        Me.Label56.Size = New System.Drawing.Size(56, 21)
+        Me.Label56.TabIndex = 315
+        Me.Label56.Text = "車號"
+        '
+        'cmbCarNo_report
+        '
+        Me.cmbCarNo_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbCarNo_report.FormattingEnabled = True
+        Me.cmbCarNo_report.Location = New System.Drawing.Point(684, 269)
+        Me.cmbCarNo_report.Name = "cmbCarNo_report"
+        Me.cmbCarNo_report.Size = New System.Drawing.Size(230, 29)
+        Me.cmbCarNo_report.TabIndex = 314
+        '
+        'lblCliSup
+        '
+        Me.lblCliSup.AutoSize = True
+        Me.lblCliSup.Location = New System.Drawing.Point(314, 272)
+        Me.lblCliSup.Name = "lblCliSup"
+        Me.lblCliSup.Size = New System.Drawing.Size(56, 21)
+        Me.lblCliSup.TabIndex = 313
+        Me.lblCliSup.Text = "客戶"
+        '
+        'cmbCliSup_report
+        '
+        Me.cmbCliSup_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbCliSup_report.FormattingEnabled = True
+        Me.cmbCliSup_report.Location = New System.Drawing.Point(376, 269)
+        Me.cmbCliSup_report.Name = "cmbCliSup_report"
+        Me.cmbCliSup_report.Size = New System.Drawing.Size(230, 29)
+        Me.cmbCliSup_report.TabIndex = 312
+        '
+        'Label53
+        '
+        Me.Label53.AutoSize = True
+        Me.Label53.Location = New System.Drawing.Point(6, 272)
+        Me.Label53.Name = "Label53"
+        Me.Label53.Size = New System.Drawing.Size(56, 21)
+        Me.Label53.TabIndex = 311
+        Me.Label53.Text = "產品"
+        '
+        'cmbProduct_report
+        '
+        Me.cmbProduct_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbProduct_report.FormattingEnabled = True
+        Me.cmbProduct_report.Location = New System.Drawing.Point(68, 269)
+        Me.cmbProduct_report.Name = "cmbProduct_report"
+        Me.cmbProduct_report.Size = New System.Drawing.Size(230, 29)
+        Me.cmbProduct_report.TabIndex = 310
+        '
+        'GroupBox3
+        '
+        Me.GroupBox3.Controls.Add(Me.Label52)
+        Me.GroupBox3.Controls.Add(Me.Label51)
+        Me.GroupBox3.Controls.Add(Me.Label10)
+        Me.GroupBox3.Controls.Add(Me.nudDay_end)
+        Me.GroupBox3.Controls.Add(Me.nudDay_start)
+        Me.GroupBox3.Controls.Add(Me.nudMonth)
+        Me.GroupBox3.Controls.Add(Me.nudYear)
+        Me.GroupBox3.Controls.Add(Me.Label19)
+        Me.GroupBox3.Controls.Add(Me.Label20)
+        Me.GroupBox3.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.GroupBox3.Location = New System.Drawing.Point(113, 156)
+        Me.GroupBox3.Name = "GroupBox3"
+        Me.GroupBox3.Size = New System.Drawing.Size(552, 86)
+        Me.GroupBox3.TabIndex = 7
+        Me.GroupBox3.TabStop = False
+        Me.GroupBox3.Text = "日期"
+        '
+        'Label52
+        '
+        Me.Label52.AutoSize = True
+        Me.Label52.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label52.Location = New System.Drawing.Point(518, 37)
+        Me.Label52.Name = "Label52"
+        Me.Label52.Size = New System.Drawing.Size(30, 19)
+        Me.Label52.TabIndex = 13
+        Me.Label52.Text = "日"
+        '
+        'Label51
+        '
+        Me.Label51.AutoSize = True
+        Me.Label51.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label51.Location = New System.Drawing.Point(222, 37)
+        Me.Label51.Name = "Label51"
+        Me.Label51.Size = New System.Drawing.Size(30, 19)
+        Me.Label51.TabIndex = 12
+        Me.Label51.Text = "月"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label10.Location = New System.Drawing.Point(92, 37)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(30, 19)
+        Me.Label10.TabIndex = 11
+        Me.Label10.Text = "年"
+        '
+        'nudDay_end
+        '
+        Me.nudDay_end.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.nudDay_end.Location = New System.Drawing.Point(432, 32)
+        Me.nudDay_end.Maximum = New Decimal(New Integer() {31, 0, 0, 0})
+        Me.nudDay_end.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.nudDay_end.Name = "nudDay_end"
+        Me.nudDay_end.Size = New System.Drawing.Size(80, 30)
+        Me.nudDay_end.TabIndex = 10
+        Me.nudDay_end.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.nudDay_end.Value = New Decimal(New Integer() {31, 0, 0, 0})
+        '
+        'nudDay_start
+        '
+        Me.nudDay_start.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.nudDay_start.Location = New System.Drawing.Point(302, 32)
+        Me.nudDay_start.Maximum = New Decimal(New Integer() {31, 0, 0, 0})
+        Me.nudDay_start.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.nudDay_start.Name = "nudDay_start"
+        Me.nudDay_start.Size = New System.Drawing.Size(80, 30)
+        Me.nudDay_start.TabIndex = 9
+        Me.nudDay_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.nudDay_start.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'nudMonth
+        '
+        Me.nudMonth.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.nudMonth.Location = New System.Drawing.Point(136, 32)
+        Me.nudMonth.Maximum = New Decimal(New Integer() {12, 0, 0, 0})
+        Me.nudMonth.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.nudMonth.Name = "nudMonth"
+        Me.nudMonth.Size = New System.Drawing.Size(80, 30)
+        Me.nudMonth.TabIndex = 8
+        Me.nudMonth.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.nudMonth.Value = New Decimal(New Integer() {5, 0, 0, 0})
+        '
+        'nudYear
+        '
+        Me.nudYear.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.nudYear.Location = New System.Drawing.Point(6, 32)
+        Me.nudYear.Maximum = New Decimal(New Integer() {2222, 0, 0, 0})
+        Me.nudYear.Minimum = New Decimal(New Integer() {1900, 0, 0, 0})
+        Me.nudYear.Name = "nudYear"
+        Me.nudYear.Size = New System.Drawing.Size(80, 30)
+        Me.nudYear.TabIndex = 7
+        Me.nudYear.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.nudYear.Value = New Decimal(New Integer() {2017, 0, 0, 0})
+        '
+        'Label19
+        '
+        Me.Label19.AutoSize = True
+        Me.Label19.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label19.Location = New System.Drawing.Point(396, 37)
+        Me.Label19.Name = "Label19"
+        Me.Label19.Size = New System.Drawing.Size(30, 19)
+        Me.Label19.TabIndex = 6
+        Me.Label19.Text = "迄"
+        '
+        'Label20
+        '
+        Me.Label20.AutoSize = True
+        Me.Label20.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.Label20.Location = New System.Drawing.Point(266, 37)
+        Me.Label20.Name = "Label20"
+        Me.Label20.Size = New System.Drawing.Size(30, 19)
+        Me.Label20.TabIndex = 5
+        Me.Label20.Text = "起"
         '
         'grpType_report
         '
@@ -2457,109 +2576,100 @@ Partial Class frmMain
         Me.grpType_report.Controls.Add(Me.RadioButton3)
         Me.grpType_report.Controls.Add(Me.RadioButton4)
         Me.grpType_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpType_report.Location = New System.Drawing.Point(113, 6)
+        Me.grpType_report.Location = New System.Drawing.Point(8, 6)
         Me.grpType_report.Name = "grpType_report"
-        Me.grpType_report.Size = New System.Drawing.Size(696, 207)
+        Me.grpType_report.Size = New System.Drawing.Size(785, 144)
         Me.grpType_report.TabIndex = 2
         Me.grpType_report.TabStop = False
         Me.grpType_report.Text = "種類"
         '
         'RadioButton11
         '
-        Me.RadioButton11.AutoSize = True
         Me.RadioButton11.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton11.Location = New System.Drawing.Point(253, 84)
+        Me.RadioButton11.Location = New System.Drawing.Point(292, 104)
         Me.RadioButton11.Name = "RadioButton11"
-        Me.RadioButton11.Size = New System.Drawing.Size(174, 23)
+        Me.RadioButton11.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton11.TabIndex = 8
         Me.RadioButton11.Text = "過磅單日統計表"
         Me.RadioButton11.UseVisualStyleBackColor = True
         '
         'RadioButton10
         '
-        Me.RadioButton10.AutoSize = True
         Me.RadioButton10.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton10.Location = New System.Drawing.Point(253, 55)
+        Me.RadioButton10.Location = New System.Drawing.Point(292, 65)
         Me.RadioButton10.Name = "RadioButton10"
-        Me.RadioButton10.Size = New System.Drawing.Size(195, 23)
+        Me.RadioButton10.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton10.TabIndex = 7
-        Me.RadioButton10.Text = "日客戶產品統計表"
+        Me.RadioButton10.Text = "日報統計表(客戶 產品)"
         Me.RadioButton10.UseVisualStyleBackColor = True
         '
         'RadioButton9
         '
-        Me.RadioButton9.AutoSize = True
         Me.RadioButton9.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton9.Location = New System.Drawing.Point(253, 26)
+        Me.RadioButton9.Location = New System.Drawing.Point(292, 26)
         Me.RadioButton9.Name = "RadioButton9"
-        Me.RadioButton9.Size = New System.Drawing.Size(195, 23)
+        Me.RadioButton9.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton9.TabIndex = 6
-        Me.RadioButton9.Text = "日產品客戶統計表"
+        Me.RadioButton9.Text = "日統計明細表(產品 客戶)"
         Me.RadioButton9.UseVisualStyleBackColor = True
         '
         'RadioButton6
         '
-        Me.RadioButton6.AutoSize = True
         Me.RadioButton6.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton6.Location = New System.Drawing.Point(6, 171)
+        Me.RadioButton6.Location = New System.Drawing.Point(578, 104)
         Me.RadioButton6.Name = "RadioButton6"
-        Me.RadioButton6.Size = New System.Drawing.Size(153, 23)
+        Me.RadioButton6.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton6.TabIndex = 5
-        Me.RadioButton6.Text = "日產品統計表"
+        Me.RadioButton6.Text = "日報統計表(產品)"
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
         'RadioButton7
         '
-        Me.RadioButton7.AutoSize = True
         Me.RadioButton7.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton7.Location = New System.Drawing.Point(6, 142)
+        Me.RadioButton7.Location = New System.Drawing.Point(578, 65)
         Me.RadioButton7.Name = "RadioButton7"
-        Me.RadioButton7.Size = New System.Drawing.Size(153, 23)
+        Me.RadioButton7.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton7.TabIndex = 4
-        Me.RadioButton7.Text = "月產品統計表"
+        Me.RadioButton7.Text = "月報統計表(產品)"
         Me.RadioButton7.UseVisualStyleBackColor = True
         '
         'RadioButton8
         '
-        Me.RadioButton8.AutoSize = True
         Me.RadioButton8.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton8.Location = New System.Drawing.Point(6, 113)
+        Me.RadioButton8.Location = New System.Drawing.Point(578, 26)
         Me.RadioButton8.Name = "RadioButton8"
-        Me.RadioButton8.Size = New System.Drawing.Size(111, 23)
+        Me.RadioButton8.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton8.TabIndex = 3
-        Me.RadioButton8.Text = "月統計表"
+        Me.RadioButton8.Text = "月報統計表(總量)"
         Me.RadioButton8.UseVisualStyleBackColor = True
         '
         'RadioButton5
         '
-        Me.RadioButton5.AutoSize = True
         Me.RadioButton5.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton5.Location = New System.Drawing.Point(6, 84)
+        Me.RadioButton5.Location = New System.Drawing.Point(6, 104)
         Me.RadioButton5.Name = "RadioButton5"
-        Me.RadioButton5.Size = New System.Drawing.Size(111, 23)
+        Me.RadioButton5.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton5.TabIndex = 2
-        Me.RadioButton5.Text = "日對帳單"
+        Me.RadioButton5.Text = "日報統計明細表"
         Me.RadioButton5.UseVisualStyleBackColor = True
         '
         'RadioButton3
         '
-        Me.RadioButton3.AutoSize = True
         Me.RadioButton3.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton3.Location = New System.Drawing.Point(6, 55)
+        Me.RadioButton3.Location = New System.Drawing.Point(6, 65)
         Me.RadioButton3.Name = "RadioButton3"
-        Me.RadioButton3.Size = New System.Drawing.Size(111, 23)
+        Me.RadioButton3.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton3.TabIndex = 1
         Me.RadioButton3.Text = "月對帳單"
         Me.RadioButton3.UseVisualStyleBackColor = True
         '
         'RadioButton4
         '
-        Me.RadioButton4.AutoSize = True
         Me.RadioButton4.Checked = True
         Me.RadioButton4.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.RadioButton4.Location = New System.Drawing.Point(6, 26)
         Me.RadioButton4.Name = "RadioButton4"
-        Me.RadioButton4.Size = New System.Drawing.Size(132, 23)
+        Me.RadioButton4.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton4.TabIndex = 0
         Me.RadioButton4.TabStop = True
         Me.RadioButton4.Text = "年度對帳單"
@@ -2569,755 +2679,48 @@ Partial Class frmMain
         '
         Me.btnPrint_report.AutoSize = True
         Me.btnPrint_report.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnPrint_report.Image = Global.PlatformScale.My.Resources.Resources.button_print
-        Me.btnPrint_report.Location = New System.Drawing.Point(911, 6)
+        Me.btnPrint_report.Image = CType(resources.GetObject("btnPrint_report.Image"), System.Drawing.Image)
+        Me.btnPrint_report.Location = New System.Drawing.Point(799, 6)
         Me.btnPrint_report.Name = "btnPrint_report"
         Me.btnPrint_report.Size = New System.Drawing.Size(81, 81)
         Me.btnPrint_report.TabIndex = 309
         Me.btnPrint_report.UseVisualStyleBackColor = False
         '
-        'grpDate_report
-        '
-        Me.grpDate_report.Controls.Add(Me.dtpEnd)
-        Me.grpDate_report.Controls.Add(Me.dtpStart)
-        Me.grpDate_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpDate_report.Location = New System.Drawing.Point(8, 219)
-        Me.grpDate_report.Name = "grpDate_report"
-        Me.grpDate_report.Size = New System.Drawing.Size(826, 159)
-        Me.grpDate_report.TabIndex = 2
-        Me.grpDate_report.TabStop = False
-        Me.grpDate_report.Text = "日期"
-        '
-        'dtpEnd
-        '
-        Me.dtpEnd.Location = New System.Drawing.Point(219, 37)
-        Me.dtpEnd.Name = "dtpEnd"
-        Me.dtpEnd.Size = New System.Drawing.Size(162, 27)
-        Me.dtpEnd.TabIndex = 4
-        '
-        'dtpStart
-        '
-        Me.dtpStart.Location = New System.Drawing.Point(19, 37)
-        Me.dtpStart.Name = "dtpStart"
-        Me.dtpStart.Size = New System.Drawing.Size(162, 27)
-        Me.dtpStart.TabIndex = 3
-        Me.dtpStart.Value = New Date(2017, 5, 27, 0, 0, 0, 0)
-        '
         'grpInOut_report
         '
-        Me.grpInOut_report.Controls.Add(Me.RadioButton1)
-        Me.grpInOut_report.Controls.Add(Me.RadioButton2)
+        Me.grpInOut_report.Controls.Add(Me.rdoSupplier)
+        Me.grpInOut_report.Controls.Add(Me.rdoCustomer)
         Me.grpInOut_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpInOut_report.Location = New System.Drawing.Point(8, 6)
+        Me.grpInOut_report.Location = New System.Drawing.Point(8, 156)
         Me.grpInOut_report.Name = "grpInOut_report"
         Me.grpInOut_report.Size = New System.Drawing.Size(99, 86)
         Me.grpInOut_report.TabIndex = 1
         Me.grpInOut_report.TabStop = False
         Me.grpInOut_report.Text = "客戶/廠商"
         '
-        'RadioButton1
-        '
-        Me.RadioButton1.AutoSize = True
-        Me.RadioButton1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton1.Location = New System.Drawing.Point(6, 55)
-        Me.RadioButton1.Name = "RadioButton1"
-        Me.RadioButton1.Size = New System.Drawing.Size(69, 23)
-        Me.RadioButton1.TabIndex = 1
-        Me.RadioButton1.Text = "進貨"
-        Me.RadioButton1.UseVisualStyleBackColor = True
-        '
-        'RadioButton2
-        '
-        Me.RadioButton2.AutoSize = True
-        Me.RadioButton2.Checked = True
-        Me.RadioButton2.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton2.Location = New System.Drawing.Point(6, 26)
-        Me.RadioButton2.Name = "RadioButton2"
-        Me.RadioButton2.Size = New System.Drawing.Size(69, 23)
-        Me.RadioButton2.TabIndex = 0
-        Me.RadioButton2.TabStop = True
-        Me.RadioButton2.Text = "出貨"
-        Me.RadioButton2.UseVisualStyleBackColor = True
-        '
-        'tabReport
-        '
-        Me.tabReport.Controls.Add(Me.Button24)
-        Me.tabReport.Controls.Add(Me.Button23)
-        Me.tabReport.Controls.Add(Me.TabControl1)
-        Me.tabReport.Controls.Add(Me.GroupBox8)
-        Me.tabReport.Controls.Add(Me.GroupBox7)
-        Me.tabReport.Location = New System.Drawing.Point(4, 31)
-        Me.tabReport.Name = "tabReport"
-        Me.tabReport.Size = New System.Drawing.Size(1000, 666)
-        Me.tabReport.TabIndex = 5
-        Me.tabReport.Text = "報   表(舊)"
-        Me.tabReport.UseVisualStyleBackColor = True
-        '
-        'Button24
-        '
-        Me.Button24.AutoSize = True
-        Me.Button24.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.Button24.Image = Global.PlatformScale.My.Resources.Resources.button_print
-        Me.Button24.Location = New System.Drawing.Point(358, 3)
-        Me.Button24.Name = "Button24"
-        Me.Button24.Size = New System.Drawing.Size(81, 81)
-        Me.Button24.TabIndex = 308
-        Me.Button24.UseVisualStyleBackColor = False
-        '
-        'Button23
-        '
-        Me.Button23.AutoSize = True
-        Me.Button23.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.Button23.Image = Global.PlatformScale.My.Resources.Resources.button_clear
-        Me.Button23.Location = New System.Drawing.Point(271, 3)
-        Me.Button23.Name = "Button23"
-        Me.Button23.Size = New System.Drawing.Size(81, 81)
-        Me.Button23.TabIndex = 307
-        Me.Button23.UseVisualStyleBackColor = False
-        '
-        'TabControl1
-        '
-        Me.TabControl1.Controls.Add(Me.TabPage1)
-        Me.TabControl1.Controls.Add(Me.TabPage2)
-        Me.TabControl1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.TabControl1.Location = New System.Drawing.Point(3, 110)
-        Me.TabControl1.Name = "TabControl1"
-        Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(994, 548)
-        Me.TabControl1.TabIndex = 243
-        '
-        'TabPage1
-        '
-        Me.TabPage1.Controls.Add(Me.DataGridView6)
-        Me.TabPage1.Controls.Add(Me.ComboBox8)
-        Me.TabPage1.Controls.Add(Me.ComboBox7)
-        Me.TabPage1.Controls.Add(Me.ComboBox11)
-        Me.TabPage1.Controls.Add(Me.Label93)
-        Me.TabPage1.Controls.Add(Me.ComboBox10)
-        Me.TabPage1.Controls.Add(Me.Label92)
-        Me.TabPage1.Controls.Add(Me.ComboBox9)
-        Me.TabPage1.Controls.Add(Me.Label91)
-        Me.TabPage1.Controls.Add(Me.Button55)
-        Me.TabPage1.Controls.Add(Me.Button54)
-        Me.TabPage1.Controls.Add(Me.Button53)
-        Me.TabPage1.Controls.Add(Me.ListBox4)
-        Me.TabPage1.Controls.Add(Me.ListBox3)
-        Me.TabPage1.Controls.Add(Me.ListBox2)
-        Me.TabPage1.Controls.Add(Me.Label90)
-        Me.TabPage1.Controls.Add(Me.Label87)
-        Me.TabPage1.Controls.Add(Me.ComboBox6)
-        Me.TabPage1.Controls.Add(Me.Label59)
-        Me.TabPage1.Controls.Add(Me.GroupBox14)
-        Me.TabPage1.Controls.Add(Me.GroupBox10)
-        Me.TabPage1.Location = New System.Drawing.Point(4, 29)
-        Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(986, 515)
-        Me.TabPage1.TabIndex = 0
-        Me.TabPage1.Text = "對帳單"
-        Me.TabPage1.UseVisualStyleBackColor = True
-        '
-        'DataGridView6
-        '
-        Me.DataGridView6.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView6.Location = New System.Drawing.Point(12, 345)
-        Me.DataGridView6.Name = "DataGridView6"
-        Me.DataGridView6.RowTemplate.Height = 24
-        Me.DataGridView6.Size = New System.Drawing.Size(633, 164)
-        Me.DataGridView6.TabIndex = 32
-        '
-        'ComboBox8
-        '
-        Me.ComboBox8.FormattingEnabled = True
-        Me.ComboBox8.Location = New System.Drawing.Point(495, 102)
-        Me.ComboBox8.Name = "ComboBox8"
-        Me.ComboBox8.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox8.TabIndex = 31
-        '
-        'ComboBox7
-        '
-        Me.ComboBox7.FormattingEnabled = True
-        Me.ComboBox7.Location = New System.Drawing.Point(282, 102)
-        Me.ComboBox7.Name = "ComboBox7"
-        Me.ComboBox7.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox7.TabIndex = 30
-        '
-        'ComboBox11
-        '
-        Me.ComboBox11.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.ComboBox11.FormattingEnabled = True
-        Me.ComboBox11.Location = New System.Drawing.Point(551, 278)
-        Me.ComboBox11.Name = "ComboBox11"
-        Me.ComboBox11.Size = New System.Drawing.Size(94, 24)
-        Me.ComboBox11.TabIndex = 29
-        '
-        'Label93
-        '
-        Me.Label93.AutoSize = True
-        Me.Label93.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label93.Location = New System.Drawing.Point(435, 281)
-        Me.Label93.Name = "Label93"
-        Me.Label93.Size = New System.Drawing.Size(109, 16)
-        Me.Label93.TabIndex = 28
-        Me.Label93.Text = "報表排序等級"
-        '
-        'ComboBox10
-        '
-        Me.ComboBox10.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.ComboBox10.FormattingEnabled = True
-        Me.ComboBox10.Location = New System.Drawing.Point(338, 278)
-        Me.ComboBox10.Name = "ComboBox10"
-        Me.ComboBox10.Size = New System.Drawing.Size(94, 24)
-        Me.ComboBox10.TabIndex = 27
-        '
-        'Label92
-        '
-        Me.Label92.AutoSize = True
-        Me.Label92.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label92.Location = New System.Drawing.Point(222, 281)
-        Me.Label92.Name = "Label92"
-        Me.Label92.Size = New System.Drawing.Size(109, 16)
-        Me.Label92.TabIndex = 26
-        Me.Label92.Text = "報表排序等級"
-        '
-        'ComboBox9
-        '
-        Me.ComboBox9.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.ComboBox9.FormattingEnabled = True
-        Me.ComboBox9.Location = New System.Drawing.Point(125, 278)
-        Me.ComboBox9.Name = "ComboBox9"
-        Me.ComboBox9.Size = New System.Drawing.Size(94, 24)
-        Me.ComboBox9.TabIndex = 25
-        '
-        'Label91
-        '
-        Me.Label91.AutoSize = True
-        Me.Label91.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label91.Location = New System.Drawing.Point(9, 281)
-        Me.Label91.Name = "Label91"
-        Me.Label91.Size = New System.Drawing.Size(109, 16)
-        Me.Label91.TabIndex = 24
-        Me.Label91.Text = "報表排序等級"
-        '
-        'Button55
-        '
-        Me.Button55.AutoSize = True
-        Me.Button55.Location = New System.Drawing.Point(579, 308)
-        Me.Button55.Name = "Button55"
-        Me.Button55.Size = New System.Drawing.Size(66, 31)
-        Me.Button55.TabIndex = 23
-        Me.Button55.Text = "刪除"
-        Me.Button55.UseVisualStyleBackColor = True
-        '
-        'Button54
-        '
-        Me.Button54.AutoSize = True
-        Me.Button54.Location = New System.Drawing.Point(366, 308)
-        Me.Button54.Name = "Button54"
-        Me.Button54.Size = New System.Drawing.Size(66, 31)
-        Me.Button54.TabIndex = 22
-        Me.Button54.Text = "刪除"
-        Me.Button54.UseVisualStyleBackColor = True
-        '
-        'Button53
-        '
-        Me.Button53.AutoSize = True
-        Me.Button53.Location = New System.Drawing.Point(153, 308)
-        Me.Button53.Name = "Button53"
-        Me.Button53.Size = New System.Drawing.Size(66, 31)
-        Me.Button53.TabIndex = 21
-        Me.Button53.Text = "刪除"
-        Me.Button53.UseVisualStyleBackColor = True
-        '
-        'ListBox4
-        '
-        Me.ListBox4.FormattingEnabled = True
-        Me.ListBox4.ItemHeight = 19
-        Me.ListBox4.Location = New System.Drawing.Point(438, 135)
-        Me.ListBox4.Name = "ListBox4"
-        Me.ListBox4.Size = New System.Drawing.Size(207, 137)
-        Me.ListBox4.TabIndex = 20
-        '
-        'ListBox3
-        '
-        Me.ListBox3.FormattingEnabled = True
-        Me.ListBox3.ItemHeight = 19
-        Me.ListBox3.Location = New System.Drawing.Point(225, 135)
-        Me.ListBox3.Name = "ListBox3"
-        Me.ListBox3.Size = New System.Drawing.Size(207, 137)
-        Me.ListBox3.TabIndex = 19
-        '
-        'ListBox2
-        '
-        Me.ListBox2.FormattingEnabled = True
-        Me.ListBox2.ItemHeight = 19
-        Me.ListBox2.Location = New System.Drawing.Point(12, 135)
-        Me.ListBox2.Name = "ListBox2"
-        Me.ListBox2.Size = New System.Drawing.Size(207, 137)
-        Me.ListBox2.TabIndex = 18
-        '
-        'Label90
-        '
-        Me.Label90.AutoSize = True
-        Me.Label90.Location = New System.Drawing.Point(438, 105)
-        Me.Label90.Name = "Label90"
-        Me.Label90.Size = New System.Drawing.Size(51, 19)
-        Me.Label90.TabIndex = 16
-        Me.Label90.Text = "車號"
-        '
-        'Label87
-        '
-        Me.Label87.AutoSize = True
-        Me.Label87.Location = New System.Drawing.Point(225, 105)
-        Me.Label87.Name = "Label87"
-        Me.Label87.Size = New System.Drawing.Size(51, 19)
-        Me.Label87.TabIndex = 14
-        Me.Label87.Text = "客戶"
-        '
-        'ComboBox6
-        '
-        Me.ComboBox6.FormattingEnabled = True
-        Me.ComboBox6.Location = New System.Drawing.Point(69, 102)
-        Me.ComboBox6.Name = "ComboBox6"
-        Me.ComboBox6.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox6.TabIndex = 13
-        '
-        'Label59
-        '
-        Me.Label59.AutoSize = True
-        Me.Label59.Location = New System.Drawing.Point(6, 105)
-        Me.Label59.Name = "Label59"
-        Me.Label59.Size = New System.Drawing.Size(51, 19)
-        Me.Label59.TabIndex = 12
-        Me.Label59.Text = "品項"
-        '
-        'GroupBox14
-        '
-        Me.GroupBox14.Controls.Add(Me.DateTimePicker7)
-        Me.GroupBox14.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox14.Location = New System.Drawing.Point(150, 6)
-        Me.GroupBox14.Name = "GroupBox14"
-        Me.GroupBox14.Size = New System.Drawing.Size(164, 70)
-        Me.GroupBox14.TabIndex = 11
-        Me.GroupBox14.TabStop = False
-        Me.GroupBox14.Text = "查詢時間設定"
-        '
-        'DateTimePicker7
-        '
-        Me.DateTimePicker7.CustomFormat = "yyyy年MM月"
-        Me.DateTimePicker7.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.DateTimePicker7.Location = New System.Drawing.Point(6, 29)
-        Me.DateTimePicker7.Name = "DateTimePicker7"
-        Me.DateTimePicker7.Size = New System.Drawing.Size(146, 30)
-        Me.DateTimePicker7.TabIndex = 0
-        Me.DateTimePicker7.Value = New Date(2023, 6, 1, 0, 0, 0, 0)
-        '
-        'GroupBox10
-        '
-        Me.GroupBox10.Controls.Add(Me.RadioButton28)
-        Me.GroupBox10.Controls.Add(Me.RadioButton29)
-        Me.GroupBox10.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox10.Location = New System.Drawing.Point(6, 6)
-        Me.GroupBox10.Name = "GroupBox10"
-        Me.GroupBox10.Size = New System.Drawing.Size(140, 90)
-        Me.GroupBox10.TabIndex = 8
-        Me.GroupBox10.TabStop = False
-        Me.GroupBox10.Text = "對帳單"
-        '
-        'RadioButton28
-        '
-        Me.RadioButton28.AutoSize = True
-        Me.RadioButton28.Location = New System.Drawing.Point(6, 58)
-        Me.RadioButton28.Name = "RadioButton28"
-        Me.RadioButton28.Size = New System.Drawing.Size(132, 23)
-        Me.RadioButton28.TabIndex = 3
-        Me.RadioButton28.TabStop = True
-        Me.RadioButton28.Text = "月份對帳單"
-        Me.RadioButton28.UseVisualStyleBackColor = True
-        '
-        'RadioButton29
-        '
-        Me.RadioButton29.AutoSize = True
-        Me.RadioButton29.Location = New System.Drawing.Point(6, 29)
-        Me.RadioButton29.Name = "RadioButton29"
-        Me.RadioButton29.Size = New System.Drawing.Size(132, 23)
-        Me.RadioButton29.TabIndex = 2
-        Me.RadioButton29.TabStop = True
-        Me.RadioButton29.Text = "年度對帳單"
-        Me.RadioButton29.UseVisualStyleBackColor = True
-        '
-        'TabPage2
-        '
-        Me.TabPage2.Controls.Add(Me.DataGridView7)
-        Me.TabPage2.Controls.Add(Me.ComboBox12)
-        Me.TabPage2.Controls.Add(Me.ComboBox13)
-        Me.TabPage2.Controls.Add(Me.Button56)
-        Me.TabPage2.Controls.Add(Me.Button57)
-        Me.TabPage2.Controls.Add(Me.Button58)
-        Me.TabPage2.Controls.Add(Me.ListBox5)
-        Me.TabPage2.Controls.Add(Me.ListBox6)
-        Me.TabPage2.Controls.Add(Me.ListBox7)
-        Me.TabPage2.Controls.Add(Me.Label97)
-        Me.TabPage2.Controls.Add(Me.Label98)
-        Me.TabPage2.Controls.Add(Me.ComboBox17)
-        Me.TabPage2.Controls.Add(Me.Label99)
-        Me.TabPage2.Controls.Add(Me.GroupBox13)
-        Me.TabPage2.Controls.Add(Me.GroupBox12)
-        Me.TabPage2.Controls.Add(Me.GroupBox9)
-        Me.TabPage2.Location = New System.Drawing.Point(4, 29)
-        Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(986, 515)
-        Me.TabPage2.TabIndex = 1
-        Me.TabPage2.Text = "統計表"
-        Me.TabPage2.UseVisualStyleBackColor = True
-        '
-        'DataGridView7
-        '
-        Me.DataGridView7.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView7.Location = New System.Drawing.Point(719, 6)
-        Me.DataGridView7.Name = "DataGridView7"
-        Me.DataGridView7.RowTemplate.Height = 24
-        Me.DataGridView7.Size = New System.Drawing.Size(254, 488)
-        Me.DataGridView7.TabIndex = 50
-        '
-        'ComboBox12
-        '
-        Me.ComboBox12.FormattingEnabled = True
-        Me.ComboBox12.Location = New System.Drawing.Point(495, 254)
-        Me.ComboBox12.Name = "ComboBox12"
-        Me.ComboBox12.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox12.TabIndex = 49
-        '
-        'ComboBox13
-        '
-        Me.ComboBox13.FormattingEnabled = True
-        Me.ComboBox13.Location = New System.Drawing.Point(282, 254)
-        Me.ComboBox13.Name = "ComboBox13"
-        Me.ComboBox13.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox13.TabIndex = 48
-        '
-        'Button56
-        '
-        Me.Button56.AutoSize = True
-        Me.Button56.Location = New System.Drawing.Point(579, 430)
-        Me.Button56.Name = "Button56"
-        Me.Button56.Size = New System.Drawing.Size(66, 31)
-        Me.Button56.TabIndex = 41
-        Me.Button56.Text = "刪除"
-        Me.Button56.UseVisualStyleBackColor = True
-        '
-        'Button57
-        '
-        Me.Button57.AutoSize = True
-        Me.Button57.Location = New System.Drawing.Point(366, 430)
-        Me.Button57.Name = "Button57"
-        Me.Button57.Size = New System.Drawing.Size(66, 31)
-        Me.Button57.TabIndex = 40
-        Me.Button57.Text = "刪除"
-        Me.Button57.UseVisualStyleBackColor = True
-        '
-        'Button58
-        '
-        Me.Button58.AutoSize = True
-        Me.Button58.Location = New System.Drawing.Point(153, 430)
-        Me.Button58.Name = "Button58"
-        Me.Button58.Size = New System.Drawing.Size(66, 31)
-        Me.Button58.TabIndex = 39
-        Me.Button58.Text = "刪除"
-        Me.Button58.UseVisualStyleBackColor = True
-        '
-        'ListBox5
-        '
-        Me.ListBox5.FormattingEnabled = True
-        Me.ListBox5.ItemHeight = 19
-        Me.ListBox5.Location = New System.Drawing.Point(438, 287)
-        Me.ListBox5.Name = "ListBox5"
-        Me.ListBox5.Size = New System.Drawing.Size(207, 137)
-        Me.ListBox5.TabIndex = 38
-        '
-        'ListBox6
-        '
-        Me.ListBox6.FormattingEnabled = True
-        Me.ListBox6.ItemHeight = 19
-        Me.ListBox6.Location = New System.Drawing.Point(225, 287)
-        Me.ListBox6.Name = "ListBox6"
-        Me.ListBox6.Size = New System.Drawing.Size(207, 137)
-        Me.ListBox6.TabIndex = 37
-        '
-        'ListBox7
-        '
-        Me.ListBox7.FormattingEnabled = True
-        Me.ListBox7.ItemHeight = 19
-        Me.ListBox7.Location = New System.Drawing.Point(7, 287)
-        Me.ListBox7.Name = "ListBox7"
-        Me.ListBox7.Size = New System.Drawing.Size(212, 137)
-        Me.ListBox7.TabIndex = 36
-        '
-        'Label97
-        '
-        Me.Label97.AutoSize = True
-        Me.Label97.Location = New System.Drawing.Point(438, 257)
-        Me.Label97.Name = "Label97"
-        Me.Label97.Size = New System.Drawing.Size(51, 19)
-        Me.Label97.TabIndex = 35
-        Me.Label97.Text = "車號"
-        '
-        'Label98
-        '
-        Me.Label98.AutoSize = True
-        Me.Label98.Location = New System.Drawing.Point(225, 257)
-        Me.Label98.Name = "Label98"
-        Me.Label98.Size = New System.Drawing.Size(51, 19)
-        Me.Label98.TabIndex = 34
-        Me.Label98.Text = "客戶"
-        '
-        'ComboBox17
-        '
-        Me.ComboBox17.FormattingEnabled = True
-        Me.ComboBox17.Location = New System.Drawing.Point(69, 254)
-        Me.ComboBox17.Name = "ComboBox17"
-        Me.ComboBox17.Size = New System.Drawing.Size(150, 27)
-        Me.ComboBox17.TabIndex = 33
-        '
-        'Label99
-        '
-        Me.Label99.AutoSize = True
-        Me.Label99.Location = New System.Drawing.Point(7, 257)
-        Me.Label99.Name = "Label99"
-        Me.Label99.Size = New System.Drawing.Size(51, 19)
-        Me.Label99.TabIndex = 32
-        Me.Label99.Text = "品項"
-        '
-        'GroupBox13
-        '
-        Me.GroupBox13.Controls.Add(Me.RadioButton24)
-        Me.GroupBox13.Controls.Add(Me.RadioButton25)
-        Me.GroupBox13.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox13.Location = New System.Drawing.Point(7, 178)
-        Me.GroupBox13.Name = "GroupBox13"
-        Me.GroupBox13.Size = New System.Drawing.Size(239, 70)
-        Me.GroupBox13.TabIndex = 11
-        Me.GroupBox13.TabStop = False
-        Me.GroupBox13.Text = "報表排序等級"
-        '
-        'RadioButton24
-        '
-        Me.RadioButton24.AutoSize = True
-        Me.RadioButton24.Checked = True
-        Me.RadioButton24.Location = New System.Drawing.Point(6, 29)
-        Me.RadioButton24.Name = "RadioButton24"
-        Me.RadioButton24.Size = New System.Drawing.Size(111, 23)
-        Me.RadioButton24.TabIndex = 9
-        Me.RadioButton24.TabStop = True
-        Me.RadioButton24.Text = "最高順位"
-        Me.RadioButton24.UseVisualStyleBackColor = True
-        '
-        'RadioButton25
-        '
-        Me.RadioButton25.AutoSize = True
-        Me.RadioButton25.Location = New System.Drawing.Point(123, 29)
-        Me.RadioButton25.Name = "RadioButton25"
-        Me.RadioButton25.Size = New System.Drawing.Size(111, 23)
-        Me.RadioButton25.TabIndex = 8
-        Me.RadioButton25.Text = "最低順位"
-        Me.RadioButton25.UseVisualStyleBackColor = True
-        '
-        'GroupBox12
-        '
-        Me.GroupBox12.Controls.Add(Me.Label88)
-        Me.GroupBox12.Controls.Add(Me.Label89)
-        Me.GroupBox12.Controls.Add(Me.DateTimePicker4)
-        Me.GroupBox12.Controls.Add(Me.DateTimePicker5)
-        Me.GroupBox12.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox12.Location = New System.Drawing.Point(6, 102)
-        Me.GroupBox12.Name = "GroupBox12"
-        Me.GroupBox12.Size = New System.Drawing.Size(707, 70)
-        Me.GroupBox12.TabIndex = 10
-        Me.GroupBox12.TabStop = False
-        Me.GroupBox12.Text = "查詢時間設定"
-        '
-        'Label88
-        '
-        Me.Label88.AutoSize = True
-        Me.Label88.Location = New System.Drawing.Point(269, 37)
-        Me.Label88.Name = "Label88"
-        Me.Label88.Size = New System.Drawing.Size(51, 19)
-        Me.Label88.TabIndex = 3
-        Me.Label88.Text = "迄日"
-        '
-        'Label89
-        '
-        Me.Label89.AutoSize = True
-        Me.Label89.Location = New System.Drawing.Point(6, 37)
-        Me.Label89.Name = "Label89"
-        Me.Label89.Size = New System.Drawing.Size(51, 19)
-        Me.Label89.TabIndex = 2
-        Me.Label89.Text = "起日"
-        '
-        'DateTimePicker4
-        '
-        Me.DateTimePicker4.Location = New System.Drawing.Point(326, 29)
-        Me.DateTimePicker4.Name = "DateTimePicker4"
-        Me.DateTimePicker4.Size = New System.Drawing.Size(200, 30)
-        Me.DateTimePicker4.TabIndex = 1
-        '
-        'DateTimePicker5
-        '
-        Me.DateTimePicker5.Location = New System.Drawing.Point(63, 29)
-        Me.DateTimePicker5.Name = "DateTimePicker5"
-        Me.DateTimePicker5.Size = New System.Drawing.Size(200, 30)
-        Me.DateTimePicker5.TabIndex = 0
-        '
-        'GroupBox9
-        '
-        Me.GroupBox9.Controls.Add(Me.RadioButton22)
-        Me.GroupBox9.Controls.Add(Me.RadioButton23)
-        Me.GroupBox9.Controls.Add(Me.RadioButton20)
-        Me.GroupBox9.Controls.Add(Me.RadioButton21)
-        Me.GroupBox9.Controls.Add(Me.RadioButton18)
-        Me.GroupBox9.Controls.Add(Me.RadioButton19)
-        Me.GroupBox9.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox9.Location = New System.Drawing.Point(6, 6)
-        Me.GroupBox9.Name = "GroupBox9"
-        Me.GroupBox9.Size = New System.Drawing.Size(707, 90)
-        Me.GroupBox9.TabIndex = 5
-        Me.GroupBox9.TabStop = False
-        Me.GroupBox9.Text = "統計表"
-        '
-        'RadioButton22
-        '
-        Me.RadioButton22.AutoSize = True
-        Me.RadioButton22.Location = New System.Drawing.Point(250, 58)
-        Me.RadioButton22.Name = "RadioButton22"
-        Me.RadioButton22.Size = New System.Drawing.Size(196, 23)
-        Me.RadioButton22.TabIndex = 7
-        Me.RadioButton22.TabStop = True
-        Me.RadioButton22.Text = "月報統計表(總量)"
-        Me.RadioButton22.UseVisualStyleBackColor = True
-        '
-        'RadioButton23
-        '
-        Me.RadioButton23.AutoSize = True
-        Me.RadioButton23.Location = New System.Drawing.Point(250, 29)
-        Me.RadioButton23.Name = "RadioButton23"
-        Me.RadioButton23.Size = New System.Drawing.Size(249, 23)
-        Me.RadioButton23.TabIndex = 6
-        Me.RadioButton23.TabStop = True
-        Me.RadioButton23.Text = "日報統計表(客戶_產品)"
-        Me.RadioButton23.UseVisualStyleBackColor = True
-        '
-        'RadioButton20
-        '
-        Me.RadioButton20.AutoSize = True
-        Me.RadioButton20.Location = New System.Drawing.Point(505, 58)
-        Me.RadioButton20.Name = "RadioButton20"
-        Me.RadioButton20.Size = New System.Drawing.Size(195, 23)
-        Me.RadioButton20.TabIndex = 5
-        Me.RadioButton20.TabStop = True
-        Me.RadioButton20.Text = "過磅單單日統計表"
-        Me.RadioButton20.UseVisualStyleBackColor = True
-        '
-        'RadioButton21
-        '
-        Me.RadioButton21.AutoSize = True
-        Me.RadioButton21.Location = New System.Drawing.Point(505, 29)
-        Me.RadioButton21.Name = "RadioButton21"
-        Me.RadioButton21.Size = New System.Drawing.Size(196, 23)
-        Me.RadioButton21.TabIndex = 4
-        Me.RadioButton21.TabStop = True
-        Me.RadioButton21.Text = "日報統計表(產品)"
-        Me.RadioButton21.UseVisualStyleBackColor = True
-        '
-        'RadioButton18
-        '
-        Me.RadioButton18.AutoSize = True
-        Me.RadioButton18.Location = New System.Drawing.Point(6, 58)
-        Me.RadioButton18.Name = "RadioButton18"
-        Me.RadioButton18.Size = New System.Drawing.Size(196, 23)
-        Me.RadioButton18.TabIndex = 3
-        Me.RadioButton18.TabStop = True
-        Me.RadioButton18.Text = "月報統計表(產品)"
-        Me.RadioButton18.UseVisualStyleBackColor = True
-        '
-        'RadioButton19
-        '
-        Me.RadioButton19.AutoSize = True
-        Me.RadioButton19.Location = New System.Drawing.Point(6, 29)
-        Me.RadioButton19.Name = "RadioButton19"
-        Me.RadioButton19.Size = New System.Drawing.Size(238, 23)
-        Me.RadioButton19.TabIndex = 2
-        Me.RadioButton19.TabStop = True
-        Me.RadioButton19.Text = "日報統計明細表(所有)"
-        Me.RadioButton19.UseVisualStyleBackColor = True
-        '
-        'GroupBox8
-        '
-        Me.GroupBox8.Controls.Add(Me.RadioButton16)
-        Me.GroupBox8.Controls.Add(Me.RadioButton17)
-        Me.GroupBox8.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox8.Location = New System.Drawing.Point(154, 10)
-        Me.GroupBox8.Name = "GroupBox8"
-        Me.GroupBox8.Size = New System.Drawing.Size(111, 94)
-        Me.GroupBox8.TabIndex = 1
-        Me.GroupBox8.TabStop = False
-        Me.GroupBox8.Text = "報表種類"
-        '
-        'RadioButton16
-        '
-        Me.RadioButton16.AutoSize = True
-        Me.RadioButton16.Location = New System.Drawing.Point(6, 58)
-        Me.RadioButton16.Name = "RadioButton16"
-        Me.RadioButton16.Size = New System.Drawing.Size(90, 23)
-        Me.RadioButton16.TabIndex = 3
-        Me.RadioButton16.TabStop = True
-        Me.RadioButton16.Text = "統計表"
-        Me.RadioButton16.UseVisualStyleBackColor = True
-        '
-        'RadioButton17
-        '
-        Me.RadioButton17.AutoSize = True
-        Me.RadioButton17.Location = New System.Drawing.Point(6, 29)
-        Me.RadioButton17.Name = "RadioButton17"
-        Me.RadioButton17.Size = New System.Drawing.Size(90, 23)
-        Me.RadioButton17.TabIndex = 2
-        Me.RadioButton17.TabStop = True
-        Me.RadioButton17.Text = "對帳單"
-        Me.RadioButton17.UseVisualStyleBackColor = True
-        '
-        'GroupBox7
-        '
-        Me.GroupBox7.Controls.Add(Me.RadioButton15)
-        Me.GroupBox7.Controls.Add(Me.RadioButton14)
-        Me.GroupBox7.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox7.Location = New System.Drawing.Point(8, 10)
-        Me.GroupBox7.Name = "GroupBox7"
-        Me.GroupBox7.Size = New System.Drawing.Size(140, 94)
-        Me.GroupBox7.TabIndex = 0
-        Me.GroupBox7.TabStop = False
-        Me.GroupBox7.Text = "進/出貨選項"
-        '
-        'RadioButton15
-        '
-        Me.RadioButton15.AutoSize = True
-        Me.RadioButton15.Location = New System.Drawing.Point(6, 58)
-        Me.RadioButton15.Name = "RadioButton15"
-        Me.RadioButton15.Size = New System.Drawing.Size(69, 23)
-        Me.RadioButton15.TabIndex = 1
-        Me.RadioButton15.TabStop = True
-        Me.RadioButton15.Text = "進貨"
-        Me.RadioButton15.UseVisualStyleBackColor = True
-        '
-        'RadioButton14
-        '
-        Me.RadioButton14.AutoSize = True
-        Me.RadioButton14.Location = New System.Drawing.Point(6, 29)
-        Me.RadioButton14.Name = "RadioButton14"
-        Me.RadioButton14.Size = New System.Drawing.Size(69, 23)
-        Me.RadioButton14.TabIndex = 0
-        Me.RadioButton14.TabStop = True
-        Me.RadioButton14.Text = "出貨"
-        Me.RadioButton14.UseVisualStyleBackColor = True
+        'rdoSupplier
+        '
+        Me.rdoSupplier.AutoSize = True
+        Me.rdoSupplier.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.rdoSupplier.Location = New System.Drawing.Point(6, 55)
+        Me.rdoSupplier.Name = "rdoSupplier"
+        Me.rdoSupplier.Size = New System.Drawing.Size(69, 23)
+        Me.rdoSupplier.TabIndex = 1
+        Me.rdoSupplier.Text = "進貨"
+        Me.rdoSupplier.UseVisualStyleBackColor = True
+        '
+        'rdoCustomer
+        '
+        Me.rdoCustomer.AutoSize = True
+        Me.rdoCustomer.Checked = True
+        Me.rdoCustomer.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.rdoCustomer.Location = New System.Drawing.Point(6, 26)
+        Me.rdoCustomer.Name = "rdoCustomer"
+        Me.rdoCustomer.Size = New System.Drawing.Size(69, 23)
+        Me.rdoCustomer.TabIndex = 0
+        Me.rdoCustomer.TabStop = True
+        Me.rdoCustomer.Text = "出貨"
+        Me.rdoCustomer.UseVisualStyleBackColor = True
         '
         'tpSystem
         '
@@ -3440,7 +2843,7 @@ Partial Class frmMain
         '
         Me.btnRemote.AutoSize = True
         Me.btnRemote.BackColor = System.Drawing.Color.Yellow
-        Me.btnRemote.Image = Global.PlatformScale.My.Resources.Resources.button_backup
+        Me.btnRemote.Image = CType(resources.GetObject("btnRemote.Image"), System.Drawing.Image)
         Me.btnRemote.Location = New System.Drawing.Point(532, 26)
         Me.btnRemote.Name = "btnRemote"
         Me.btnRemote.Size = New System.Drawing.Size(81, 81)
@@ -3484,7 +2887,7 @@ Partial Class frmMain
         '
         Me.btnSave_權限.AutoSize = True
         Me.btnSave_權限.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnSave_權限.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnSave_權限.Image = CType(resources.GetObject("btnSave_權限.Image"), System.Drawing.Image)
         Me.btnSave_權限.Location = New System.Drawing.Point(399, 49)
         Me.btnSave_權限.Name = "btnSave_權限"
         Me.btnSave_權限.Size = New System.Drawing.Size(81, 81)
@@ -3495,7 +2898,7 @@ Partial Class frmMain
         '
         Me.btnInsert_權限.AutoSize = True
         Me.btnInsert_權限.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnInsert_權限.Image = Global.PlatformScale.My.Resources.Resources.button_add
+        Me.btnInsert_權限.Image = CType(resources.GetObject("btnInsert_權限.Image"), System.Drawing.Image)
         Me.btnInsert_權限.Location = New System.Drawing.Point(312, 49)
         Me.btnInsert_權限.Name = "btnInsert_權限"
         Me.btnInsert_權限.Size = New System.Drawing.Size(81, 81)
@@ -3506,7 +2909,7 @@ Partial Class frmMain
         '
         Me.btnClear_權限.AutoSize = True
         Me.btnClear_權限.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_權限.Image = Global.PlatformScale.My.Resources.Resources.button_clear
+        Me.btnClear_權限.Image = CType(resources.GetObject("btnClear_權限.Image"), System.Drawing.Image)
         Me.btnClear_權限.Location = New System.Drawing.Point(573, 49)
         Me.btnClear_權限.Name = "btnClear_權限"
         Me.btnClear_權限.Size = New System.Drawing.Size(81, 81)
@@ -3517,7 +2920,7 @@ Partial Class frmMain
         '
         Me.btnDel_權限.AutoSize = True
         Me.btnDel_權限.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnDel_權限.Image = Global.PlatformScale.My.Resources.Resources.button_del
+        Me.btnDel_權限.Image = CType(resources.GetObject("btnDel_權限.Image"), System.Drawing.Image)
         Me.btnDel_權限.Location = New System.Drawing.Point(486, 49)
         Me.btnDel_權限.Name = "btnDel_權限"
         Me.btnDel_權限.Size = New System.Drawing.Size(81, 81)
@@ -3622,7 +3025,7 @@ Partial Class frmMain
         '
         Me.btnSave_Port.AutoSize = True
         Me.btnSave_Port.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.btnSave_Port.Image = Global.PlatformScale.My.Resources.Resources.button_save
+        Me.btnSave_Port.Image = CType(resources.GetObject("btnSave_Port.Image"), System.Drawing.Image)
         Me.btnSave_Port.Location = New System.Drawing.Point(224, 26)
         Me.btnSave_Port.Name = "btnSave_Port"
         Me.btnSave_Port.Size = New System.Drawing.Size(81, 81)
@@ -3689,6 +3092,16 @@ Partial Class frmMain
         '
         Me.tmrScale.Interval = 500
         '
+        'chkExcel
+        '
+        Me.chkExcel.AutoSize = True
+        Me.chkExcel.Location = New System.Drawing.Point(799, 100)
+        Me.chkExcel.Name = "chkExcel"
+        Me.chkExcel.Size = New System.Drawing.Size(135, 25)
+        Me.chkExcel.TabIndex = 316
+        Me.chkExcel.Text = "生成Excel"
+        Me.chkExcel.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3732,33 +3145,15 @@ Partial Class frmMain
         CType(Me.dgv貨品, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tpReport.ResumeLayout(False)
         Me.tpReport.PerformLayout()
+        Me.GroupBox3.ResumeLayout(False)
+        Me.GroupBox3.PerformLayout()
+        CType(Me.nudDay_end, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nudDay_start, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nudMonth, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.nudYear, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpType_report.ResumeLayout(False)
-        Me.grpType_report.PerformLayout()
-        Me.grpDate_report.ResumeLayout(False)
         Me.grpInOut_report.ResumeLayout(False)
         Me.grpInOut_report.PerformLayout()
-        Me.tabReport.ResumeLayout(False)
-        Me.tabReport.PerformLayout()
-        Me.TabControl1.ResumeLayout(False)
-        Me.TabPage1.ResumeLayout(False)
-        Me.TabPage1.PerformLayout()
-        CType(Me.DataGridView6, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox14.ResumeLayout(False)
-        Me.GroupBox10.ResumeLayout(False)
-        Me.GroupBox10.PerformLayout()
-        Me.TabPage2.ResumeLayout(False)
-        Me.TabPage2.PerformLayout()
-        CType(Me.DataGridView7, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox13.ResumeLayout(False)
-        Me.GroupBox13.PerformLayout()
-        Me.GroupBox12.ResumeLayout(False)
-        Me.GroupBox12.PerformLayout()
-        Me.GroupBox9.ResumeLayout(False)
-        Me.GroupBox9.PerformLayout()
-        Me.GroupBox8.ResumeLayout(False)
-        Me.GroupBox8.PerformLayout()
-        Me.GroupBox7.ResumeLayout(False)
-        Me.GroupBox7.PerformLayout()
         Me.tpSystem.ResumeLayout(False)
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
@@ -3780,7 +3175,6 @@ Partial Class frmMain
     Friend WithEvents tp客戶 As TabPage
     Friend WithEvents tabData_Vehicle As TabPage
     Friend WithEvents tp貨品 As TabPage
-    Friend WithEvents tabReport As TabPage
     Friend WithEvents tpSystem As TabPage
     Friend WithEvents Label1 As Label
     Friend WithEvents TextBox1 As TextBox
@@ -3930,67 +3324,6 @@ Partial Class frmMain
     Friend WithEvents Label60 As Label
     Friend WithEvents TextBox42 As TextBox
     Friend WithEvents btnPrint_過磅 As Button
-    Friend WithEvents TabControl1 As TabControl
-    Friend WithEvents TabPage1 As TabPage
-    Friend WithEvents DataGridView6 As DataGridView
-    Friend WithEvents ComboBox8 As ComboBox
-    Friend WithEvents ComboBox7 As ComboBox
-    Friend WithEvents ComboBox11 As ComboBox
-    Friend WithEvents Label93 As Label
-    Friend WithEvents ComboBox10 As ComboBox
-    Friend WithEvents Label92 As Label
-    Friend WithEvents ComboBox9 As ComboBox
-    Friend WithEvents Label91 As Label
-    Friend WithEvents Button55 As Button
-    Friend WithEvents Button54 As Button
-    Friend WithEvents Button53 As Button
-    Friend WithEvents ListBox4 As ListBox
-    Friend WithEvents ListBox3 As ListBox
-    Friend WithEvents ListBox2 As ListBox
-    Friend WithEvents Label90 As Label
-    Friend WithEvents Label87 As Label
-    Friend WithEvents ComboBox6 As ComboBox
-    Friend WithEvents Label59 As Label
-    Friend WithEvents GroupBox14 As GroupBox
-    Friend WithEvents DateTimePicker7 As DateTimePicker
-    Friend WithEvents GroupBox10 As GroupBox
-    Friend WithEvents RadioButton28 As RadioButton
-    Friend WithEvents RadioButton29 As RadioButton
-    Friend WithEvents TabPage2 As TabPage
-    Friend WithEvents DataGridView7 As DataGridView
-    Friend WithEvents ComboBox12 As ComboBox
-    Friend WithEvents ComboBox13 As ComboBox
-    Friend WithEvents Button56 As Button
-    Friend WithEvents Button57 As Button
-    Friend WithEvents Button58 As Button
-    Friend WithEvents ListBox5 As ListBox
-    Friend WithEvents ListBox6 As ListBox
-    Friend WithEvents ListBox7 As ListBox
-    Friend WithEvents Label97 As Label
-    Friend WithEvents Label98 As Label
-    Friend WithEvents ComboBox17 As ComboBox
-    Friend WithEvents Label99 As Label
-    Friend WithEvents GroupBox13 As GroupBox
-    Friend WithEvents RadioButton24 As RadioButton
-    Friend WithEvents RadioButton25 As RadioButton
-    Friend WithEvents GroupBox12 As GroupBox
-    Friend WithEvents Label88 As Label
-    Friend WithEvents Label89 As Label
-    Friend WithEvents DateTimePicker4 As DateTimePicker
-    Friend WithEvents DateTimePicker5 As DateTimePicker
-    Friend WithEvents GroupBox9 As GroupBox
-    Friend WithEvents RadioButton22 As RadioButton
-    Friend WithEvents RadioButton23 As RadioButton
-    Friend WithEvents RadioButton20 As RadioButton
-    Friend WithEvents RadioButton21 As RadioButton
-    Friend WithEvents RadioButton18 As RadioButton
-    Friend WithEvents RadioButton19 As RadioButton
-    Friend WithEvents GroupBox8 As GroupBox
-    Friend WithEvents RadioButton16 As RadioButton
-    Friend WithEvents RadioButton17 As RadioButton
-    Friend WithEvents GroupBox7 As GroupBox
-    Friend WithEvents RadioButton15 As RadioButton
-    Friend WithEvents RadioButton14 As RadioButton
     Friend WithEvents GroupBox16 As GroupBox
     Friend WithEvents grp權限 As GroupBox
     Friend WithEvents grpPort As GroupBox
@@ -4023,8 +3356,6 @@ Partial Class frmMain
     Friend WithEvents btnClear_貨品 As Button
     Friend WithEvents btnDel_貨品 As Button
     Friend WithEvents btnQuery_貨品 As Button
-    Friend WithEvents Button24 As Button
-    Friend WithEvents Button23 As Button
     Friend WithEvents btnInsert_權限 As Button
     Friend WithEvents btnClear_權限 As Button
     Friend WithEvents btnDel_權限 As Button
@@ -4062,13 +3393,27 @@ Partial Class frmMain
     Friend WithEvents RadioButton3 As RadioButton
     Friend WithEvents RadioButton4 As RadioButton
     Friend WithEvents btnPrint_report As Button
-    Friend WithEvents grpDate_report As GroupBox
     Friend WithEvents grpInOut_report As GroupBox
-    Friend WithEvents RadioButton1 As RadioButton
-    Friend WithEvents RadioButton2 As RadioButton
-    Friend WithEvents dtpEnd As DateTimePicker
-    Friend WithEvents dtpStart As DateTimePicker
+    Friend WithEvents rdoSupplier As RadioButton
+    Friend WithEvents rdoCustomer As RadioButton
     Friend WithEvents RadioButton9 As RadioButton
     Friend WithEvents RadioButton10 As RadioButton
     Friend WithEvents RadioButton11 As RadioButton
+    Friend WithEvents GroupBox3 As GroupBox
+    Friend WithEvents nudYear As NumericUpDown
+    Friend WithEvents Label19 As Label
+    Friend WithEvents Label20 As Label
+    Friend WithEvents nudMonth As NumericUpDown
+    Friend WithEvents nudDay_end As NumericUpDown
+    Friend WithEvents nudDay_start As NumericUpDown
+    Friend WithEvents Label52 As Label
+    Friend WithEvents Label51 As Label
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label56 As Label
+    Friend WithEvents cmbCarNo_report As ComboBox
+    Friend WithEvents lblCliSup As Label
+    Friend WithEvents cmbCliSup_report As ComboBox
+    Friend WithEvents Label53 As Label
+    Friend WithEvents cmbProduct_report As ComboBox
+    Friend WithEvents chkExcel As CheckBox
 End Class
