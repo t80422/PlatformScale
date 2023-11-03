@@ -1462,6 +1462,7 @@ Finish:
         btnPrint_report.Enabled = False
 
         Dim exlReport As New ExcelReportGenerator(StartupPath, chkExcel.Checked)
+
         Dim dic As New Dictionary(Of String, String) From {
             {"產品名稱", cmbProduct_report.Text},
             {"[客戶/廠商]", cmbCliSup_report.Text},
@@ -1488,11 +1489,16 @@ Finish:
                     exlReport.GenerateMonthlyReport(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
 
                 Case "月報統計表(產品)"
-                    exlReport.GenerateMonthlyProductStats(nudYear.Value, nudMonth.Value, inOut, dic)
+                    Dim dicMonthProd = New Dictionary(Of String, String) From {
+                        {"[客戶/廠商]", cmbCliSup_report.Text},
+                        {"車牌號碼", cmbCarNo_report.Text}
+                    }
+
+                    exlReport.GenerateMonthlyProductStats(nudYear.Value, nudMonth.Value, inOut, dicMonthProd)
 
                 Case "日報統計表(產品)"
-                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, 1)
-                    Dim endDate = startDate.AddMonths(1).AddDays(-1)
+                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value)
+                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value)
 
                     exlReport.GenerateDailyProductStats(startDate.ToString("yyyy/MM/dd"), endDate.ToString("yyyy/MM/dd"), inOut, dic)
 
