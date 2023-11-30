@@ -2,6 +2,8 @@
 Imports System.Runtime.InteropServices
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports System.Threading
+Imports System.Windows.Media.Media3D
 Imports iText.Bouncycastle.Asn1
 Imports iText.StyledXmlParser.Css.Validate.Impl.Datatype
 Imports Microsoft.Office.Interop.Excel
@@ -174,7 +176,6 @@ Namespace ReportGenerators
             Dim sql = "SELECT [客戶/廠商], 產品代號, 磅單序號, 空重, 總重, 每米噸數, 淨重, 米數, 產品名稱, 車牌號碼 FROM 過磅資料表 " &
                       "WHERE 過磅日期 BETWEEN @endDate AND @startDate " &
                       "AND [進/出] = @inOut "
-
             Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
 
             '標題
@@ -214,56 +215,60 @@ Namespace ReportGenerators
             Dim monthNetWeight As Double = 0.0
             Dim monthMeter As Double = 0.0
             Dim monthCount As Integer = 0
-            Dim rowIndex As Integer = 3
 
             For Each customerGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
+                Dim cusNet As Double = 0
+                Dim cusMeter As Double = 0
+                Dim cusCount As Integer = 0
+
                 table.Rows.Add("客戶:" & customerGroup.Key)
-                DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                rowIndex += 1
+                DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
                 For Each productGroup In customerGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
+                    Dim prodNet As Double = 0
+                    Dim prodMeter As Double = 0
+                    Dim prodCount As Integer = 0
+
                     table.Rows.Add("產品:" & productGroup.Key)
-                    DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                    rowIndex += 1
+                    DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
-                    For Each CarNoGroup In customerGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
+                    For Each CarNoGroup In productGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
                         table.Rows.Add("車號:" & CarNoGroup.Key)
-                        DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                        rowIndex += 1
+                        DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
-                        For Each carNoItem In CarNoGroup.First.Data
-                            '寫入每條記錄的詳細資料
-                            table.Rows.Add(carNoItem.ID, carNoItem.ProductID, carNoItem.Empty, carNoItem.Weight, carNoItem.NetWeight, carNoItem.Meter, carNoItem.TPM)
-                            DrawLine(rowIndex, 1, 7, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
-                            rowIndex += 1
+                        For Each carNoItem In CarNoGroup
+                            For Each record In carNoItem.Data
+                                '寫入每條記錄的詳細資料
+                                table.Rows.Add(record.ID, record.ProductID, record.Empty, record.Weight, record.NetWeight, record.Meter, record.TPM)
+                                DrawLine(table.Rows.Count + 2, 1, 7, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+                            Next
                         Next
 
-                        table.Rows.Add("", "", "", "(小計)", CarNoGroup.First.SumNetWeight, CarNoGroup.First.SumMeter, CarNoGroup.First.Count & "輛")
-                        DrawLine(rowIndex, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
+                        table.Rows.Add("", "", "", "(車號小計)", CarNoGroup.First.SumNetWeight, CarNoGroup.First.SumMeter, CarNoGroup.First.Count & "輛")
+                        DrawLine(table.Rows.Count + 2, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
 
-                        rowIndex += 1
-                        monthNetWeight += CarNoGroup.First.SumNetWeight
-                        monthMeter += CarNoGroup.First.SumMeter
-                        monthCount += CarNoGroup.Count
+                        prodNet += CarNoGroup.First.SumNetWeight
+                        prodMeter += CarNoGroup.First.SumMeter
+                        prodCount += CarNoGroup.First.Count
                     Next
+
+                    table.Rows.Add("", "", "", "(產品小計)", prodNet, prodMeter, prodCount & "輛")
+                    DrawLine(table.Rows.Count + 2, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
+                    cusNet += prodNet
+                    cusMeter += prodMeter
+                    cusCount += prodCount
                 Next
+
+                table.Rows.Add("", "", "", "(客戶小計)", cusNet, cusMeter, cusCount & "輛")
+                DrawLine(table.Rows.Count + 2, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
+                monthNetWeight += cusNet
+                monthMeter += cusMeter
+                monthCount += cusCount
             Next
 
-            DrawLine(rowIndex, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
             table.Rows.Add("", "", "", "(總計)", monthNetWeight, monthMeter, monthCount & "輛")
-            ' 將 DataTable 寫入一個二維陣列
-            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
-
-            ' 寫入資料
-            For i = 0 To table.Rows.Count - 1
-                For j = 0 To table.Columns.Count - 1
-                    objectArray(i, j) = table.Rows(i)(j)
-                Next
-            Next
-
-            ' 一次性將二維陣列寫入 Excel
-            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
-            range.Value = objectArray
+            DrawLine(table.Rows.Count + 2, 4, 7, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -319,6 +324,9 @@ Namespace ReportGenerators
                 table.Columns.Add()
             Next
 
+            Dim totalNetWeight As Double = 0
+            Dim totalMeter As Double = 0
+            Dim totalCount As Integer = 0
 
             For Each dayGroup In datas.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
                 table.Rows.Add("日期:" & dayGroup.Key)
@@ -349,24 +357,18 @@ Namespace ReportGenerators
                             Dim sumMeter = CarNoGroup.Sum(Function(x) x.Data.Sum(Function(d) CDbl(d.Meter)))
 
                             table.Rows.Add("", "", "(小計)", sumNetWeight, sumMeter, CarNoGroup.Count & "輛")
+                            totalNetWeight += sumNetWeight
+                            totalMeter += sumMeter
+                            totalCount += CarNoGroup.Count
                         Next
                     Next
                 Next
             Next
 
-            ' 將 DataTable 寫入一個二維陣列
-            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+            DrawLine(table.Rows.Count + 2, 1, 6, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+            table.Rows.Add("", "", "(總計)", totalNetWeight, totalMeter, totalCount & "輛")
 
-            ' 寫入資料
-            For i = 0 To table.Rows.Count - 1
-                For j = 0 To table.Columns.Count - 1
-                    objectArray(i, j) = table.Rows(i)(j)
-                Next
-            Next
-
-            ' 一次性將二維陣列寫入 Excel
-            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
-            range.Value = objectArray
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -394,7 +396,8 @@ Namespace ReportGenerators
 
             '建立 DataTable
             Dim table As New Data.DataTable()
-            For i As Integer = 1 To 6
+
+            For i As Integer = 1 To 4
                 table.Columns.Add()
             Next
 
@@ -408,57 +411,50 @@ Namespace ReportGenerators
                             Key Customer,
                             Key CarNo,
                             Key Product,
+                            Group.Count,
                             .SumMeter = Group.Sum(Function(row) Double.Parse(row("米數"))),
                             .SumNetWeight = Group.Sum(Function(row) Double.Parse(row("淨重")))
                         }
 
-            Dim rowIndex = 3
+            Dim totalNetWeight As Double = 0.0
+            Dim totalMeter As Double = 0.0
+            Dim totalCount As Integer = 0
+
             For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
                 table.Rows.Add($"客戶/廠商:{cusGroup.Key}")
-                DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                rowIndex += 1
+                DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
                 For Each carGroup In cusGroup.GroupBy(Function(x) x.CarNo).OrderBy(Function(x) x.Key)
                     table.Rows.Add($"車牌:{carGroup.Key}")
-                    DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                    rowIndex += 1
+                    DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
-                    Dim totalNetWeight As Double = 0.0
-                    Dim totalMeter As Double = 0.0
-                    Dim totalCount As Integer = 0
+                    Dim sumNetWeight As Double = 0.0
+                    Dim sumMeter As Double = 0.0
+                    Dim sumCount As Integer = 0
 
-                    For Each prodGroup In carGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
-                        Dim sumNetWeight = Math.Round(prodGroup.First().SumNetWeight, 3)
-                        Dim sumMeter = Math.Round(prodGroup.First().SumMeter, 3)
-                        table.Rows.Add(prodGroup.Key, prodGroup.Count, sumNetWeight, sumMeter)
-                        DrawLine(rowIndex, 1, 4, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+                    For Each prodGroup In carGroup
+                        table.Rows.Add(prodGroup.Product, prodGroup.Count, prodGroup.SumNetWeight, prodGroup.SumMeter)
+                        DrawLine(table.Rows.Count + 2, 1, 4, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
 
-                        rowIndex += 1
-                        totalNetWeight += sumNetWeight
-                        totalMeter += sumMeter
-                        totalCount += prodGroup.Count
+                        sumNetWeight += prodGroup.SumNetWeight
+                        sumMeter += prodGroup.SumMeter
+                        sumCount += prodGroup.Count
                     Next
 
-                    DrawLine(rowIndex, 1, 4, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
-                    rowIndex += 2
-                    table.Rows.Add("(小計)", totalCount, totalNetWeight, totalMeter)
+                    table.Rows.Add("(小計)", sumCount, sumNetWeight, sumMeter)
                     table.Rows.Add()
+
+                    totalNetWeight += sumNetWeight
+                    totalMeter += sumMeter
+                    totalCount += sumCount
                 Next
             Next
 
-            ' 將 DataTable 寫入一個二維陣列
-            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+            table.Rows.RemoveAt(table.Rows.Count - 1)
+            DrawLine(table.Rows.Count + 2, 1, 4, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+            table.Rows.Add("(總計)", totalCount, totalNetWeight, totalMeter)
 
-            ' 寫入資料
-            For i = 0 To table.Rows.Count - 1
-                For j = 0 To table.Columns.Count - 1
-                    objectArray(i, j) = table.Rows(i)(j)
-                Next
-            Next
-
-            ' 一次性將二維陣列寫入 Excel
-            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
-            range.Value = objectArray
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -467,7 +463,7 @@ Namespace ReportGenerators
         ''' <param name="year"></param>
         ''' <param name="month"></param>
         ''' <param name="inOut"></param>
-        Public Sub GenerateMonthlyProductStats(year As Integer, month As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
+        Public Sub GenerateMonthlyProductStats(year As Integer, month As Integer, dayStart As Integer, dayEnd As Integer, inOut As String, dicCondition As Dictionary(Of String, String))
             '標題
             cells(1, 1) = $"{year}年{month}月 產品 {inOut} 統計表"
 
@@ -475,16 +471,20 @@ Namespace ReportGenerators
             cells(3, 1) = $"車號:{dicCondition("車牌號碼")}"
 
             '撈資料
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", New Date(year, month, dayStart).ToString("yyyy/MM/dd")},
+                {"endDate", New Date(year, month, dayEnd).ToString("yyyy/MM/dd")},
+                {"inOut", inOut}
+            }
             Dim sql = "SELECT 產品名稱, COUNT(*) AS 車次, SUM(淨重) AS 總重, SUM(米數) AS 米 FROM 過磅資料表 " &
-                      $"WHERE YEAR(過磅日期) = {year} " &
-                      $"AND MONTH(過磅日期) = {month} " &
-                      $"AND [進/出] = '{inOut}' "
+                      "WHERE 過磅日期 BETWEEN @endDate AND @startDate " &
+                      $"AND [進/出] = @inOut "
 
             sql = AppendConditionsToSQL(sql, dicCondition) &
                   "GROUP BY 產品名稱 " &
                   "ORDER BY 產品名稱"
 
-            Dim dt = SelectTable(sql)
+            Dim dt = SelectTable(sql, dic)
 
             Dim rowIndex = 5
 
@@ -550,49 +550,46 @@ Namespace ReportGenerators
                             .SumMeter = Group.Sum(Function(x) Double.Parse(x("米數")))
                         }
 
-            Dim formattedData As New List(Of Object())
-            Dim rowIndex As Integer = 3
+            '建立 DataTable
+            Dim table As New Data.DataTable()
+
+            For i As Integer = 1 To 5
+                table.Columns.Add()
+            Next
+
+            Dim sumNet As Double
+            Dim sumMeter As Double
+            Dim sumCount As Integer
 
             For Each dayGroup In datas.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
-                formattedData.Add(New Object() {"日期:" & dayGroup.Key, Nothing, Nothing, Nothing, Nothing})
-                DrawLine(rowIndex, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
-                rowIndex += 1
+                table.Rows.Add($"日期:{dayGroup.Key}")
+                DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
                 Dim totalNetWeight As Double = 0.0
                 Dim totalMeter As Double = 0.0
                 Dim totalCount As Integer = 0
 
-                For Each prodGroup In dayGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
-                    Dim sumNetWeight = prodGroup.First().SumNetWeight
-                    Dim sumMeter = prodGroup.First().SumMeter
-                    Dim count = prodGroup.First.Count
-                    formattedData.Add(New Object() {Nothing, prodGroup.Key, count, sumNetWeight, sumMeter})
-                    DrawLine(rowIndex, 2, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+                For Each prodGroup In dayGroup
+                    table.Rows.Add($"", prodGroup.Product, prodGroup.Count, prodGroup.SumNetWeight, prodGroup.SumMeter)
+                    DrawLine(table.Rows.Count + 2, 2, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
-                    rowIndex += 1
-                    totalNetWeight += sumNetWeight
-                    totalMeter += sumMeter
-                    totalCount += count
+                    totalCount += prodGroup.Count
+                    totalNetWeight += prodGroup.SumNetWeight
+                    totalMeter += prodGroup.SumMeter
                 Next
 
-                DrawLine(rowIndex, 2, 5, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
-                rowIndex += 2
-                formattedData.Add(New Object() {Nothing, "(小計)", totalCount, totalNetWeight, totalMeter})
-                formattedData.Add(New Object() {Nothing, Nothing, Nothing, Nothing, Nothing}) ' 空行
+                table.Rows.Add($"", "", totalCount, totalNetWeight, totalMeter)
+                table.Rows.Add()
+
+                sumCount += totalCount
+                sumNet += totalNetWeight
+                sumMeter += totalMeter
             Next
 
-            ' 轉換格式化後的數據列表為二維陣列
-            Dim dataArray(formattedData.Count - 1, 4) As Object
-            For i = 0 To formattedData.Count - 1
-                dataArray(i, 0) = formattedData(i)(0)
-                dataArray(i, 1) = formattedData(i)(1)
-                dataArray(i, 2) = formattedData(i)(2)
-                dataArray(i, 3) = formattedData(i)(3)
-                dataArray(i, 4) = formattedData(i)(4)
-            Next
+            table.Rows.Add($"", "(總計)", sumCount, sumNet, sumMeter)
+            DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
 
-            ' 批量寫入 Excel
-            cells.Range("A3").Resize(formattedData.Count, 5).Value = dataArray
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -640,44 +637,43 @@ Namespace ReportGenerators
                 table.Columns.Add()
             Next
 
+            Dim totalCount As Integer = 0
+            Dim totalNet As Double = 0
+            Dim totalMeter As Double = 0
+
             For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
                 table.Rows.Add("客戶:" & cusGroup.Key)
                 DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
-                Dim totalCount As Integer = cusGroup.Sum(Function(x) x.Count)
-                Dim totalNetWeight As Double = cusGroup.Sum(Function(x) x.sumNetWeight)
-                Dim totalMeter As Double = cusGroup.Sum(Function(x) x.sumMeter)
+                Dim sumCount As Integer = cusGroup.Sum(Function(x) x.Count)
+                Dim sumNetWeight As Double = cusGroup.Sum(Function(x) x.sumNetWeight)
+                Dim sumMeter As Double = cusGroup.Sum(Function(x) x.sumMeter)
 
                 For Each dayGroup In cusGroup.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
                     '日期
                     table.Rows.Add(dayGroup.Key)
-                    DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
                     For Each prodGroup In dayGroup
-                        '                   品名          車次             總淨重        總米數
+                        '                  品名               車次             總淨重                  總米數
                         table.Rows.Add("", prodGroup.Product, prodGroup.Count, prodGroup.sumNetWeight, prodGroup.sumMeter)
-                        DrawLine(table.Rows.Count + 2, 2, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+                        DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
                     Next
                 Next
 
                 ' 寫入小計
-                table.Rows.Add("", "(總計)", totalCount, totalNetWeight, totalMeter)
+                table.Rows.Add("", "", sumCount, sumNetWeight, sumMeter)
                 table.Rows.Add()
+
+                totalCount += sumCount
+                totalNet += sumNetWeight
+                totalMeter += sumMeter
             Next
 
-            ' 將 DataTable 寫入一個二維陣列
-            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+            '寫入總計
+            DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThick)
+            table.Rows.Add("", "(總計)", totalCount, totalNet, totalMeter)
 
-            ' 寫入資料
-            For i = 0 To table.Rows.Count - 1
-                For j = 0 To table.Columns.Count - 1
-                    objectArray(i, j) = table.Rows(i)(j)
-                Next
-            Next
-
-            ' 一次性將二維陣列寫入 Excel
-            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
-            range.Value = objectArray
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -696,7 +692,6 @@ Namespace ReportGenerators
                 Case "出貨"
                     person = "客戶"
                 Case Else
-
             End Select
 
             cells(1, 1) = $"{person}每日 {inOut} 產品統計表"
@@ -723,58 +718,45 @@ Namespace ReportGenerators
                             Key Customer,
                             Key Day,
                             Key Product,
+                            Group.Count,
                             .SumNetWeight = Group.Sum(Function(row) Double.Parse(row("淨重"))),
                             .SumMeter = Group.Sum(Function(row) Double.Parse(row("米數")))
             }
 
             '建立 DataTable
             Dim table As New Data.DataTable()
-            For i As Integer = 1 To 6
+
+            For i As Integer = 1 To 5
                 table.Columns.Add()
             Next
 
             For Each cusGroup In datas.GroupBy(Function(x) x.Customer).OrderBy(Function(x) x.Key)
+                Dim totalCount As Integer = 0
+                Dim totalNet As Double = 0
+                Dim totalMeter As Double = 0
+
                 table.Rows.Add("客戶:" & cusGroup.Key)
-                DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
+                DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
 
                 For Each dayGroup In cusGroup.GroupBy(Function(x) x.Day).OrderBy(Function(x) x.Key)
-                    table.Rows.Add("日期:" & dayGroup.Key)
-                    DrawLine(table.Rows.Count + 2, 1, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
+                    table.Rows.Add(dayGroup.Key)
 
-                    Dim totalCount As Integer = 0
-                    Dim totalNetWeight As Double = 0
-                    Dim totalMeter As Double = 0
+                    For Each prodGroup In dayGroup
+                        table.Rows.Add("", prodGroup.Product, prodGroup.Count, prodGroup.SumNetWeight, prodGroup.SumMeter)
+                        DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
 
-                    For Each prodGroup In dayGroup.GroupBy(Function(x) x.Product).OrderBy(Function(x) x.Key)
-                        Dim sumNetWeight = prodGroup.First().SumNetWeight
-                        Dim sumMeter = prodGroup.First().SumMeter
-
-                        table.Rows.Add(prodGroup.Key, prodGroup.Count, sumNetWeight, sumMeter)
-                        DrawLine(table.Rows.Count + 2, 4, 1, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
-
-                        totalNetWeight += sumNetWeight
-                        totalMeter += sumMeter
+                        totalNet += prodGroup.SumNetWeight
+                        totalMeter += prodGroup.SumMeter
                         totalCount += prodGroup.Count
                     Next
-
-                    table.Rows.Add("(小計)", totalCount, totalNetWeight, totalMeter)
-                    table.Rows.Add()
                 Next
+
+                DrawLine(table.Rows.Count + 2, 1, 5, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
+                table.Rows.Add("總計", "", totalCount, totalNet, totalMeter)
+                table.Rows.Add()
             Next
 
-            ' 將 DataTable 寫入一個二維陣列
-            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
-
-            ' 寫入資料
-            For i = 0 To table.Rows.Count - 1
-                For j = 0 To table.Columns.Count - 1
-                    objectArray(i, j) = table.Rows(i)(j)
-                Next
-            Next
-
-            ' 一次性將二維陣列寫入 Excel
-            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 3, table.Columns.Count))
-            range.Value = objectArray
+            WriteToExcel(table)
         End Sub
 
         ''' <summary>
@@ -801,42 +783,34 @@ Namespace ReportGenerators
                       "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
                       "AND [進/出] = @inOut "
             Dim dt = SelectTable(AppendConditionsToSQL(sql, dicCondition), dic)
+            Dim sumWeight As Double
+            Dim sumEmptyWeight As Double
+            Dim sumNetWeight As Double
+            Dim sumMeter As Double
 
-            Dim rowIndex = 3
+            '建立 DataTable
+            Dim table As New Data.DataTable()
+            For i As Integer = 1 To 8
+                table.Columns.Add()
+            Next
 
-            Dim sumWeight As Double = 0
-            Dim sumEmptyWeight As Double = 0
-            Dim sumNetWeight As Double = 0
-            Dim sumMeter As Double = 0
-
-            'todo 改善寫入速度
             For Each row As DataRow In dt.Rows
                 Dim weight As Double = Math.Round(row("總重"), 3)
                 Dim emptyWeight As Double = Math.Round(row("空重"), 3)
                 Dim netWeight As Double = Math.Round(row("淨重"), 3)
-                Dim meter As Double = Math.Round(row("米數"), 3)
+                Dim meter As Double = row("米數")
 
-                cells(rowIndex, 1) = row("磅單序號")
-                cells(rowIndex, 2) = row("客戶/廠商")
-                cells(rowIndex, 3) = row("車牌號碼")
-                cells(rowIndex, 4) = row("產品名稱")
-                cells(rowIndex, 5) = weight
+                table.Rows.Add(row("磅單序號"), row("客戶/廠商"), row("車牌號碼"), row("產品名稱"), weight, emptyWeight, netWeight, "'" & meter.ToString("F2"))
                 sumWeight += weight
-                cells(rowIndex, 6) = emptyWeight
                 sumEmptyWeight += emptyWeight
-                cells(rowIndex, 7) = netWeight
                 sumNetWeight += netWeight
-                cells(rowIndex, 8) = meter
                 sumMeter += meter
-
-                rowIndex += 1
             Next
 
-            cells(rowIndex, 4) = "(總計)"
-            cells(rowIndex, 5) = sumWeight
-            cells(rowIndex, 6) = sumEmptyWeight
-            cells(rowIndex, 7) = sumNetWeight
-            cells(rowIndex, 8) = sumMeter
+            DrawLine(table.Rows.Count + 2, 1, 8, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+            table.Rows.Add("", "(總計)", dt.Rows.Count, "", sumWeight, sumEmptyWeight, sumNetWeight, "'" & Math.Round(sumMeter, 3).ToString("F2"))
+
+            WriteToExcel(table)
         End Sub
 
         Public Sub CreateNewReport(sheetName As String)
@@ -912,5 +886,22 @@ Namespace ReportGenerators
 
             Return sb.ToString
         End Function
+
+
+        Public Sub WriteToExcel(table As Data.DataTable)
+            ' 將 DataTable 寫入一個二維陣列
+            Dim objectArray(table.Rows.Count, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel
+            Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 2, table.Columns.Count))
+            range.Value = objectArray
+        End Sub
     End Class
 End Namespace

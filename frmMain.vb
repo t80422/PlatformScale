@@ -443,7 +443,7 @@ Public Class frmMain
         Dim filePath = Path.Combine(folder, fileName)
         Dim pdfFilePath = Path.Combine(folder, "test.pdf")
 
-        '檢查PDF是否開啟,有就關閉
+#Region "檢查PDF是否開啟"
         Dim processes = Process.GetProcessesByName("AcroRd32")
 
         For Each process In processes
@@ -452,6 +452,7 @@ Public Class frmMain
                 process.WaitForExit()
             End If
         Next
+#End Region
 
         Using fs = New FileStream(filePath, FileMode.Open, FileAccess.Read)
             Using sr = New StreamReader(fs)
@@ -460,6 +461,7 @@ Public Class frmMain
                 '取代文字
                 Dim regex As New Regex("\[\$(.*?)\]")
                 Dim matches = regex.Matches(lines)
+
                 For Each match As Match In matches
                     Dim columnName = match.Groups(1).Value
                     Dim value As String = GetColumnValue(data, columnName)
@@ -469,9 +471,11 @@ Public Class frmMain
                 '另存成PDF
                 Using pdf = New PdfDocument(New PdfWriter(pdfFilePath))
                     '設定中文字型
-                    Dim fontProvider = New DefaultFontProvider
-                    fontProvider.AddFont("c:/windows/Fonts/MSMINCHO.TTF")
-                    fontProvider.AddFont("c:/windows/Fonts/STSONG.TTF")
+                    Dim fontProvider = New DefaultFontProvider(False, False, False)
+
+                    fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
+                    fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
+
                     Dim cp = New ConverterProperties
                     cp.SetFontProvider(fontProvider)
 
@@ -1494,7 +1498,7 @@ Finish:
                         {"車牌號碼", cmbCarNo_report.Text}
                     }
 
-                    exlReport.GenerateMonthlyProductStats(nudYear.Value, nudMonth.Value, inOut, dicMonthProd)
+                    exlReport.GenerateMonthlyProductStats(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dicMonthProd)
 
                 Case "日報統計表(產品)"
                     Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value)
@@ -1539,6 +1543,7 @@ Finish:
 
         nudDay_start.Maximum = Date.DaysInMonth(nudYear.Value, nudMonth.Value)
         nudDay_end.Maximum = Date.DaysInMonth(nudYear.Value, nudMonth.Value)
+        nudDay_end.Value = nudDay_end.Maximum
     End Sub
 
     Private Sub CliSupButton_CheckedChanged(sender As Object, e As EventArgs) Handles rdoCustomer.CheckedChanged, rdoSupplier.CheckedChanged

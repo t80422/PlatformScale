@@ -205,6 +205,7 @@ Partial Class frmMain
         Me.dgv貨品 = New System.Windows.Forms.DataGridView()
         Me.btnQuery_貨品 = New System.Windows.Forms.Button()
         Me.tpReport = New System.Windows.Forms.TabPage()
+        Me.chkExcel = New System.Windows.Forms.CheckBox()
         Me.Label56 = New System.Windows.Forms.Label()
         Me.cmbCarNo_report = New System.Windows.Forms.ComboBox()
         Me.lblCliSup = New System.Windows.Forms.Label()
@@ -270,7 +271,6 @@ Partial Class frmMain
         Me.tpLogout = New System.Windows.Forms.TabPage()
         Me.tmr過磅 = New System.Windows.Forms.Timer(Me.components)
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
-        Me.chkExcel = New System.Windows.Forms.CheckBox()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -2393,6 +2393,16 @@ Partial Class frmMain
         Me.tpReport.Text = "報   表"
         Me.tpReport.UseVisualStyleBackColor = True
         '
+        'chkExcel
+        '
+        Me.chkExcel.AutoSize = True
+        Me.chkExcel.Location = New System.Drawing.Point(799, 100)
+        Me.chkExcel.Name = "chkExcel"
+        Me.chkExcel.Size = New System.Drawing.Size(135, 25)
+        Me.chkExcel.TabIndex = 316
+        Me.chkExcel.Text = "生成Excel"
+        Me.chkExcel.UseVisualStyleBackColor = True
+        '
         'Label56
         '
         Me.Label56.AutoSize = True
@@ -3092,16 +3102,6 @@ Partial Class frmMain
         '
         Me.tmrScale.Interval = 500
         '
-        'chkExcel
-        '
-        Me.chkExcel.AutoSize = True
-        Me.chkExcel.Location = New System.Drawing.Point(799, 100)
-        Me.chkExcel.Name = "chkExcel"
-        Me.chkExcel.Size = New System.Drawing.Size(135, 25)
-        Me.chkExcel.TabIndex = 316
-        Me.chkExcel.Text = "生成Excel"
-        Me.chkExcel.UseVisualStyleBackColor = True
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3113,7 +3113,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V0.6.0"
+        Me.Text = "原綱衡器過磅系統 V0.10"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
