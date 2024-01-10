@@ -1,15 +1,19 @@
 ﻿Imports System.IO
 Imports System.IO.Ports
 Imports System.Text.RegularExpressions
+Imports System.Windows
 Imports System.Windows.Forms.Application
 Imports iText.Html2pdf
 Imports iText.Html2pdf.Resolver.Font
+Imports iText.Kernel.Geom
 Imports iText.Kernel.Pdf
 Imports iText.Layout
 Imports Microsoft.Office.Interop.Excel
 Imports PlatformScale.ReportGenerators
-Imports TextBox = System.Windows.Forms.TextBox
+Imports Application = System.Windows.Forms.Application
 Imports DataTable = System.Data.DataTable
+Imports Path = System.IO.Path
+Imports TextBox = System.Windows.Forms.TextBox
 
 Public Class frmMain
     Public permissions As Integer '權限等級
@@ -20,6 +24,7 @@ Public Class frmMain
     Private portClose As Boolean
     Private spAClose As Integer 'Port停止傳訊息就表示關閉了,此變數用來紀錄逾時
     Private spBClose As Integer 'Port停止傳訊息就表示關閉了,此變數用來紀錄逾時
+    Private tempModify As Date '暫存最後更新時間
 
     Private Enum enumWho
         客戶
@@ -28,7 +33,7 @@ Public Class frmMain
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         '檢查資料夾是否存在
-        Dim folderPath As String = Path.Combine(StartupPath, "Report")
+        Dim folderPath As String = IO.Path.Combine(StartupPath, "Report")
         If Not Directory.Exists(folderPath) Then Directory.CreateDirectory(folderPath)
 
         InitDataGrid()
@@ -56,7 +61,29 @@ Public Class frmMain
         InitRcepStyle()
 
         InitReportCombobox()
+
+        tempModify = GetModifyTime()
+
+        SetCheckTime()
+
     End Sub
+
+    ''' <summary>
+    ''' 設定資料更新頻率
+    ''' </summary>
+    Private Sub SetCheckTime()
+        Dim sec = GetCheckTime()
+        txtDBCheck.Text = sec
+        tmrCheckModify.Interval = sec * 1000
+    End Sub
+
+    ''' <summary>
+    ''' 取得資料更新頻率
+    ''' </summary>
+    ''' <returns></returns>
+    Private Function GetCheckTime() As Integer
+        Return SelectTable("SELECT 檢查時間 FROM 資料更新").Rows(0)("檢查時間")
+    End Function
 
     Private Sub InitReportCombobox()
         cmbProduct_report.Items.Add("全部")
@@ -77,27 +104,44 @@ Public Class frmMain
     Private Sub InitRcepStyle()
         '設定 系統設定-過磅單樣式 cmb
         Dim dic = New Dictionary(Of String, String) From {
-            {"直式", "A"},
-            {"橫式", "B"}
-        }
+        {"直式", "A"},
+        {"橫式", "B"},
+        {"直式三聯", "C"}
+    }
+
         With cmbRcepStyle
             For Each kvp In dic
-                .Items.Add(kvp)
+                .Items.Add(New KeyValuePair(Of String, String)(kvp.Key, kvp.Value))
             Next
             .DisplayMember = "Key"
+            .ValueMember = "Value"
         End With
 
         '載入設定檔
-        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
+        Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
         If Not File.Exists(filePath) Then
             File.Create(filePath).Close()
             Exit Sub
         Else
-            For Each kvp In dic
-                If kvp.Value = File.ReadAllText(filePath) Then
-                    cmbRcepStyle.SelectedItem = kvp
-                    Exit For
-                End If
+            Dim lines = File.ReadAllLines(filePath)
+            For Each line In lines
+                Dim parts = Split(line, ":")
+                Select Case parts(0)
+                    Case "type"
+                        Dim selectedType = parts(1)
+                        For Each item As KeyValuePair(Of String, String) In cmbRcepStyle.Items
+                            If item.Value = selectedType Then
+                                cmbRcepStyle.SelectedItem = item
+                                Exit For
+                            End If
+                        Next
+                    Case "title"
+                        chkCustomizeTitle.Checked = Convert.ToBoolean(parts(1))
+                    Case "text"
+                        txtCustomizeTitle.Text = parts(1)
+                    Case Else
+                        ' 其他情況
+                End Select
             Next
         End If
     End Sub
@@ -133,9 +177,9 @@ Public Class frmMain
     Private Sub SetScaleSign()
         Dim aCircle As New Drawing2D.GraphicsPath
         aCircle.AddEllipse(New RectangleF(0, 0, 50, 50))
-        lblA.Size = New Size(50, 50)
+        lblA.Size = New System.Drawing.Size(50, 50)
         lblA.Region = New Region(aCircle)
-        lblB.Size = New Size(50, 50)
+        lblB.Size = New System.Drawing.Size(50, 50)
         lblB.Region = New Region(aCircle)
     End Sub
 
@@ -179,18 +223,18 @@ Public Class frmMain
         Select Case nowScale
             Case "A"
                 With lblA
-                    If .BackColor = Color.White Then
-                        .BackColor = Color.Red
+                    If .BackColor = System.Drawing.Color.White Then
+                        .BackColor = System.Drawing.Color.Red
                     Else
-                        .BackColor = Color.White
+                        .BackColor = System.Drawing.Color.White
                     End If
                 End With
             Case "B"
                 With lblB
-                    If .BackColor = Color.White Then
-                        .BackColor = Color.Red
+                    If .BackColor = System.Drawing.Color.White Then
+                        .BackColor = System.Drawing.Color.Red
                     Else
-                        .BackColor = Color.White
+                        .BackColor = System.Drawing.Color.White
                     End If
                 End With
         End Select
@@ -204,10 +248,10 @@ Public Class frmMain
         Select Case AorB
             Case "A"
                 nowScale = AorB
-                lblB.BackColor = Color.White
+                lblB.BackColor = System.Drawing.Color.White
             Case "B"
                 nowScale = AorB
-                lblA.BackColor = Color.White
+                lblA.BackColor = System.Drawing.Color.White
         End Select
         tmrScale.Enabled = True
     End Sub
@@ -425,7 +469,8 @@ Public Class frmMain
 
         If cmbRcepStyle.SelectedIndex = -1 Then
             MsgBox("請到系統設定先設定過磅單樣式")
-            GoTo Finish
+            Cursor = Cursors.Default
+            Return
         End If
 
         Dim type = cmbRcepStyle.SelectedItem.value
@@ -437,56 +482,76 @@ Public Class frmMain
                 fileName = "直式.html"
             Case "B"
                 fileName = "橫式.html"
+            Case "C"
+                fileName = "直式三聯.html"
         End Select
 
-        Dim folder = Path.Combine(StartupPath, "Rcep")
-        Dim filePath = Path.Combine(folder, fileName)
-        Dim pdfFilePath = Path.Combine(folder, "test.pdf")
+        Dim folder = IO.Path.Combine(StartupPath, "Rcep")
+        Dim filePath = IO.Path.Combine(folder, fileName)
+        Dim pdfFilePath = IO.Path.Combine(folder, "test.pdf")
 
-#Region "檢查PDF是否開啟"
-        Dim processes = Process.GetProcessesByName("AcroRd32")
-
-        For Each process In processes
-            If pdfFilePath = process.MainModule.FileName Then
-                process.CloseMainWindow()
-                process.WaitForExit()
-            End If
-        Next
-#End Region
+        CloseOpenPDF(pdfFilePath)
 
         Using fs = New FileStream(filePath, FileMode.Open, FileAccess.Read)
             Using sr = New StreamReader(fs)
                 Dim lines = sr.ReadToEnd
 
                 '取代文字
-                Dim regex As New Regex("\[\$(.*?)\]")
-                Dim matches = regex.Matches(lines)
-
-                For Each match As Match In matches
-                    Dim columnName = match.Groups(1).Value
-                    Dim value As String = GetColumnValue(data, columnName)
-                    lines = lines.Replace(match.Value, value)
-                Next
+                lines = ReplaceTemplateText(lines, data)
 
                 '另存成PDF
-                Using pdf = New PdfDocument(New PdfWriter(pdfFilePath))
-                    '設定中文字型
-                    Dim fontProvider = New DefaultFontProvider(False, False, False)
-
-                    fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
-                    fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
-
-                    Dim cp = New ConverterProperties
-                    cp.SetFontProvider(fontProvider)
-
-                    HtmlConverter.ConvertToPdf(lines, pdf, cp)
-                End Using
+                SaveAsPDF(lines, pdfFilePath)
             End Using
         End Using
 
-        Process.Start(pdfFilePath)
-Finish:
+        Dim printDialog As New PrintDialog
+
+        PrintPDF(pdfFilePath, type)
+
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub CloseOpenPDF(pdfFilePath As String)
+        Dim processes = Process.GetProcessesByName("AcroRd32")
+        For Each process In processes
+            If pdfFilePath = process.MainModule.FileName Then
+                process.CloseMainWindow()
+                process.WaitForExit()
+            End If
+        Next
+    End Sub
+
+    Private Function ReplaceTemplateText(template As String, data As DataTable) As String
+        Dim regex As New Regex("\[\$(.*?)\]")
+        Dim matches = regex.Matches(template)
+
+        For Each match As Match In matches
+            Dim columnName = match.Groups(1).Value
+            Dim replacement As String
+
+            If columnName = "抬頭" Then
+                replacement = If(chkCustomizeTitle.Checked, txtCustomizeTitle.Text, "")
+            Else
+                replacement = GetColumnValue(data, columnName)
+            End If
+
+            template = template.Replace(match.Value, replacement)
+        Next
+
+        Return template
+    End Function
+
+    Private Sub SaveAsPDF(htmlContent As String, pdfFilePath As String)
+        Using pdf = New iText.Kernel.Pdf.PdfDocument(New PdfWriter(pdfFilePath))
+            Dim fontProvider = New DefaultFontProvider(False, False, False)
+            fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
+            fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
+
+            Dim cp = New ConverterProperties
+            cp.SetFontProvider(fontProvider)
+
+            HtmlConverter.ConvertToPdf(htmlContent, pdf, cp)
+        End Using
     End Sub
 
     Private Function GetColumnValue(data As DataTable, columnName As String) As String
@@ -659,6 +724,8 @@ Finish:
         cmbCarNo.Enabled = False
         cmbProduct.Enabled = False
         txtTPM.ReadOnly = True
+        lblWarningModify.Visible = False
+
     End Sub
 
     '清除-系統設定-權限設定
@@ -924,6 +991,7 @@ Finish:
         End If
         SetCmbCliManu(cm)
 Finish:
+        UpdateModifyTime()
         btnClear_過磅.PerformClick()
         MsgBox("儲存成功")
     End Sub
@@ -1065,8 +1133,10 @@ Finish:
     '儲存-系統設定-遠端備份
     Private Sub btnRemote_Click(sender As Object, e As EventArgs) Handles btnRemote.Click
         txtRemote.Enabled = False
+
         If Not String.IsNullOrWhiteSpace(txtRemote.Text) Then
             Dim dic As New Dictionary(Of String, String) From {{txtRemote.Tag, txtRemote.Text}}
+
             If UpdateTable("遠端備份資料表", dic, "1=1") Then
                 lblRemote.Text = SelectTable($"SELECT IP FROM 遠端備份資料表").Rows(0)("IP")
                 txtRemote.Clear()
@@ -1075,17 +1145,32 @@ Finish:
                 Exit Sub
             End If
         End If
+
         lblBackUping.Visible = True
+
         If lblRemote.Text.EndsWith("\") Then lblRemote.Text = lblRemote.Text.Remove(lblRemote.Text.Length - 1)
-        Dim dbPath = lblRemote.Text + "\db4UGWS.mdb"
+
+        Dim sourcePath As String
+
+        Using reader As New StreamReader(Path.Combine(StartupPath, "DB.set"))
+            sourcePath = reader.ReadLine
+        End Using
+
+        Dim dbPath = lblRemote.Text & "\db4UGWS.mdb"
         Dim logPath = lblRemote.Text + "\DBBackUp.log"
-        Try
-            File.Copy(StartupPath + "\db4UGWS.mdb", dbPath, True)
-            File.AppendAllText(logPath, Now.ToString("yyyy/MM/dd HH:mm:ss") & vbCrLf)
-            MsgBox("備份成功")
-        Catch ex As Exception
-            MsgBox(ex.Message)
-        End Try
+
+        If Not String.IsNullOrEmpty(sourcePath) Then
+            Try
+                File.Copy(sourcePath, dbPath, True)
+                File.AppendAllText(logPath, Now.ToString("yyyy/MM/dd HH:mm:ss") & vbCrLf)
+                MsgBox("備份成功")
+            Catch ex As Exception
+                MsgBox(ex.Message)
+            End Try
+        Else
+            MsgBox("未指定來源資料庫")
+        End If
+
         txtRemote.Enabled = True
         lblBackUping.Visible = False
     End Sub
@@ -1250,6 +1335,7 @@ Finish:
         If MsgBox("確定要刪除?", vbYesNo, "警告") = MsgBoxResult.No Then Exit Sub
         Dim dic As New Dictionary(Of String, String) From {{"磅單序號", txtRcepNo.Text}}
         If DeleteTable("過磅資料表", dic) Then
+            UpdateModifyTime()
             btnClear_過磅.PerformClick()
             MsgBox("刪除成功")
         End If
@@ -1417,7 +1503,11 @@ Finish:
 
     Private Sub frmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
         portClose = True
-        End
+        Try
+            End
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles tabMain.SelectedIndexChanged
@@ -1450,15 +1540,6 @@ Finish:
         Dim row = dgvPort.SelectedRows(0)
         If row.Index = -1 Then Exit Sub
         GetDataToControls(grpPort, row)
-    End Sub
-
-    '系統設定-過磅單樣式
-    Private Sub cmbRcepStyle_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbRcepStyle.SelectionChangeCommitted
-        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
-        If File.Exists(filePath) Then
-            Dim item = cmbRcepStyle.SelectedItem
-            File.WriteAllText(filePath, item.value)
-        End If
     End Sub
 
     Private Sub btnPrint_report_Click(sender As Object, e As EventArgs) Handles btnPrint_report.Click
@@ -1575,6 +1656,65 @@ Finish:
 
         If cmbCliSup_report.Text <> "全部" Then
             cmbCarNo_report.Items.AddRange(SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車主 = '{cmbCliSup_report.Text}'").AsEnumerable().Select(Function(row) row("車號")).ToArray())
+        End If
+    End Sub
+
+    Private Sub btnSave_rcep_Click(sender As Object, e As EventArgs) Handles btnSave_rcep.Click
+        Try
+            Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
+            Dim kvp As KeyValuePair(Of String, String) = cmbRcepStyle.SelectedItem
+            Dim content = "type:" & kvp.Value & vbCrLf &
+                "title:" & chkCustomizeTitle.Checked & vbCrLf &
+                "text:" & txtCustomizeTitle.Text
+            File.WriteAllText(filePath, content)
+
+            '存過磅單偏移
+            WriteRecpMargin(kvp.Key, txtRcepLeft.Text, txtRcepRTop.Text)
+
+            MsgBox("存檔成功")
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cmbRcepStyle_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRcepStyle.SelectedIndexChanged
+        Dim cmb As ComboBox = sender
+        Dim margins = RoadRecpMargin(cmb.SelectedItem.key)
+        txtRcepLeft.Text = margins(0)
+        txtRcepRTop.Text = margins(1)
+    End Sub
+
+    ''' <summary>
+    ''' 更新最後操作的時間
+    ''' </summary>
+    Private Sub UpdateModifyTime()
+        Dim time = Date.Now
+        Dim dic = New Dictionary(Of String, String) From {{"更新時間", time.ToString}}
+        UpdateTable("資料更新", dic, "編號 = 1")
+        tempModify = time
+    End Sub
+
+    Private Sub tmrCheckModify_Tick(sender As Object, e As EventArgs) Handles tmrCheckModify.Tick
+        Dim time = GetModifyTime()
+
+        If tempModify.ToString <> time.ToString AndAlso Not lblWarningModify.Visible Then
+            lblWarningModify.Visible = True
+            tempModify = time
+        End If
+    End Sub
+
+    Private Function GetModifyTime() As Date
+        Dim dic = New Dictionary(Of String, Object) From {{"編號", 1}}
+        SetCheckTime()
+        Return SelectTable("SELECT * FROM 資料更新", dic).Rows(0).Field(Of Date)("更新時間")
+    End Function
+
+    Private Sub btnSave_dbCheck_Click(sender As Object, e As EventArgs) Handles btnSave_dbCheck.Click
+        Dim dic = New Dictionary(Of String, String) From {{"檢查時間", txtDBCheck.Text}}
+        If UpdateTable("資料更新", dic, "編號 = 1") Then
+            SetCheckTime()
+            MsgBox("儲存成功")
         End If
     End Sub
 End Class

@@ -1,4 +1,10 @@
-﻿Module Utility
+﻿Imports System.Drawing.Printing
+Imports System.IO
+Imports System.Text.RegularExpressions
+Imports System.Windows
+Imports Application = System.Windows.Forms.Application
+
+Module Utility
     ''' <summary>
     ''' 設定DataGridView的樣式屬性
     ''' </summary>
@@ -7,8 +13,8 @@
         For Each dgv In GetControlInParent(Of DataGridView)(ctrl)
             With dgv
                 .SelectionMode = DataGridViewSelectionMode.FullRowSelect
-                .ColumnHeadersDefaultCellStyle.Font = New Font("標楷體", 12, FontStyle.Bold)
-                .DefaultCellStyle.Font = New Font("標楷體", 12, FontStyle.Bold)
+                .ColumnHeadersDefaultCellStyle.Font = New Font("標楷體", 12, Drawing.FontStyle.Bold)
+                .DefaultCellStyle.Font = New Font("標楷體", 12, Drawing.FontStyle.Bold)
                 .AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(224, 224, 224)
                 .EnableHeadersVisualStyles = False
                 .ColumnHeadersDefaultCellStyle.BackColor = Color.MediumTurquoise
@@ -58,6 +64,7 @@
             End If
         Next
     End Sub
+
     ''' <summary>
     ''' 清空指定控制項內的控制項
     ''' </summary>
@@ -199,4 +206,97 @@
         Return True
     End Function
 
+    Public Sub PrintPDF(filePath As String, type As String)
+        Dim printerSettings As New PrinterSettings()
+
+        Select Case type
+            Case "A"
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 310, 598)
+            Case "B"
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 700, 401)
+            Case "C"
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 858, 708)
+            Case Else
+
+        End Select
+
+        Using document As PdfiumViewer.PdfDocument = PdfiumViewer.PdfDocument.Load(filePath)
+            Dim printDocument As PrintDocument = document.CreatePrintDocument()
+            printDocument.PrinterSettings = printerSettings
+            printDocument.PrintController = New StandardPrintController()
+            printDocument.Print()
+        End Using
+    End Sub
+
+    ''' <summary>
+    ''' 讀取過磅單偏移
+    ''' </summary>
+    ''' <param name="style">直式、橫式</param>
+    ''' <returns></returns>
+    Public Function RoadRecpMargin(style As String) As Double()
+        Dim filePath As String = Path.Combine(Forms.Application.StartupPath, "Rcep", style & ".html")
+        Dim margin_left As String = ""
+        Dim margin_top As String = ""
+        Dim arr() As Double = {0, 0}
+
+        Try
+            Using reader As New StreamReader(filePath)
+                Dim line As String
+
+                Do While (reader.Peek() >= 0)
+                    line = reader.ReadLine()
+                    If line.Contains("div class=""form-wrap""") Then
+                        Dim match As Match = Regex.Match(line, "margin-left: (-?[\d\.]+)cm;margin-top: (-?[\d\.]+)cm;")
+
+                        If match.Success Then
+                            margin_left = match.Groups(1).Value
+                            margin_top = match.Groups(2).Value
+                            Exit Do
+                        End If
+                    End If
+                Loop
+            End Using
+
+            Dim left As Double
+            Dim top As Double = 0.0
+            Double.TryParse(margin_left, left)
+            Double.TryParse(margin_top, top)
+
+            arr = {left, top}
+
+        Catch ex As Exception
+            MsgBox(ex)
+        End Try
+
+        Return arr
+    End Function
+
+    Public Sub WriteRecpMargin(style As String, left As Double, top As Double)
+        Dim filePath As String = Path.Combine(Forms.Application.StartupPath, "Rcep", style & ".html")
+        Dim fileContent As String = File.ReadAllText(filePath)
+        Dim newStyle As String = $"margin-left: {left}cm;margin-top: {top}cm;"
+        Dim pattern As String = "(div class=""form-wrap"" style="")[^""]*"
+        Dim replacement As String = "${1}" & newStyle
+        fileContent = Regex.Replace(fileContent, pattern, replacement)
+        File.WriteAllText(filePath, fileContent)
+    End Sub
+
+    Public Sub CreateOrUpdateConfigFile(fileName As String, content As String)
+        Try
+            Dim filePath = Path.Combine(Application.StartupPath, fileName)
+            File.WriteAllText(filePath, content)
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
+
+    Public Function ReadConfigFile(fileName As String) As String()
+        Try
+            Return File.ReadAllLines(Path.Combine(Application.StartupPath, fileName))
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return Nothing
+        End Try
+    End Function
 End Module
+

@@ -661,7 +661,7 @@ Namespace ReportGenerators
                 Next
 
                 ' 寫入小計
-                table.Rows.Add("", "", sumCount, sumNetWeight, sumMeter)
+                table.Rows.Add("", "(小計)", sumCount, sumNetWeight, sumMeter)
                 table.Rows.Add()
 
                 totalCount += sumCount

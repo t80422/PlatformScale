@@ -1,16 +1,55 @@
-﻿Imports System.Configuration
-Imports System.Data.OleDb
+﻿Imports System.Data.OleDb
+Imports System.IO
 
 Module modAccess
     Public conn As OleDbConnection
     Private title As String = "資料庫"
+    Private dataSource As String
+    Private passWord As String
+    Private connStr As String
 
     '初始化
     Sub New()
-        Dim dataSource = ConfigurationManager.AppSettings("Data Source")
-        Dim passWord = ConfigurationManager.AppSettings("Database Password")
-        Dim connString = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
-        conn = New OleDbConnection(connString)
+        Try
+            Dim dbSet = ReadConfigFile("DB.set")
+
+            If dbSet Is Nothing Then
+                SetDatabase()
+            Else
+                '檢查Db是否在位置上
+                If Not File.Exists(dbSet(0)) Then SetDatabase()
+                dataSource = dbSet(0)
+                passWord = dbSet(1)
+                connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
+                conn = New OleDbConnection(connStr)
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+
+        TestConnect()
+    End Sub
+
+    Public Sub TestConnect()
+        Try
+            conn.Open()
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            SetDatabase()
+        End Try
+        conn.Close()
+    End Sub
+
+    Public Sub SetDatabase()
+        dataSource = InputBox("請輸入資料庫路徑")
+        If dataSource = "" Then End
+
+        passWord = InputBox("請輸入密碼")
+
+        Dim content = dataSource & vbCrLf & passWord
+        CreateOrUpdateConfigFile("DB.set", content)
+        connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
+        conn = New OleDbConnection(connStr)
     End Sub
 
     ''' <summary>
@@ -20,6 +59,7 @@ Module modAccess
     ''' <returns></returns>
     Public Function SelectTable(sSQL As String) As DataTable
         Dim dt As New DataTable()
+
         Try
             conn.Open()
             Using cmd As New OleDbCommand(sSQL, conn)
@@ -29,7 +69,9 @@ Module modAccess
         Catch ex As Exception
             MsgBox(ex.Message, MsgBoxStyle.Exclamation, title)
         End Try
+
         conn.Close()
+
         Return dt
     End Function
 
