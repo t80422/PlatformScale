@@ -10,7 +10,7 @@ Imports iText.Kernel.Pdf
 Imports iText.Layout
 Imports Microsoft.Office.Interop.Excel
 Imports PlatformScale.ReportGenerators
-Imports Application = System.Windows.Forms.Application
+Imports Button = System.Windows.Forms.Button
 Imports DataTable = System.Data.DataTable
 Imports Path = System.IO.Path
 Imports TextBox = System.Windows.Forms.TextBox
@@ -882,6 +882,73 @@ Public Class frmMain
             Exit Sub
         End If
 
+        '臨時客戶/廠商,新增到資料表
+        Dim cm As enumWho
+        If cmbCliManu.SelectedIndex = -1 Then
+            Dim table As String = ""
+
+            '判斷是客戶還是廠商
+            Select Case lblCliManu.Text
+                Case "客    戶"
+                    table = "客戶資料表"
+                    cm = enumWho.客戶
+                Case "廠    商"
+                    table = "廠商資料表"
+                    cm = enumWho.廠商
+            End Select
+
+            '檢查是否重複
+            If SelectTable($"SELECT 簡稱 FROM {table} WHERE 簡稱 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
+                '取得代號
+                Dim dtNo = SelectTable($"SELECT TOP 1 代號 FROM {table} ORDER BY 代號 DESC")
+                Dim no As String = 0
+                If dtNo.Rows.Count > 0 Then
+                    Dim input = dtNo.Rows(0)("代號")
+                    Dim patternDigits = "\d+"
+                    Dim match = Regex.Match(input, patternDigits)
+
+                    If match.Success Then
+                        Dim number = Integer.Parse(match.Value)
+                        number += 1
+                        no = Regex.Replace(input, patternDigits, number.ToString("D3"))
+                    End If
+
+                Else
+                    no = 1
+                End If
+
+                '全銜、簡稱一樣
+                Dim dic As New Dictionary(Of String, Object) From {
+                    {"代號", no},
+                    {"簡稱", cmbCliManu.Text},
+                    {"全銜", cmbCliManu.Text}
+                }
+                InserTable(table, dic)
+
+                '對應臨時客戶/廠商新增時要刷新
+                btnClear_Click(btnClear_客戶, e)
+                btnClear_Click(btnClear_廠商, e)
+            End If
+        End If
+
+        '臨時車號,新增到資料表
+        If cmbCarNo.SelectedIndex = -1 Then
+            '檢查是否重複
+            Dim car = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}'")
+            If car.Rows.Count = 0 Then
+                Dim dic As New Dictionary(Of String, Object) From {
+                    {"車主", cmbCliManu.Text},
+                    {"車號", cmbCarNo.Text}
+                }
+                InserTable("車籍資料表", dic)
+                '對應臨時車號新增時要刷新
+                btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
+            Else
+                MsgBox($"重複的車號:{cmbCarNo.Text} 原車主為{car.Rows(0)("車主")}")
+                Exit Sub
+            End If
+        End If
+
         '如果有空重時間與總重時間表示完成過磅
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) And Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then
             '檢查空重是否超過總重
@@ -933,62 +1000,6 @@ Public Class frmMain
             Exit Sub
         End If
 
-        '臨時客戶/廠商,新增到資料表
-        Dim cm As enumWho
-        If cmbCliManu.SelectedIndex = -1 Then
-            Dim table As String = ""
-
-            '判斷是客戶還是廠商
-            Select Case lblCliManu.Text
-                Case "客    戶"
-                    table = "客戶資料表"
-                    cm = enumWho.客戶
-                Case "廠    商"
-                    table = "廠商資料表"
-                    cm = enumWho.廠商
-            End Select
-
-            '檢查是否重複
-            If SelectTable($"SELECT 簡稱 FROM {table} WHERE 簡稱 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
-                '取得代號
-                Dim dtNo = SelectTable($"SELECT TOP 1 代號 FROM {table} ORDER BY 代號 DESC")
-                Dim no As String
-                If dtNo.Rows.Count > 0 Then
-                    no = dtNo.Rows(0)("代號") + 1
-                Else
-                    no = 1
-                End If
-
-                '全銜、簡稱一樣
-                Dim dic As New Dictionary(Of String, Object) From {
-                    {"代號", no},
-                    {"簡稱", cmbCliManu.Text},
-                    {"全銜", cmbCliManu.Text}
-                }
-                InserTable(table, dic)
-
-                '對應臨時客戶/廠商新增時要刷新
-                btnClear_Click(btnClear_客戶, e)
-                btnClear_Click(btnClear_廠商, e)
-            End If
-        End If
-
-        '臨時車號,新增到資料表
-        If cmbCarNo.SelectedIndex = -1 Then
-            '檢查是否重複
-            If SelectTable($"SELECT 車號 FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}' AND 車主 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
-                Dim dic As New Dictionary(Of String, Object) From {
-                    {"車主", cmbCliManu.Text},
-                    {"車號", cmbCarNo.Text}
-                }
-                InserTable("車籍資料表", dic)
-            End If
-
-            '對應臨時車號新增時要刷新
-            btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
-        Else
-            GoTo Finish
-        End If
         SetCmbCliManu(cm)
 Finish:
         UpdateModifyTime()
@@ -1410,7 +1421,7 @@ Finish:
 
     '清除-車籍資料
     Private Sub btnClear_車籍_Click(sender As Object, e As EventArgs) Handles btnClear_車籍.Click
-        Dim btn As Button = sender
+        Dim btn As Forms.Button = sender
         ClearControl(btn.Parent)
         dgv車籍.DataSource = SelectTable(GetTableAllData("車籍資料表"))
         Init車籍()
@@ -1497,7 +1508,7 @@ Finish:
 
     Private Sub lst廠商_Click(sender As Object, e As EventArgs) Handles lst廠商.Click, lst客戶.Click
         txt車主.Clear()
-        Dim lst = CType(sender, ListBox)
+        Dim lst = CType(sender, Forms.ListBox)
         txt車主.Text = lst.GetItemText(lst.SelectedItem)
     End Sub
 
