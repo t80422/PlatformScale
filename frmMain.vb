@@ -25,6 +25,8 @@ Public Class frmMain
     Private spAClose As Integer 'Port停止傳訊息就表示關閉了,此變數用來紀錄逾時
     Private spBClose As Integer 'Port停止傳訊息就表示關閉了,此變數用來紀錄逾時
     Private tempModify As Date '暫存最後更新時間
+    Private tempCarNo As String '用在車籍資料
+    Private tempCarOwner As String '用在車籍資料
 
     Private Enum enumWho
         客戶
@@ -161,7 +163,6 @@ Public Class frmMain
         lst客戶.DataSource = SelectTable("SELECT DISTINCT 簡稱 FROM 客戶資料表")
         lst客戶.DisplayMember = "簡稱"
     End Sub
-
     Private Sub Init過磅()
         '設定客戶
         SetCmbCliManu(enumWho.客戶)
@@ -803,14 +804,25 @@ Public Class frmMain
 
     '新增-車籍資料
     Private Sub txtInsert_車籍_Click(sender As Object, e As EventArgs) Handles txtInsert_車籍.Click
-        Dim dic As New Dictionary(Of String, Object) From {
-            {"車號", txtNo_車籍},
-            {"車主", txt車主}
-        }
-        Dim lst As New List(Of Object) From {txtNo_車籍}
-        If CheckInsert(sender, dic, lst, "車籍資料表") Then
+        If String.IsNullOrEmpty(txtNo_車籍.Text) Or String.IsNullOrEmpty(txt車主.Text) Then
+            MsgBox("車號 或 車主 為必填欄位")
+            Exit Sub
+        End If
+
+        If Not CheckCarNumberDuplicate(txtNo_車籍.Text, txt車主.Text) Then
+            MsgBox("重複的車號與車主")
+            Exit Sub
+        End If
+
+        '取得各欄位的值
+        Dim dic As New Dictionary(Of String, Object)
+        tp車籍.Controls.OfType(Of TextBox).ToList.ForEach(Sub(txt) dic.Add(txt.Tag.ToString, txt.Text))
+
+        If InserTable("車籍資料表", dic) Then
             btnClear_車籍.PerformClick()
             MsgBox("新增成功")
+        Else
+            MsgBox("新增失敗")
         End If
     End Sub
 
@@ -933,9 +945,8 @@ Public Class frmMain
 
         '臨時車號,新增到資料表
         If cmbCarNo.SelectedIndex = -1 Then
-            '檢查是否重複
-            Dim car = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車號 = '{cmbCarNo.Text}'")
-            If car.Rows.Count = 0 Then
+
+            If CheckCarNumberDuplicate(cmbCarNo.Text, cmbCliManu.Text) Then
                 Dim dic As New Dictionary(Of String, Object) From {
                     {"車主", cmbCliManu.Text},
                     {"車號", cmbCarNo.Text}
@@ -944,8 +955,7 @@ Public Class frmMain
                 '對應臨時車號新增時要刷新
                 btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
             Else
-                MsgBox($"重複的車號:{cmbCarNo.Text} 原車主為{car.Rows(0)("車主")}")
-                Exit Sub
+                MsgBox($"重複的車號:{cmbCarNo.Text}")
             End If
         End If
 
@@ -1006,6 +1016,18 @@ Finish:
         btnClear_過磅.PerformClick()
         MsgBox("儲存成功")
     End Sub
+
+    ''' <summary>
+    ''' 檢查車號車主是否重複
+    ''' </summary>
+    ''' <param name="carNo"></param>
+    ''' <param name="owner"></param>
+    ''' <returns></returns>
+    Private Function CheckCarNumberDuplicate(carNo As String, owner As String) As Boolean
+        '檢查是否重複
+        Dim car = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車號 = '{carNo}' AND 車主 = '{owner}'")
+        Return car.Rows.Count = 0
+    End Function
 
     ''' <summary>
     ''' 儲存過磅資料
@@ -1204,7 +1226,28 @@ Finish:
             MsgBox("權限不足,無法修改")
             Exit Sub
         End If
-        btnModify_Click(sender, e)
+
+        Dim tp = CType(sender, Button).Parent
+        Dim table As String = ""
+        Dim btn As Button = Nothing
+        Dim condition() As String = {}
+        Dim required = New List(Of String)
+
+        table = "車籍資料表"
+        btn = btnClear_車籍
+        condition = {"車號", txtNo_車籍.Text}
+        required.AddRange({"車號", "車主"})
+
+        If Not CheckText(tp, required) Then Exit Sub
+
+        '取得欄位資料
+        Dim dic As New Dictionary(Of String, String)
+        tp.Controls.OfType(Of TextBox).ToList.ForEach(Sub(txt) dic.Add(txt.Tag.ToString, txt.Text))
+
+        If Not UpdateTable(table, dic, $"車號 = '{tempCarNo}' AND 車主 = '{tempCarOwner}'") Then Exit Sub
+
+        btn.PerformClick()
+        MsgBox("修改成功")
     End Sub
 
     '刪除-系統設定-權限設定
@@ -1227,6 +1270,8 @@ Finish:
         Dim tp = dgv.Parent
         Dim selectRow = dgv.SelectedRows(0)
         GetDataToControls(tp, selectRow)
+        tempCarNo = selectRow.Cells("車號").Value
+        tempCarOwner = selectRow.Cells("車主").Value
     End Sub
 
     'dgv點擊-貨品資料
@@ -1257,12 +1302,14 @@ Finish:
     ''' <returns></returns>
     Private Function CheckInsert(sender As Button, required As Dictionary(Of String, Object), duplication As List(Of Object), table As String) As Boolean
         Dim tp = sender.Parent
-        'If Not CheckText(tp, required.ToList) Then Return False
+
         If Not CheckRequiredCol(required) Then Return False
         If Not CheckDuplication(GetTableAllData(table), duplication, tp.Controls.OfType(Of DataGridView).First) Then Return False
+
         '取得各欄位的值
         Dim dic As New Dictionary(Of String, Object)
         tp.Controls.OfType(Of TextBox).ToList.ForEach(Sub(txt) dic.Add(txt.Tag.ToString, txt.Text))
+
         '取得GruopBox裡的TextBox
         For Each grp In tp.Controls.OfType(Of GroupBox)
             grpDecimal.Controls.OfType(Of TextBox).ToList.ForEach(Sub(txt) dic.Add(txt.Tag.ToString, txt.Text))
@@ -1279,11 +1326,13 @@ Finish:
             MsgBox("權限不足,無法修改")
             Exit Sub
         End If
+
         Dim tp = CType(sender, Button).Parent
         Dim table As String = ""
         Dim btn As Button = Nothing
         Dim condition() As String = {}
         Dim required = New List(Of String)
+
         Select Case tp.Text
             Case "廠商資料"
                 table = "廠商資料表"

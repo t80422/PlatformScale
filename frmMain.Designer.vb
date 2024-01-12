@@ -158,7 +158,7 @@ Partial Class frmMain
         Me.btnClear_客戶 = New System.Windows.Forms.Button()
         Me.btnDelete_客戶 = New System.Windows.Forms.Button()
         Me.btnQuery_客戶 = New System.Windows.Forms.Button()
-        Me.tabData_Vehicle = New System.Windows.Forms.TabPage()
+        Me.tp車籍 = New System.Windows.Forms.TabPage()
         Me.Label102 = New System.Windows.Forms.Label()
         Me.Label96 = New System.Windows.Forms.Label()
         Me.btnModify_車籍 = New System.Windows.Forms.Button()
@@ -300,7 +300,7 @@ Partial Class frmMain
         CType(Me.dgv廠商, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tp客戶.SuspendLayout()
         CType(Me.dgv客戶, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.tabData_Vehicle.SuspendLayout()
+        Me.tp車籍.SuspendLayout()
         CType(Me.dgv車籍, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tp貨品.SuspendLayout()
         Me.grpT.SuspendLayout()
@@ -328,7 +328,7 @@ Partial Class frmMain
         Me.tabMain.Controls.Add(Me.tp過磅)
         Me.tabMain.Controls.Add(Me.tp廠商)
         Me.tabMain.Controls.Add(Me.tp客戶)
-        Me.tabMain.Controls.Add(Me.tabData_Vehicle)
+        Me.tabMain.Controls.Add(Me.tp車籍)
         Me.tabMain.Controls.Add(Me.tp貨品)
         Me.tabMain.Controls.Add(Me.tpReport)
         Me.tabMain.Controls.Add(Me.tpSystem)
@@ -1859,41 +1859,41 @@ Partial Class frmMain
         Me.btnQuery_客戶.TabIndex = 290
         Me.btnQuery_客戶.UseVisualStyleBackColor = False
         '
-        'tabData_Vehicle
+        'tp車籍
         '
-        Me.tabData_Vehicle.Controls.Add(Me.Label102)
-        Me.tabData_Vehicle.Controls.Add(Me.Label96)
-        Me.tabData_Vehicle.Controls.Add(Me.btnModify_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.txtInsert_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.btnClear_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.btnDel_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.btnQuery_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.lst客戶)
-        Me.tabData_Vehicle.Controls.Add(Me.lst廠商)
-        Me.tabData_Vehicle.Controls.Add(Me.Label43)
-        Me.tabData_Vehicle.Controls.Add(Me.Label44)
-        Me.tabData_Vehicle.Controls.Add(Me.txt車主)
-        Me.tabData_Vehicle.Controls.Add(Me.Label42)
-        Me.tabData_Vehicle.Controls.Add(Me.Label35)
-        Me.tabData_Vehicle.Controls.Add(Me.TextBox28)
-        Me.tabData_Vehicle.Controls.Add(Me.Label41)
-        Me.tabData_Vehicle.Controls.Add(Me.TextBox29)
-        Me.tabData_Vehicle.Controls.Add(Me.Label36)
-        Me.tabData_Vehicle.Controls.Add(Me.Label37)
-        Me.tabData_Vehicle.Controls.Add(Me.TextBox24)
-        Me.tabData_Vehicle.Controls.Add(Me.Label38)
-        Me.tabData_Vehicle.Controls.Add(Me.txtWeight_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.Label39)
-        Me.tabData_Vehicle.Controls.Add(Me.TextBox26)
-        Me.tabData_Vehicle.Controls.Add(Me.Label40)
-        Me.tabData_Vehicle.Controls.Add(Me.txtNo_車籍)
-        Me.tabData_Vehicle.Controls.Add(Me.dgv車籍)
-        Me.tabData_Vehicle.Location = New System.Drawing.Point(4, 31)
-        Me.tabData_Vehicle.Name = "tabData_Vehicle"
-        Me.tabData_Vehicle.Size = New System.Drawing.Size(1000, 666)
-        Me.tabData_Vehicle.TabIndex = 2
-        Me.tabData_Vehicle.Text = "車籍資料"
-        Me.tabData_Vehicle.UseVisualStyleBackColor = True
+        Me.tp車籍.Controls.Add(Me.Label102)
+        Me.tp車籍.Controls.Add(Me.Label96)
+        Me.tp車籍.Controls.Add(Me.btnModify_車籍)
+        Me.tp車籍.Controls.Add(Me.txtInsert_車籍)
+        Me.tp車籍.Controls.Add(Me.btnClear_車籍)
+        Me.tp車籍.Controls.Add(Me.btnDel_車籍)
+        Me.tp車籍.Controls.Add(Me.btnQuery_車籍)
+        Me.tp車籍.Controls.Add(Me.lst客戶)
+        Me.tp車籍.Controls.Add(Me.lst廠商)
+        Me.tp車籍.Controls.Add(Me.Label43)
+        Me.tp車籍.Controls.Add(Me.Label44)
+        Me.tp車籍.Controls.Add(Me.txt車主)
+        Me.tp車籍.Controls.Add(Me.Label42)
+        Me.tp車籍.Controls.Add(Me.Label35)
+        Me.tp車籍.Controls.Add(Me.TextBox28)
+        Me.tp車籍.Controls.Add(Me.Label41)
+        Me.tp車籍.Controls.Add(Me.TextBox29)
+        Me.tp車籍.Controls.Add(Me.Label36)
+        Me.tp車籍.Controls.Add(Me.Label37)
+        Me.tp車籍.Controls.Add(Me.TextBox24)
+        Me.tp車籍.Controls.Add(Me.Label38)
+        Me.tp車籍.Controls.Add(Me.txtWeight_車籍)
+        Me.tp車籍.Controls.Add(Me.Label39)
+        Me.tp車籍.Controls.Add(Me.TextBox26)
+        Me.tp車籍.Controls.Add(Me.Label40)
+        Me.tp車籍.Controls.Add(Me.txtNo_車籍)
+        Me.tp車籍.Controls.Add(Me.dgv車籍)
+        Me.tp車籍.Location = New System.Drawing.Point(4, 31)
+        Me.tp車籍.Name = "tp車籍"
+        Me.tp車籍.Size = New System.Drawing.Size(1000, 666)
+        Me.tp車籍.TabIndex = 2
+        Me.tp車籍.Text = "車籍資料"
+        Me.tp車籍.UseVisualStyleBackColor = True
         '
         'Label102
         '
@@ -3278,7 +3278,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V1.0.1"
+        Me.Text = "原綱衡器過磅系統 V1.0.2"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3300,8 +3300,8 @@ Partial Class frmMain
         Me.tp客戶.ResumeLayout(False)
         Me.tp客戶.PerformLayout()
         CType(Me.dgv客戶, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.tabData_Vehicle.ResumeLayout(False)
-        Me.tabData_Vehicle.PerformLayout()
+        Me.tp車籍.ResumeLayout(False)
+        Me.tp車籍.PerformLayout()
         CType(Me.dgv車籍, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tp貨品.ResumeLayout(False)
         Me.tp貨品.PerformLayout()
@@ -3340,7 +3340,7 @@ Partial Class frmMain
     Friend WithEvents tp過磅 As TabPage
     Friend WithEvents tp廠商 As TabPage
     Friend WithEvents tp客戶 As TabPage
-    Friend WithEvents tabData_Vehicle As TabPage
+    Friend WithEvents tp車籍 As TabPage
     Friend WithEvents tp貨品 As TabPage
     Friend WithEvents tpSystem As TabPage
     Friend WithEvents Label1 As Label

@@ -96,11 +96,11 @@ Module modAccess
     ''' <summary>
     ''' 檢查必填欄位
     ''' </summary>
-    ''' <param name="control">父控制項</param>
+    ''' <param name="container">父控制項</param>
     ''' <param name="required">必填清單</param>
     ''' <returns></returns>
-    Public Function CheckText(control As Control, required As List(Of String)) As Boolean
-        For Each txt In control.Controls.OfType(Of TextBox)().Where(Function(x) required.Contains(x.Tag.ToString) AndAlso String.IsNullOrWhiteSpace(x.Text))
+    Public Function CheckText(container As Control, required As List(Of String)) As Boolean
+        For Each txt In container.Controls.OfType(Of TextBox)().Where(Function(x) required.Contains(x.Tag.ToString) AndAlso String.IsNullOrWhiteSpace(x.Text))
             MsgBox(txt.Tag.ToString & " 不能空白")
             txt.Focus()
             Return False
