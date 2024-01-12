@@ -39,9 +39,7 @@ Public Class frmMain
         If Not Directory.Exists(folderPath) Then Directory.CreateDirectory(folderPath)
 
         InitDataGrid()
-
         Init車籍()
-
         Init過磅()
 
         '初始化權限設定的cmb權限
@@ -61,13 +59,19 @@ Public Class frmMain
         dtp過磅.Value = Now
 
         InitRcepStyle()
-
         InitReportCombobox()
-
         tempModify = GetModifyTime()
-
         SetCheckTime()
+        InitReportDate()
 
+    End Sub
+
+    ''' <summary>
+    ''' 初始化 報表-日期
+    ''' </summary>
+    Private Sub InitReportDate()
+        nudYear.Value = Now.Year
+        nudMonth.Value = Now.Month
     End Sub
 
     ''' <summary>
@@ -97,6 +101,7 @@ Public Class frmMain
         cmbCliSup_report.SelectedIndex = 0
 
         cmbCarNo_report.Items.Add("全部")
+        cmbCarNo_report.Items.AddRange(SelectTable($"SELECT 車號 FROM 車籍資料表").AsEnumerable().Select(Function(row) row("車號")).ToArray())
         cmbCarNo_report.SelectedIndex = 0
     End Sub
 
@@ -1263,8 +1268,8 @@ Finish:
         End If
     End Sub
 
-    'dgv點擊-廠商資料、客戶資料、車籍資料
-    Private Sub dgv_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv廠商.CellMouseClick, dgv客戶.CellMouseClick, dgv車籍.CellMouseClick
+    'dgv點擊-車籍資料
+    Private Sub dgv車籍_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv車籍.CellMouseClick
         Dim dgv As DataGridView = sender
         If dgv.SelectedRows.Count < 1 Then Exit Sub
         Dim tp = dgv.Parent
@@ -1272,6 +1277,14 @@ Finish:
         GetDataToControls(tp, selectRow)
         tempCarNo = selectRow.Cells("車號").Value
         tempCarOwner = selectRow.Cells("車主").Value
+    End Sub
+
+    Private Sub dgv_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv客戶.CellMouseClick, dgv廠商.CellMouseClick
+        Dim dgv As DataGridView = sender
+        If dgv.SelectedRows.Count < 1 Then Exit Sub
+        Dim tp = dgv.Parent
+        Dim selectRow = dgv.SelectedRows(0)
+        GetDataToControls(tp, selectRow)
     End Sub
 
     'dgv點擊-貨品資料
@@ -1777,4 +1790,5 @@ Finish:
             MsgBox("儲存成功")
         End If
     End Sub
+
 End Class

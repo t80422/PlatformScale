@@ -1,11 +1,6 @@
 ﻿Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Text
-Imports System.Text.RegularExpressions
-Imports System.Threading
-Imports System.Windows.Media.Media3D
-Imports iText.Bouncycastle.Asn1
-Imports iText.StyledXmlParser.Css.Validate.Impl.Datatype
 Imports Microsoft.Office.Interop.Excel
 
 Namespace ReportGenerators
