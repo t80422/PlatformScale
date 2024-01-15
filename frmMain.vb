@@ -759,6 +759,7 @@ Public Class frmMain
         Dim btn As Button = Nothing
         Dim lst As New List(Of Object)
         Dim dic As New Dictionary(Of String, Object)
+
         Select Case tp.Text
             Case "廠商資料"
                 table = "廠商資料表"
@@ -775,6 +776,17 @@ Public Class frmMain
                 dic.Add("簡稱", txtAka_客戶)
                 lst.Add(txtNo_客戶)
         End Select
+
+        Dim dicCus = New Dictionary(Of String, String) From {
+            {"代號", CType(dic("代號"), TextBox).Text},
+            {"全銜", CType(dic("全銜"), TextBox).Text},
+            {"簡稱", CType(dic("簡稱"), TextBox).Text}
+        }
+        If Not CheckDuplication("SELECT * FROM 客戶資料表", dicCus) OrElse Not CheckDuplication("SELECT * FROM 廠商資料表", dicCus) Then
+            MsgBox("重複的代號、全銜或簡稱")
+            Exit Sub
+        End If
+
         If CheckInsert(sender, dic, lst, table) Then
             btn.PerformClick()
             MsgBox("新增成功")
@@ -1109,6 +1121,13 @@ Finish:
     ''' </summary>
     ''' <returns></returns>
     Private Function Check貨品() As Boolean
+        '檢查重複
+        Dim dic = New Dictionary(Of String, String) From {{txtNo_貨品.Tag, txtNo_貨品.Text}}
+        If Not CheckDuplication("SELECT * FROM 產品資料表", dic) Then
+            MsgBox("重複代號")
+            Return False
+        End If
+
         '檢查每米噸數在選擇設定時有沒有填寫
         If rdoTSet.Checked Then
             If String.IsNullOrEmpty(txtTM.Text) Then

@@ -61,11 +61,12 @@ Module modAccess
         Dim dt As New DataTable()
 
         Try
-            conn.Open()
+            If conn.State = ConnectionState.Closed Then conn.Open()
             Using cmd As New OleDbCommand(sSQL, conn)
                 Dim adapter As New OleDbDataAdapter(cmd)
                 adapter.Fill(dt)
             End Using
+
         Catch ex As Exception
             MsgBox(ex.Message, MsgBoxStyle.Exclamation, title)
         End Try
@@ -142,6 +143,7 @@ Module modAccess
                 cmd.Parameters.AddWithValue($"@{kvp.Key}", Trim(kvp.Value))
             Next
             If cmd.ExecuteNonQuery() > 0 Then result = True
+
         Catch ex As Exception
             MsgBox(ex.Message, Title:=title)
         End Try
@@ -246,11 +248,10 @@ Module modAccess
     ''' <returns></returns>
     Public Function CheckDuplication(selectFrom As String, dic As Dictionary(Of String, String), Optional dgv As DataGridView = Nothing) As Boolean
         '修正參數List>Dictionary,如果遇到DateTimePicker就會遇到可能取的值不是想要的
-        Dim lst As List(Of String) = dic.Select(Function(kvp) $"{kvp.Key} = {kvp.Value}").ToList
-        Dim sql = selectFrom + $" WHERE {String.Join(" AND ", lst)}"
+        Dim lst As List(Of String) = dic.Select(Function(kvp) $"{kvp.Key} = '{kvp.Value}'").ToList
+        Dim sql = selectFrom + $" WHERE {String.Join(" OR ", lst)}"
         Dim dt = SelectTable(sql)
         If dt.Rows.Count > 0 Then
-            MsgBox("重複資料")
             If dgv IsNot Nothing Then dgv.DataSource = dt
             Return False
         End If
