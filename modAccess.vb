@@ -13,22 +13,22 @@ Module modAccess
         Try
             Dim dbSet = ReadConfigFile("DB.set")
 
-            If dbSet Is Nothing Then
+            If dbSet Is Nothing OrElse Not File.Exists(dbSet(0)) Then
                 SetDatabase()
             Else
-                '檢查Db是否在位置上
-                If Not File.Exists(dbSet(0)) Then SetDatabase()
                 dataSource = dbSet(0)
                 passWord = dbSet(1)
-                connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
-                conn = New OleDbConnection(connStr)
             End If
+
+            connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source='{dataSource}';Jet OLEDB:Database Password={passWord}"
+            conn = New OleDbConnection(connStr)
+
+            TestConnect()
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
-
-        TestConnect()
     End Sub
+
 
     Public Sub TestConnect()
         Try
@@ -49,6 +49,7 @@ Module modAccess
         Dim content = dataSource & vbCrLf & passWord
         CreateOrUpdateConfigFile("DB.set", content)
         connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
+        'connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\WorkWork\db4UGWS.mdb;Jet OLEDB:Database Password={passWord}"
         conn = New OleDbConnection(connStr)
     End Sub
 

@@ -49,7 +49,6 @@ Public Class LoginForm1
 
     Private Sub LoginForm1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
-
             dt = SelectTable("SELECT * FROM 密碼資料表")
             cmbUser.DataSource = dt.AsEnumerable.Select(Function(row) row("名稱")).ToList
         Catch ex As Exception
