@@ -26,6 +26,7 @@ Partial Class frmMain
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.tabMain = New System.Windows.Forms.TabControl()
         Me.tp過磅 = New System.Windows.Forms.TabPage()
+        Me.chkPrintMeter = New System.Windows.Forms.CheckBox()
         Me.lblWarningModify = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.dgv過磅 = New System.Windows.Forms.DataGridView()
@@ -93,10 +94,9 @@ Partial Class frmMain
         Me.tp廠商 = New System.Windows.Forms.TabPage()
         Me.btnModify_廠商 = New System.Windows.Forms.Button()
         Me.btnInsert_廠商 = New System.Windows.Forms.Button()
-        Me.Button60 = New System.Windows.Forms.Button()
+        Me.btnPrint_vendor = New System.Windows.Forms.Button()
         Me.btnClear_廠商 = New System.Windows.Forms.Button()
         Me.btnDel_廠商 = New System.Windows.Forms.Button()
-        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
@@ -126,7 +126,6 @@ Partial Class frmMain
         Me.btnQuery_廠商 = New System.Windows.Forms.Button()
         Me.tp客戶 = New System.Windows.Forms.TabPage()
         Me.btnModify_客戶 = New System.Windows.Forms.Button()
-        Me.CheckBox3 = New System.Windows.Forms.CheckBox()
         Me.Label32 = New System.Windows.Forms.Label()
         Me.Label33 = New System.Windows.Forms.Label()
         Me.Label34 = New System.Windows.Forms.Label()
@@ -243,6 +242,12 @@ Partial Class frmMain
         Me.txtDBCheck = New System.Windows.Forms.TextBox()
         Me.Label71 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Label75 = New System.Windows.Forms.Label()
+        Me.Label77 = New System.Windows.Forms.Label()
+        Me.Label78 = New System.Windows.Forms.Label()
+        Me.txtRcepHeight = New System.Windows.Forms.TextBox()
+        Me.txtRcepWidth = New System.Windows.Forms.TextBox()
+        Me.Label72 = New System.Windows.Forms.Label()
         Me.Label62 = New System.Windows.Forms.Label()
         Me.Label61 = New System.Windows.Forms.Label()
         Me.Label59 = New System.Windows.Forms.Label()
@@ -342,6 +347,7 @@ Partial Class frmMain
         '
         'tp過磅
         '
+        Me.tp過磅.Controls.Add(Me.chkPrintMeter)
         Me.tp過磅.Controls.Add(Me.lblWarningModify)
         Me.tp過磅.Controls.Add(Me.GroupBox1)
         Me.tp過磅.Controls.Add(Me.btnDel_二次過磅)
@@ -398,12 +404,21 @@ Partial Class frmMain
         Me.tp過磅.Text = "過磅作業"
         Me.tp過磅.UseVisualStyleBackColor = True
         '
+        'chkPrintMeter
+        '
+        Me.chkPrintMeter.Location = New System.Drawing.Point(525, 3)
+        Me.chkPrintMeter.Name = "chkPrintMeter"
+        Me.chkPrintMeter.Size = New System.Drawing.Size(99, 56)
+        Me.chkPrintMeter.TabIndex = 287
+        Me.chkPrintMeter.Text = "是否列印米數"
+        Me.chkPrintMeter.UseVisualStyleBackColor = True
+        '
         'lblWarningModify
         '
         Me.lblWarningModify.AutoSize = True
         Me.lblWarningModify.BackColor = System.Drawing.Color.Yellow
         Me.lblWarningModify.ForeColor = System.Drawing.Color.Red
-        Me.lblWarningModify.Location = New System.Drawing.Point(651, 254)
+        Me.lblWarningModify.Location = New System.Drawing.Point(656, 254)
         Me.lblWarningModify.Name = "lblWarningModify"
         Me.lblWarningModify.Size = New System.Drawing.Size(323, 21)
         Me.lblWarningModify.TabIndex = 286
@@ -592,7 +607,7 @@ Partial Class frmMain
         '
         Me.Label60.AutoSize = True
         Me.Label60.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label60.Location = New System.Drawing.Point(652, 208)
+        Me.Label60.Location = New System.Drawing.Point(657, 208)
         Me.Label60.Name = "Label60"
         Me.Label60.Size = New System.Drawing.Size(78, 16)
         Me.Label60.TabIndex = 269
@@ -601,7 +616,7 @@ Partial Class frmMain
         'TextBox42
         '
         Me.TextBox42.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.TextBox42.Location = New System.Drawing.Point(739, 205)
+        Me.TextBox42.Location = New System.Drawing.Point(744, 205)
         Me.TextBox42.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.TextBox42.Name = "TextBox42"
         Me.TextBox42.Size = New System.Drawing.Size(150, 27)
@@ -776,7 +791,7 @@ Partial Class frmMain
         '
         Me.Label70.AutoSize = True
         Me.Label70.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label70.Location = New System.Drawing.Point(653, 172)
+        Me.Label70.Location = New System.Drawing.Point(658, 172)
         Me.Label70.Name = "Label70"
         Me.Label70.Size = New System.Drawing.Size(76, 16)
         Me.Label70.TabIndex = 251
@@ -785,7 +800,7 @@ Partial Class frmMain
         'txtLoudTime_Total
         '
         Me.txtLoudTime_Total.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.txtLoudTime_Total.Location = New System.Drawing.Point(739, 168)
+        Me.txtLoudTime_Total.Location = New System.Drawing.Point(744, 168)
         Me.txtLoudTime_Total.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtLoudTime_Total.Name = "txtLoudTime_Total"
         Me.txtLoudTime_Total.Size = New System.Drawing.Size(150, 27)
@@ -796,7 +811,7 @@ Partial Class frmMain
         '
         Me.Label69.AutoSize = True
         Me.Label69.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label69.Location = New System.Drawing.Point(653, 134)
+        Me.Label69.Location = New System.Drawing.Point(658, 134)
         Me.Label69.Name = "Label69"
         Me.Label69.Size = New System.Drawing.Size(76, 16)
         Me.Label69.TabIndex = 249
@@ -805,7 +820,7 @@ Partial Class frmMain
         'txtLoudTime_Empty
         '
         Me.txtLoudTime_Empty.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.txtLoudTime_Empty.Location = New System.Drawing.Point(739, 131)
+        Me.txtLoudTime_Empty.Location = New System.Drawing.Point(744, 131)
         Me.txtLoudTime_Empty.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtLoudTime_Empty.Name = "txtLoudTime_Empty"
         Me.txtLoudTime_Empty.Size = New System.Drawing.Size(150, 27)
@@ -936,7 +951,7 @@ Partial Class frmMain
         Me.grpAutoManu.Controls.Add(Me.rdoManual)
         Me.grpAutoManu.Controls.Add(Me.rdoAuto)
         Me.grpAutoManu.Font = New System.Drawing.Font("標楷體", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpAutoManu.Location = New System.Drawing.Point(720, 10)
+        Me.grpAutoManu.Location = New System.Drawing.Point(783, 3)
         Me.grpAutoManu.Name = "grpAutoManu"
         Me.grpAutoManu.Size = New System.Drawing.Size(169, 74)
         Me.grpAutoManu.TabIndex = 236
@@ -970,7 +985,7 @@ Partial Class frmMain
         Me.grpInOut.Controls.Add(Me.rdoShipment)
         Me.grpInOut.Controls.Add(Me.rdoPurchase)
         Me.grpInOut.Font = New System.Drawing.Font("標楷體", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpInOut.Location = New System.Drawing.Point(533, 10)
+        Me.grpInOut.Location = New System.Drawing.Point(630, 3)
         Me.grpInOut.Name = "grpInOut"
         Me.grpInOut.Size = New System.Drawing.Size(147, 74)
         Me.grpInOut.TabIndex = 234
@@ -1061,7 +1076,7 @@ Partial Class frmMain
         '
         Me.Label58.AutoSize = True
         Me.Label58.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label58.Location = New System.Drawing.Point(653, 95)
+        Me.Label58.Location = New System.Drawing.Point(658, 95)
         Me.Label58.Name = "Label58"
         Me.Label58.Size = New System.Drawing.Size(77, 16)
         Me.Label58.TabIndex = 218
@@ -1070,7 +1085,7 @@ Partial Class frmMain
         'txtUser
         '
         Me.txtUser.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.txtUser.Location = New System.Drawing.Point(739, 92)
+        Me.txtUser.Location = New System.Drawing.Point(744, 92)
         Me.txtUser.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtUser.Name = "txtUser"
         Me.txtUser.ReadOnly = True
@@ -1102,10 +1117,9 @@ Partial Class frmMain
         '
         Me.tp廠商.Controls.Add(Me.btnModify_廠商)
         Me.tp廠商.Controls.Add(Me.btnInsert_廠商)
-        Me.tp廠商.Controls.Add(Me.Button60)
+        Me.tp廠商.Controls.Add(Me.btnPrint_vendor)
         Me.tp廠商.Controls.Add(Me.btnClear_廠商)
         Me.tp廠商.Controls.Add(Me.btnDel_廠商)
-        Me.tp廠商.Controls.Add(Me.CheckBox2)
         Me.tp廠商.Controls.Add(Me.Label9)
         Me.tp廠商.Controls.Add(Me.Label8)
         Me.tp廠商.Controls.Add(Me.Label7)
@@ -1164,16 +1178,16 @@ Partial Class frmMain
         Me.btnInsert_廠商.TabIndex = 288
         Me.btnInsert_廠商.UseVisualStyleBackColor = False
         '
-        'Button60
+        'btnPrint_vendor
         '
-        Me.Button60.AutoSize = True
-        Me.Button60.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.Button60.Image = CType(resources.GetObject("Button60.Image"), System.Drawing.Image)
-        Me.Button60.Location = New System.Drawing.Point(441, 6)
-        Me.Button60.Name = "Button60"
-        Me.Button60.Size = New System.Drawing.Size(81, 81)
-        Me.Button60.TabIndex = 287
-        Me.Button60.UseVisualStyleBackColor = False
+        Me.btnPrint_vendor.AutoSize = True
+        Me.btnPrint_vendor.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnPrint_vendor.Image = CType(resources.GetObject("btnPrint_vendor.Image"), System.Drawing.Image)
+        Me.btnPrint_vendor.Location = New System.Drawing.Point(441, 6)
+        Me.btnPrint_vendor.Name = "btnPrint_vendor"
+        Me.btnPrint_vendor.Size = New System.Drawing.Size(81, 81)
+        Me.btnPrint_vendor.TabIndex = 287
+        Me.btnPrint_vendor.UseVisualStyleBackColor = False
         '
         'btnClear_廠商
         '
@@ -1196,17 +1210,6 @@ Partial Class frmMain
         Me.btnDel_廠商.Size = New System.Drawing.Size(81, 81)
         Me.btnDel_廠商.TabIndex = 285
         Me.btnDel_廠商.UseVisualStyleBackColor = False
-        '
-        'CheckBox2
-        '
-        Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.CheckBox2.Location = New System.Drawing.Point(538, 64)
-        Me.CheckBox2.Name = "CheckBox2"
-        Me.CheckBox2.Size = New System.Drawing.Size(154, 23)
-        Me.CheckBox2.TabIndex = 189
-        Me.CheckBox2.Text = "是否列印米數"
-        Me.CheckBox2.UseVisualStyleBackColor = True
         '
         'Label9
         '
@@ -1475,7 +1478,6 @@ Partial Class frmMain
         'tp客戶
         '
         Me.tp客戶.Controls.Add(Me.btnModify_客戶)
-        Me.tp客戶.Controls.Add(Me.CheckBox3)
         Me.tp客戶.Controls.Add(Me.Label32)
         Me.tp客戶.Controls.Add(Me.Label33)
         Me.tp客戶.Controls.Add(Me.Label34)
@@ -1525,17 +1527,6 @@ Partial Class frmMain
         Me.btnModify_客戶.Size = New System.Drawing.Size(81, 81)
         Me.btnModify_客戶.TabIndex = 300
         Me.btnModify_客戶.UseVisualStyleBackColor = False
-        '
-        'CheckBox3
-        '
-        Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.CheckBox3.Location = New System.Drawing.Point(528, 62)
-        Me.CheckBox3.Name = "CheckBox3"
-        Me.CheckBox3.Size = New System.Drawing.Size(154, 23)
-        Me.CheckBox3.TabIndex = 289
-        Me.CheckBox3.Text = "是否列印米數"
-        Me.CheckBox3.UseVisualStyleBackColor = True
         '
         'Label32
         '
@@ -2783,9 +2774,9 @@ Partial Class frmMain
         Me.GroupBox4.Controls.Add(Me.btnSave_dbCheck)
         Me.GroupBox4.Controls.Add(Me.txtDBCheck)
         Me.GroupBox4.Controls.Add(Me.Label71)
-        Me.GroupBox4.Location = New System.Drawing.Point(8, 533)
+        Me.GroupBox4.Location = New System.Drawing.Point(8, 483)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(282, 125)
+        Me.GroupBox4.Size = New System.Drawing.Size(282, 175)
         Me.GroupBox4.TabIndex = 259
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "資料庫檢查設定"
@@ -2820,6 +2811,12 @@ Partial Class frmMain
         'GroupBox2
         '
         Me.GroupBox2.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
+        Me.GroupBox2.Controls.Add(Me.Label75)
+        Me.GroupBox2.Controls.Add(Me.Label77)
+        Me.GroupBox2.Controls.Add(Me.Label78)
+        Me.GroupBox2.Controls.Add(Me.txtRcepHeight)
+        Me.GroupBox2.Controls.Add(Me.txtRcepWidth)
+        Me.GroupBox2.Controls.Add(Me.Label72)
         Me.GroupBox2.Controls.Add(Me.Label62)
         Me.GroupBox2.Controls.Add(Me.Label61)
         Me.GroupBox2.Controls.Add(Me.Label59)
@@ -2832,19 +2829,69 @@ Partial Class frmMain
         Me.GroupBox2.Controls.Add(Me.cmbRcepStyle)
         Me.GroupBox2.Controls.Add(Me.Label18)
         Me.GroupBox2.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox2.Location = New System.Drawing.Point(678, 326)
+        Me.GroupBox2.Location = New System.Drawing.Point(678, 3)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Padding = New System.Windows.Forms.Padding(10)
-        Me.GroupBox2.Size = New System.Drawing.Size(314, 330)
+        Me.GroupBox2.Size = New System.Drawing.Size(314, 655)
         Me.GroupBox2.TabIndex = 258
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "過磅單設定"
+        '
+        'Label75
+        '
+        Me.Label75.AutoSize = True
+        Me.Label75.Location = New System.Drawing.Point(9, 427)
+        Me.Label75.Name = "Label75"
+        Me.Label75.Size = New System.Drawing.Size(93, 19)
+        Me.Label75.TabIndex = 267
+        Me.Label75.Text = "紙張大小"
+        '
+        'Label77
+        '
+        Me.Label77.AutoSize = True
+        Me.Label77.Location = New System.Drawing.Point(123, 489)
+        Me.Label77.Name = "Label77"
+        Me.Label77.Size = New System.Drawing.Size(51, 19)
+        Me.Label77.TabIndex = 266
+        Me.Label77.Text = "長度"
+        '
+        'Label78
+        '
+        Me.Label78.AutoSize = True
+        Me.Label78.Location = New System.Drawing.Point(123, 445)
+        Me.Label78.Name = "Label78"
+        Me.Label78.Size = New System.Drawing.Size(51, 19)
+        Me.Label78.TabIndex = 265
+        Me.Label78.Text = "寬度"
+        '
+        'txtRcepHeight
+        '
+        Me.txtRcepHeight.Location = New System.Drawing.Point(180, 486)
+        Me.txtRcepHeight.Name = "txtRcepHeight"
+        Me.txtRcepHeight.Size = New System.Drawing.Size(112, 30)
+        Me.txtRcepHeight.TabIndex = 264
+        '
+        'txtRcepWidth
+        '
+        Me.txtRcepWidth.Location = New System.Drawing.Point(180, 442)
+        Me.txtRcepWidth.Name = "txtRcepWidth"
+        Me.txtRcepWidth.Size = New System.Drawing.Size(112, 30)
+        Me.txtRcepWidth.TabIndex = 263
+        '
+        'Label72
+        '
+        Me.Label72.AutoSize = True
+        Me.Label72.Location = New System.Drawing.Point(9, 233)
+        Me.Label72.Name = "Label72"
+        Me.Label72.Size = New System.Drawing.Size(114, 19)
+        Me.Label72.TabIndex = 262
+        Me.Label72.Text = "內容偏移量"
         '
         'Label62
         '
         Me.Label62.AutoSize = True
         Me.Label62.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.Label62.Location = New System.Drawing.Point(14, 240)
+        Me.Label62.Location = New System.Drawing.Point(10, 328)
         Me.Label62.Name = "Label62"
         Me.Label62.Size = New System.Drawing.Size(225, 80)
         Me.Label62.TabIndex = 261
@@ -2853,7 +2900,7 @@ Partial Class frmMain
         'Label61
         '
         Me.Label61.AutoSize = True
-        Me.Label61.Location = New System.Drawing.Point(13, 199)
+        Me.Label61.Location = New System.Drawing.Point(132, 298)
         Me.Label61.Name = "Label61"
         Me.Label61.Size = New System.Drawing.Size(51, 19)
         Me.Label61.TabIndex = 260
@@ -2862,7 +2909,7 @@ Partial Class frmMain
         'Label59
         '
         Me.Label59.AutoSize = True
-        Me.Label59.Location = New System.Drawing.Point(9, 114)
+        Me.Label59.Location = New System.Drawing.Point(9, 193)
         Me.Label59.Name = "Label59"
         Me.Label59.Size = New System.Drawing.Size(114, 19)
         Me.Label59.TabIndex = 259
@@ -2871,7 +2918,7 @@ Partial Class frmMain
         'Label55
         '
         Me.Label55.AutoSize = True
-        Me.Label55.Location = New System.Drawing.Point(13, 155)
+        Me.Label55.Location = New System.Drawing.Point(132, 254)
         Me.Label55.Name = "Label55"
         Me.Label55.Size = New System.Drawing.Size(51, 19)
         Me.Label55.TabIndex = 258
@@ -2879,14 +2926,14 @@ Partial Class frmMain
         '
         'txtRcepRTop
         '
-        Me.txtRcepRTop.Location = New System.Drawing.Point(70, 196)
+        Me.txtRcepRTop.Location = New System.Drawing.Point(189, 295)
         Me.txtRcepRTop.Name = "txtRcepRTop"
         Me.txtRcepRTop.Size = New System.Drawing.Size(112, 30)
         Me.txtRcepRTop.TabIndex = 257
         '
         'txtRcepLeft
         '
-        Me.txtRcepLeft.Location = New System.Drawing.Point(70, 152)
+        Me.txtRcepLeft.Location = New System.Drawing.Point(189, 251)
         Me.txtRcepLeft.Name = "txtRcepLeft"
         Me.txtRcepLeft.Size = New System.Drawing.Size(112, 30)
         Me.txtRcepLeft.TabIndex = 256
@@ -2896,7 +2943,7 @@ Partial Class frmMain
         Me.btnSave_rcep.AutoSize = True
         Me.btnSave_rcep.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.btnSave_rcep.Image = CType(resources.GetObject("btnSave_rcep.Image"), System.Drawing.Image)
-        Me.btnSave_rcep.Location = New System.Drawing.Point(220, 145)
+        Me.btnSave_rcep.Location = New System.Drawing.Point(228, 18)
         Me.btnSave_rcep.Name = "btnSave_rcep"
         Me.btnSave_rcep.Size = New System.Drawing.Size(81, 81)
         Me.btnSave_rcep.TabIndex = 255
@@ -2904,7 +2951,7 @@ Partial Class frmMain
         '
         'txtCustomizeTitle
         '
-        Me.txtCustomizeTitle.Location = New System.Drawing.Point(13, 65)
+        Me.txtCustomizeTitle.Location = New System.Drawing.Point(11, 130)
         Me.txtCustomizeTitle.Name = "txtCustomizeTitle"
         Me.txtCustomizeTitle.Size = New System.Drawing.Size(288, 30)
         Me.txtCustomizeTitle.TabIndex = 254
@@ -2912,7 +2959,7 @@ Partial Class frmMain
         'chkCustomizeTitle
         '
         Me.chkCustomizeTitle.AutoSize = True
-        Me.chkCustomizeTitle.Location = New System.Drawing.Point(13, 36)
+        Me.chkCustomizeTitle.Location = New System.Drawing.Point(11, 101)
         Me.chkCustomizeTitle.Name = "chkCustomizeTitle"
         Me.chkCustomizeTitle.Size = New System.Drawing.Size(112, 23)
         Me.chkCustomizeTitle.TabIndex = 253
@@ -2923,7 +2970,7 @@ Partial Class frmMain
         '
         Me.cmbRcepStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbRcepStyle.FormattingEnabled = True
-        Me.cmbRcepStyle.Location = New System.Drawing.Point(129, 111)
+        Me.cmbRcepStyle.Location = New System.Drawing.Point(129, 190)
         Me.cmbRcepStyle.Name = "cmbRcepStyle"
         Me.cmbRcepStyle.Size = New System.Drawing.Size(172, 27)
         Me.cmbRcepStyle.TabIndex = 252
@@ -2949,14 +2996,14 @@ Partial Class frmMain
         Me.GroupBox16.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.GroupBox16.Location = New System.Drawing.Point(8, 3)
         Me.GroupBox16.Name = "GroupBox16"
-        Me.GroupBox16.Size = New System.Drawing.Size(664, 152)
+        Me.GroupBox16.Size = New System.Drawing.Size(664, 130)
         Me.GroupBox16.TabIndex = 257
         Me.GroupBox16.TabStop = False
         Me.GroupBox16.Text = "遠端備份"
         '
         'lblBackUping
         '
-        Me.lblBackUping.Location = New System.Drawing.Point(528, 112)
+        Me.lblBackUping.Location = New System.Drawing.Point(534, 94)
         Me.lblBackUping.Name = "lblBackUping"
         Me.lblBackUping.Size = New System.Drawing.Size(114, 30)
         Me.lblBackUping.TabIndex = 246
@@ -3013,7 +3060,7 @@ Partial Class frmMain
         Me.btnRemote.AutoSize = True
         Me.btnRemote.BackColor = System.Drawing.Color.Yellow
         Me.btnRemote.Image = CType(resources.GetObject("btnRemote.Image"), System.Drawing.Image)
-        Me.btnRemote.Location = New System.Drawing.Point(532, 26)
+        Me.btnRemote.Location = New System.Drawing.Point(532, 10)
         Me.btnRemote.Name = "btnRemote"
         Me.btnRemote.Size = New System.Drawing.Size(81, 81)
         Me.btnRemote.TabIndex = 242
@@ -3035,9 +3082,9 @@ Partial Class frmMain
         Me.grp權限.Controls.Add(Me.txtPsw_權限)
         Me.grp權限.Controls.Add(Me.Label83)
         Me.grp權限.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grp權限.Location = New System.Drawing.Point(8, 161)
+        Me.grp權限.Location = New System.Drawing.Point(8, 139)
         Me.grp權限.Name = "grp權限"
-        Me.grp權限.Size = New System.Drawing.Size(664, 366)
+        Me.grp權限.Size = New System.Drawing.Size(664, 339)
         Me.grp權限.TabIndex = 256
         Me.grp權限.TabStop = False
         Me.grp權限.Text = "權限設定"
@@ -3097,7 +3144,7 @@ Partial Class frmMain
         Me.dgv權限.Name = "dgv權限"
         Me.dgv權限.ReadOnly = True
         Me.dgv權限.RowTemplate.Height = 24
-        Me.dgv權限.Size = New System.Drawing.Size(658, 93)
+        Me.dgv權限.Size = New System.Drawing.Size(658, 66)
         Me.dgv權限.TabIndex = 249
         '
         'btnDel_權限
@@ -3176,9 +3223,9 @@ Partial Class frmMain
         Me.grpPort.Controls.Add(Me.txtPortB)
         Me.grpPort.Controls.Add(Me.Label81)
         Me.grpPort.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpPort.Location = New System.Drawing.Point(678, 3)
+        Me.grpPort.Location = New System.Drawing.Point(296, 484)
         Me.grpPort.Name = "grpPort"
-        Me.grpPort.Size = New System.Drawing.Size(314, 317)
+        Me.grpPort.Size = New System.Drawing.Size(376, 174)
         Me.grpPort.TabIndex = 255
         Me.grpPort.TabStop = False
         Me.grpPort.Text = "Port設定"
@@ -3188,12 +3235,13 @@ Partial Class frmMain
         Me.dgvPort.AllowUserToAddRows = False
         Me.dgvPort.AllowUserToDeleteRows = False
         Me.dgvPort.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvPort.Location = New System.Drawing.Point(9, 118)
+        Me.dgvPort.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.dgvPort.Location = New System.Drawing.Point(3, 104)
         Me.dgvPort.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.dgvPort.Name = "dgvPort"
         Me.dgvPort.ReadOnly = True
         Me.dgvPort.RowTemplate.Height = 24
-        Me.dgvPort.Size = New System.Drawing.Size(296, 190)
+        Me.dgvPort.Size = New System.Drawing.Size(370, 67)
         Me.dgvPort.TabIndex = 250
         '
         'Label80
@@ -3210,7 +3258,7 @@ Partial Class frmMain
         Me.btnSave_Port.AutoSize = True
         Me.btnSave_Port.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.btnSave_Port.Image = CType(resources.GetObject("btnSave_Port.Image"), System.Drawing.Image)
-        Me.btnSave_Port.Location = New System.Drawing.Point(224, 26)
+        Me.btnSave_Port.Location = New System.Drawing.Point(289, 20)
         Me.btnSave_Port.Name = "btnSave_Port"
         Me.btnSave_Port.Size = New System.Drawing.Size(81, 81)
         Me.btnSave_Port.TabIndex = 234
@@ -3218,7 +3266,7 @@ Partial Class frmMain
         '
         'txtPortA
         '
-        Me.txtPortA.Location = New System.Drawing.Point(141, 29)
+        Me.txtPortA.Location = New System.Drawing.Point(141, 31)
         Me.txtPortA.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.txtPortA.Name = "txtPortA"
         Me.txtPortA.Size = New System.Drawing.Size(50, 30)
@@ -3278,7 +3326,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 V1.0.4"
+        Me.Text = "原綱衡器過磅系統 v1.0.6"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3502,10 +3550,9 @@ Partial Class frmMain
     Friend WithEvents grpDecimal As GroupBox
     Friend WithEvents lst客戶 As ListBox
     Friend WithEvents lst廠商 As ListBox
-    Friend WithEvents CheckBox2 As CheckBox
     Friend WithEvents btnInsert_過磅 As Button
     Friend WithEvents btnInsert_廠商 As Button
-    Friend WithEvents Button60 As Button
+    Friend WithEvents btnPrint_vendor As Button
     Friend WithEvents btnClear_廠商 As Button
     Friend WithEvents btnDel_廠商 As Button
     Friend WithEvents btnQuery_廠商 As Button
@@ -3514,7 +3561,6 @@ Partial Class frmMain
     Friend WithEvents btnClear_客戶 As Button
     Friend WithEvents btnDelete_客戶 As Button
     Friend WithEvents btnQuery_客戶 As Button
-    Friend WithEvents CheckBox3 As CheckBox
     Friend WithEvents txtInsert_車籍 As Button
     Friend WithEvents btnClear_車籍 As Button
     Friend WithEvents btnDel_車籍 As Button
@@ -3598,4 +3644,11 @@ Partial Class frmMain
     Friend WithEvents txtDBCheck As TextBox
     Friend WithEvents Label71 As Label
     Friend WithEvents btnSave_dbCheck As Button
+    Friend WithEvents chkPrintMeter As CheckBox
+    Friend WithEvents Label75 As Label
+    Friend WithEvents Label77 As Label
+    Friend WithEvents Label78 As Label
+    Friend WithEvents txtRcepHeight As TextBox
+    Friend WithEvents txtRcepWidth As TextBox
+    Friend WithEvents Label72 As Label
 End Class

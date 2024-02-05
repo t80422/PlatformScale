@@ -537,6 +537,8 @@ Public Class frmMain
 
             If columnName = "抬頭" Then
                 replacement = If(chkCustomizeTitle.Checked, txtCustomizeTitle.Text, "")
+            ElseIf columnName = "米數" Then
+                replacement = If(chkPrintMeter.Checked, GetColumnValue(data, columnName), "")
             Else
                 replacement = GetColumnValue(data, columnName)
             End If
@@ -548,16 +550,21 @@ Public Class frmMain
     End Function
 
     Private Sub SaveAsPDF(htmlContent As String, pdfFilePath As String)
-        Using pdf = New iText.Kernel.Pdf.PdfDocument(New PdfWriter(pdfFilePath))
-            Dim fontProvider = New DefaultFontProvider(False, False, False)
-            fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
-            fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
+        Try
+            Using pdf = New iText.Kernel.Pdf.PdfDocument(New PdfWriter(pdfFilePath))
+                Dim fontProvider = New DefaultFontProvider(False, False, False)
+                fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
+                fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
 
-            Dim cp = New ConverterProperties
-            cp.SetFontProvider(fontProvider)
+                Dim cp = New ConverterProperties
+                cp.SetFontProvider(fontProvider)
 
-            HtmlConverter.ConvertToPdf(htmlContent, pdf, cp)
-        End Using
+                HtmlConverter.ConvertToPdf(htmlContent, pdf, cp)
+            End Using
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
 
     Private Function GetColumnValue(data As DataTable, columnName As String) As String
@@ -1760,8 +1767,9 @@ Finish:
                 "text:" & txtCustomizeTitle.Text
             File.WriteAllText(filePath, content)
 
-            '存過磅單偏移
+
             WriteRecpMargin(kvp.Key, txtRcepLeft.Text, txtRcepRTop.Text)
+            WriteRecpSize(kvp.Key, txtRcepWidth.Text, txtRcepHeight.Text)
 
             MsgBox("存檔成功")
 
@@ -1775,6 +1783,9 @@ Finish:
         Dim margins = RoadRecpMargin(cmb.SelectedItem.key)
         txtRcepLeft.Text = margins(0)
         txtRcepRTop.Text = margins(1)
+        Dim sizes = ReadRecpSize(cmb.SelectedItem.key)
+        txtRcepWidth.Text = sizes.Item1
+        txtRcepHeight.Text = sizes.Item2
     End Sub
 
     ''' <summary>
@@ -1810,4 +1821,67 @@ Finish:
         End If
     End Sub
 
+    '廠商管理-列印
+    Private Sub btnPrint_vendor_Click(sender As Object, e As EventArgs) Handles btnPrint_vendor.Click
+        Dim filePath = Path.Combine(StartupPath, "Report", "廠商清單(範本檔).xlsx")
+
+        Using xml As New CloseXML_Excel(filePath)
+            xml.SelectWorksheet("sheet1")
+
+            '蒐集資料
+            Dim rows = SelectTable("SELECT * FROM 廠商資料表").Rows
+
+            '列出資料
+            With xml
+                For i As Integer = 0 To rows.Count - 1
+                    Dim rowIndex = 3 + i
+                    .WriteToCell(rowIndex, 1, rows(i)("代號"))
+                    .WriteToCell(rowIndex, 2, rows(i)("簡稱"))
+                    .WriteToCell(rowIndex, 3, rows(i)("負責人"))
+                    .WriteToCell(rowIndex, 4, rows(i)("聯絡人"))
+                    .WriteToCell(rowIndex, 5, rows(i)("手機"))
+                    .WriteToCell(rowIndex, 6, rows(i)("電話"))
+                    .WriteToCell(rowIndex, 7, rows(i)("傳真"))
+                    .WriteToCell(rowIndex, 8, rows(i)("地址"))
+                    .WriteToCell(rowIndex, 9, rows(i)("全銜"))
+                    .WriteToCell(rowIndex, 10, rows(i)("統編"))
+                    .WriteToCell(rowIndex, 11, rows(i)("備註"))
+                Next
+
+                .SaveAs("廠商清單")
+            End With
+        End Using
+    End Sub
+
+    '客戶管理-列印
+    Private Sub btnPrint_客戶_Click(sender As Object, e As EventArgs) Handles btnPrint_客戶.Click
+        Dim filePath = Path.Combine(StartupPath, "Report", "客戶清單(範本檔).xlsx")
+
+        Using xml As New CloseXML_Excel(filePath)
+            xml.SelectWorksheet("sheet1")
+
+            '蒐集資料
+            Dim rows = SelectTable("SELECT * FROM 客戶資料表").Rows
+
+            '列出資料
+            With xml
+                For i As Integer = 0 To rows.Count - 1
+                    Dim rowIndex = 3 + i
+                    .WriteToCell(rowIndex, 1, rows(i)("代號"))
+                    .WriteToCell(rowIndex, 2, rows(i)("簡稱"))
+                    .WriteToCell(rowIndex, 3, If(IsDBNull(rows(i)("負責人")), "", rows(i)("負責人")))
+                    .WriteToCell(rowIndex, 4, If(IsDBNull(rows(i)("聯絡人")), "", rows(i)("聯絡人")))
+                    .WriteToCell(rowIndex, 5, If(IsDBNull(rows(i)("手機")), "", rows(i)("手機")))
+                    .WriteToCell(rowIndex, 6, If(IsDBNull(rows(i)("電話")), "", rows(i)("電話")))
+                    .WriteToCell(rowIndex, 7, If(IsDBNull(rows(i)("傳真")), "", rows(i)("傳真")))
+                    .WriteToCell(rowIndex, 8, If(IsDBNull(rows(i)("地址")), "", rows(i)("地址")), New CloseXML_Excel.CellFormatOptions With {.WrapText = True})
+                    .WriteToCell(rowIndex, 9, rows(i)("全銜"))
+                    .WriteToCell(rowIndex, 10, If(IsDBNull(rows(i)("統編")), "", rows(i)("統編")))
+                    .WriteToCell(rowIndex, 11, If(IsDBNull(rows(i)("備註")), "", rows(i)("備註")), New CloseXML_Excel.CellFormatOptions With {.WrapText = True})
+                Next
+
+                .SaveAs("客戶清單")
+            End With
+        End Using
+    End Sub
 End Class

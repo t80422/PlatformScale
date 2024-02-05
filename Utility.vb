@@ -208,14 +208,16 @@ Module Utility
 
     Public Sub PrintPDF(filePath As String, type As String)
         Dim printerSettings As New PrinterSettings()
+        printerSettings.DefaultPageSettings.Margins = New Margins(0, 0, 0, 0)
 
+        'todo 寫成參數檔,會有客製的過磅單,不一定每個客戶都使用
         Select Case type
             Case "A"
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 310, 598)
             Case "B"
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 700, 401)
             Case "C"
-                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 858, 708)
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 858, 700)
             Case Else
 
         End Select
@@ -271,6 +273,38 @@ Module Utility
         Return arr
     End Function
 
+    Public Function ReadRecpSize(style As String) As Tuple(Of Double, Double)
+        ' 路徑組合
+        Dim filePath As String = Path.Combine(Application.StartupPath, "Rcep", style & ".html")
+        ' 檢查文件是否存在
+        If Not File.Exists(filePath) Then
+            Throw New FileNotFoundException("指定的文件未找到。")
+        End If
+
+        ' 讀取文件內容
+        Dim fileContent As String = File.ReadAllText(filePath)
+
+        ' 正則表達式匹配 .form-wrap {width: 7.7cm;height: 15.5cm;...}
+        Dim pattern As String = "\.form-wrap\s*\{\s*width:\s*(\d+(?:\.\d+)?)cm;\s*height:\s*(\d+(?:\.\d+)?)cm;"
+        Dim match As Match = Regex.Match(fileContent, pattern)
+
+        ' 如果找到匹配項
+        If match.Success Then
+            ' 解析寬度和高度
+            Dim width As Double = Double.Parse(match.Groups(1).Value)
+            Dim height As Double = Double.Parse(match.Groups(2).Value)
+            Return Tuple.Create(width, height)
+        Else
+            Throw New InvalidOperationException("無法在文件中找到 .form-wrap 樣式定義。")
+        End If
+    End Function
+
+    ''' <summary>
+    ''' 存過磅單偏移
+    ''' </summary>
+    ''' <param name="style"></param>
+    ''' <param name="left"></param>
+    ''' <param name="top"></param>
     Public Sub WriteRecpMargin(style As String, left As Double, top As Double)
         Dim filePath As String = Path.Combine(Forms.Application.StartupPath, "Rcep", style & ".html")
         Dim fileContent As String = File.ReadAllText(filePath)
@@ -280,6 +314,16 @@ Module Utility
         fileContent = Regex.Replace(fileContent, pattern, replacement)
         File.WriteAllText(filePath, fileContent)
     End Sub
+
+    Public Sub WriteRecpSize(style As String, width As Double, height As Double)
+        Dim filePath As String = Path.Combine(Forms.Application.StartupPath, "Rcep", style & ".html")
+        Dim fileContent As String = File.ReadAllText(filePath)
+        Dim pattern As String = "(\.form-wrap\s*\{[^}]*width:\s*)\d+(\.\d+)?cm;([^}]*height:\s*)\d+(\.\d+)?cm;"
+        Dim replacement As String = "${1}" & width & "cm;${3}" & height & "cm;"
+        fileContent = Regex.Replace(fileContent, pattern, replacement)
+        File.WriteAllText(filePath, fileContent)
+    End Sub
+
 
     Public Sub CreateOrUpdateConfigFile(fileName As String, content As String)
         Try
