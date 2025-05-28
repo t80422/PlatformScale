@@ -505,7 +505,7 @@ Namespace ReportGenerators
             cells.Range("A5").Resize(dt.Rows.Count, 4).Value = dataArray
 
             DrawLine(rowIndex, 1, 4, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
-            cells(rowIndex, 1) = "(總計)"
+            cells(rowIndex, 1) = "(總計)&"
             cells(rowIndex, 2) = Math.Round(sumCarCount, 3)
             cells(rowIndex, 3) = Math.Round(sumWeight, 3)
             cells(rowIndex, 4) = Math.Round(sumMeter, 3)

@@ -29,7 +29,6 @@ Module modAccess
         End Try
     End Sub
 
-
     Public Sub TestConnect()
         Try
             conn.Open()
@@ -195,6 +194,7 @@ Module modAccess
         conn.Close()
         Return rowsAffected > 0
     End Function
+
     ''' <summary>
     ''' 表格刪除
     ''' </summary>
@@ -240,6 +240,7 @@ Module modAccess
         End If
         Return True
     End Function
+
     ''' <summary>
     ''' 檢查是否重複新增
     ''' </summary>

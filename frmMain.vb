@@ -35,7 +35,7 @@ Public Class frmMain
 
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         '檢查資料夾是否存在
-        Dim folderPath As String = IO.Path.Combine(StartupPath, "Report")
+        Dim folderPath As String = Path.Combine(StartupPath, "Report")
         If Not Directory.Exists(folderPath) Then Directory.CreateDirectory(folderPath)
 
         InitDataGrid()
@@ -64,6 +64,9 @@ Public Class frmMain
         SetCheckTime()
         InitReportDate()
 
+        tmrLoadPDF.Enabled = True
+
+        debug = Configuration.ConfigurationManager.AppSettings("Debug") = "T"
     End Sub
 
     ''' <summary>
@@ -111,31 +114,37 @@ Public Class frmMain
     Private Sub InitRcepStyle()
         '設定 系統設定-過磅單樣式 cmb
         Dim dic = New Dictionary(Of String, String) From {
-        {"直式", "A"},
-        {"橫式", "B"},
-        {"直式三聯", "C"}
-    }
+            {"直式", "A"},
+            {"橫式", "B"},
+            {"直式三聯", "C"},
+            {"直式2", "D"}
+        }
 
         With cmbRcepStyle
             For Each kvp In dic
                 .Items.Add(New KeyValuePair(Of String, String)(kvp.Key, kvp.Value))
             Next
+
             .DisplayMember = "Key"
             .ValueMember = "Value"
         End With
 
         '載入設定檔
-        Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
+        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
+
         If Not File.Exists(filePath) Then
             File.Create(filePath).Close()
             Exit Sub
         Else
             Dim lines = File.ReadAllLines(filePath)
+
             For Each line In lines
                 Dim parts = Split(line, ":")
+
                 Select Case parts(0)
                     Case "type"
                         Dim selectedType = parts(1)
+
                         For Each item As KeyValuePair(Of String, String) In cmbRcepStyle.Items
                             If item.Value = selectedType Then
                                 cmbRcepStyle.SelectedItem = item
@@ -283,17 +292,12 @@ Public Class frmMain
         '將所選車輛的"空重"傳至"空車重量"
         Dim row As DataRowView = cmbCarNo.SelectedItem
         If IsDBNull(row("空重")) OrElse String.IsNullOrEmpty(row("空重")) Then
-            txtLoudTime_Empty.Clear()
             txtEmptyCar.Clear()
         Else
             txtEmptyCar.Text = row("空重")
             txtLoudTime_Empty.Text = Date.Parse(lblTime.Text).ToString("HH:mm")
         End If
         txtCarCount.Text = GetCarCount(row("車號"))
-    End Sub
-
-    Private Sub cmbCarNo_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbCarNo.SelectedIndexChanged
-        If cmbCarNo.SelectedIndex = -1 Then txtEmptyCar.Clear()
     End Sub
 
     ''' <summary>
@@ -431,9 +435,13 @@ Public Class frmMain
     ''' </summary>
     Private Function GetNewRecpNo() As String
         Dim d = Now
-        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+        'Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+        '                                        "UNION " &
+        '                                      $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+        '                                       "ORDER BY 磅單序號 DESC")
+        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 磅單序號 like '{Now:yyyyMMdd}%' " &
                                                 "UNION " &
-                                              $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
+                                              $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 磅單序號 like '{Now:yyyyMMdd}%' " &
                                                "ORDER BY 磅單序號 DESC")
         Dim num As String
         If dt.Rows.Count = 0 Then
@@ -480,7 +488,11 @@ Public Class frmMain
         End If
 
         Dim type = cmbRcepStyle.SelectedItem.value
+        stopwatch.Restart()
         Dim data = SelectTable($"SELECT * FROM 過磅資料表 a LEFT JOIN 車籍資料表 b ON a.車牌號碼 = b.車號 WHERE a.磅單序號 = '{id}'")
+        stopwatch.Stop()
+        searchTime = stopwatch.ElapsedMilliseconds / 1000
+
         Dim fileName As String = ""
 
         Select Case type
@@ -490,12 +502,15 @@ Public Class frmMain
                 fileName = "橫式.html"
             Case "C"
                 fileName = "直式三聯.html"
+            Case "D"
+                fileName = "直式2.html"
         End Select
 
-        Dim folder = IO.Path.Combine(StartupPath, "Rcep")
-        Dim filePath = IO.Path.Combine(folder, fileName)
-        Dim pdfFilePath = IO.Path.Combine(folder, "test.pdf")
+        Dim folder = Path.Combine(StartupPath, "Rcep")
+        Dim filePath = Path.Combine(folder, fileName)
+        Dim pdfFilePath = Path.Combine(folder, "test.pdf")
 
+        stopwatch.Restart()
         CloseOpenPDF(pdfFilePath)
 
         Using fs = New FileStream(filePath, FileMode.Open, FileAccess.Read)
@@ -504,11 +519,19 @@ Public Class frmMain
 
                 '取代文字
                 lines = ReplaceTemplateText(lines, data)
+                stopwatch.Stop()
+                replaceTime = stopwatch.ElapsedMilliseconds / 1000
 
                 '另存成PDF
+                stopwatch.Restart()
                 SaveAsPDF(lines, pdfFilePath)
+                stopwatch.Stop()
+                PDFTime = stopwatch.ElapsedMilliseconds / 1000
             End Using
         End Using
+
+        stopwatch.Stop()
+
 
         Dim printDialog As New PrintDialog
 
@@ -551,7 +574,7 @@ Public Class frmMain
 
     Private Sub SaveAsPDF(htmlContent As String, pdfFilePath As String)
         Try
-            Using pdf = New iText.Kernel.Pdf.PdfDocument(New PdfWriter(pdfFilePath))
+            Using pdf = New PdfDocument(New PdfWriter(pdfFilePath))
                 Dim fontProvider = New DefaultFontProvider(False, False, False)
                 fontProvider.AddFont("c:/windows/Fonts/KAIU.TTF")
                 fontProvider.AddFont("c:/windows/Fonts/msjhbd.ttf")
@@ -689,7 +712,8 @@ Public Class frmMain
     Private Sub btnClear_過磅_Click(sender As Object, e As EventArgs) Handles btnClear_過磅.Click
         Dim btn As ButtonBase = sender
 
-        ClearControl(btn.Parent.Controls.OfType(Of Control).Where(Function(ctrl) ctrl.GetType.Name <> "GroupBox"))
+        Dim exception = New List(Of String) From {grpInOut.Name, grpAutoManu.Name, chkPrintMeter.Name, grpDecimal.Name}
+        ClearControls(tp過磅, exception)
 
         '刷新當日在場內車輛列表
         With dgv二次過磅
@@ -712,7 +736,7 @@ Public Class frmMain
         End With
 
         With dgv過磅
-            .DataSource = SelectTable(GetTableAllData("過磅資料表") + $" WHERE 過磅日期 = '{Now:yyyy/MM/dd}' ORDER BY 磅單序號 DESC")
+            .DataSource = SelectTable(GetTableAllData("過磅資料表") + $" WHERE 磅單序號 like '{Now:yyyyMMdd}%' ORDER BY 磅單序號 DESC")
             .Columns("空重載入時間").DefaultCellStyle.Format = "HH:mm"
             .Columns("總重載入時間").DefaultCellStyle.Format = "HH:mm"
             .Columns("過磅種類").Visible = False
@@ -733,12 +757,29 @@ Public Class frmMain
             .SelectedIndex = -1
         End With
 
+        '設定車號
+        With cmbCarNo
+            Dim dt = SelectTable($"SELECT * FROM 車籍資料表")
+            .DataSource = dt
+            .DisplayMember = "車號"
+            .SelectedIndex = -1
+
+            Dim autoComplete As New AutoCompleteStringCollection
+            For Each row As DataRow In dt.Rows
+                autoComplete.Add(row("車號").ToString)
+            Next
+
+            .AutoCompleteCustomSource = autoComplete
+        End With
+
         cmbCliManu.Enabled = False
         cmbCarNo.Enabled = False
         cmbProduct.Enabled = False
         txtTPM.ReadOnly = True
         lblWarningModify.Visible = False
-
+        dtp過磅.Value = Now
+        rdoShipment.Checked = True
+        SetCmbCliManu(enumWho.客戶)
     End Sub
 
     '清除-系統設定-權限設定
@@ -861,14 +902,19 @@ Public Class frmMain
         Dim selectRow = dgv.SelectedRows(0)
 
         grpInOut.Controls.OfType(Of RadioButton).Where(Function(rdo) rdo.Text = selectRow.Cells("進/出").Value).ToList.ForEach(Sub(x) x.Checked = True)
-        cmbCliManu.SelectedIndex = cmbCliManu.FindStringExact(selectRow.Cells("客戶/廠商").Value)
+
+        If Not IsDBNull(selectRow.Cells("客戶/廠商").Value) Then cmbCliManu.SelectedIndex = cmbCliManu.FindStringExact(selectRow.Cells("客戶/廠商").Value)
 
         Dim carNo = GetCellData(selectRow, "車牌號碼")
 
         cmbCarNo.SelectedIndex = cmbCarNo.FindStringExact(carNo)
-        cmbProduct.SelectedIndex = cmbProduct.FindStringExact(selectRow.Cells("產品名稱").Value)
-        tp過磅.Controls.OfType(Of TextBox).Where(Function(txt) txt.Tag IsNot Nothing AndAlso Not IsDBNull(selectRow.Cells(txt.Tag.ToString).Value)).
-            ToList.ForEach(Sub(txt) txt.Text = selectRow.Cells(txt.Tag.ToString).Value)
+
+        If cmbCarNo.SelectedIndex < 1 Then cmbCarNo.Text = carNo
+
+        If Not IsDBNull(selectRow.Cells("產品名稱").Value) Then cmbProduct.SelectedIndex = cmbProduct.FindStringExact(selectRow.Cells("產品名稱").Value)
+
+        tp過磅.Controls.OfType(Of TextBox).Where(Function(txt) txt.Tag IsNot Nothing AndAlso Not IsDBNull(selectRow.Cells(txt.Tag.ToString).Value)).ToList.
+                                           ForEach(Sub(txt) txt.Text = selectRow.Cells(txt.Tag.ToString).Value)
 
         If Not String.IsNullOrEmpty(txtLoudTime_Empty.Text) Then txtLoudTime_Empty.Text = Date.Parse(txtLoudTime_Empty.Text).ToString("HH:mm")
         If Not String.IsNullOrEmpty(txtLoudTime_Total.Text) Then txtLoudTime_Total.Text = Date.Parse(txtLoudTime_Total.Text).ToString("HH:mm")
@@ -882,24 +928,6 @@ Public Class frmMain
             txtTPM.ReadOnly = False
             cmbCarNo.Enabled = True
         End If
-    End Sub
-
-    '車號隨客戶/廠商改變
-    Private Sub cmbCliManu_TextChanged(sender As Object, e As EventArgs) Handles cmbCliManu.TextChanged
-        cmbCarNo.DataSource = Nothing
-        Dim row As DataRowView = cmbCliManu.SelectedItem
-        If row IsNot Nothing Then
-            '所選客戶/廠商 車號
-            With cmbCarNo
-                .DataSource = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車主 = '{row("簡稱")}'")
-                .DisplayMember = "車號"
-                .SelectedIndex = -1
-            End With
-        End If
-
-        '刷新空車重,載入時間
-        'txtEmptyCar.Clear()
-        txtLoudTime_Empty.Clear()
     End Sub
 
     'dgv點擊-系統設定-權限設定
@@ -918,69 +946,76 @@ Public Class frmMain
             Exit Sub
         End If
 
+        If String.IsNullOrEmpty(cmbCarNo.Text) Then
+            MsgBox("請填寫車號")
+            Exit Sub
+        End If
+
         '臨時客戶/廠商,新增到資料表
         Dim cm As enumWho
+
         If cmbCliManu.SelectedIndex = -1 Then
             Dim table As String = ""
 
-            '判斷是客戶還是廠商
-            Select Case lblCliManu.Text
-                Case "客    戶"
-                    table = "客戶資料表"
-                    cm = enumWho.客戶
-                Case "廠    商"
-                    table = "廠商資料表"
-                    cm = enumWho.廠商
-            End Select
+            If Not String.IsNullOrEmpty(cmbCliManu.Text) Then
+                '判斷是客戶還是廠商
+                Select Case lblCliManu.Text
+                    Case "客    戶"
+                        table = "客戶資料表"
+                        cm = enumWho.客戶
+                    Case "廠    商"
+                        table = "廠商資料表"
+                        cm = enumWho.廠商
+                End Select
 
-            '檢查是否重複
-            If SelectTable($"SELECT 簡稱 FROM {table} WHERE 簡稱 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
-                '取得代號
-                Dim dtNo = SelectTable($"SELECT TOP 1 代號 FROM {table} ORDER BY 代號 DESC")
-                Dim no As String = 0
-                If dtNo.Rows.Count > 0 Then
-                    Dim input = dtNo.Rows(0)("代號")
-                    Dim patternDigits = "\d+"
-                    Dim match = Regex.Match(input, patternDigits)
+                '檢查是否重複
+                If SelectTable($"SELECT 簡稱 FROM {table} WHERE 簡稱 = '{cmbCliManu.Text}'").Rows.Count = 0 Then
+                    '取得代號
+                    Dim dtNo = SelectTable($"SELECT TOP 1 代號 FROM {table} ORDER BY 代號 DESC")
+                    Dim no As String = 0
 
-                    If match.Success Then
-                        Dim number = Integer.Parse(match.Value)
-                        number += 1
-                        no = Regex.Replace(input, patternDigits, number.ToString("D3"))
+                    If dtNo.Rows.Count > 0 Then
+                        Dim input = dtNo.Rows(0)("代號")
+                        Dim patternDigits = "\d+"
+                        Dim match = Regex.Match(input, patternDigits)
+
+                        If match.Success Then
+                            Dim number = Integer.Parse(match.Value)
+                            number += 1
+                            no = Regex.Replace(input, patternDigits, number.ToString("D3"))
+                        End If
+                    Else
+                        no = 1
                     End If
 
-                Else
-                    no = 1
+                    '全銜、簡稱一樣
+                    Dim dic As New Dictionary(Of String, Object) From {
+                        {"代號", no},
+                        {"簡稱", cmbCliManu.Text},
+                        {"全銜", cmbCliManu.Text}
+                    }
+                    InserTable(table, dic)
+
+                    '對應臨時客戶/廠商新增時要刷新
+                    btnClear_Click(btnClear_客戶, e)
+                    btnClear_Click(btnClear_廠商, e)
                 End If
-
-                '全銜、簡稱一樣
-                Dim dic As New Dictionary(Of String, Object) From {
-                    {"代號", no},
-                    {"簡稱", cmbCliManu.Text},
-                    {"全銜", cmbCliManu.Text}
-                }
-                InserTable(table, dic)
-
-                '對應臨時客戶/廠商新增時要刷新
-                btnClear_Click(btnClear_客戶, e)
-                btnClear_Click(btnClear_廠商, e)
             End If
         End If
 
-        '臨時車號,新增到資料表
-        If cmbCarNo.SelectedIndex = -1 Then
+        '車號
+        Dim dicCar As New Dictionary(Of String, String) From {{"車號", cmbCarNo.Text}}
 
-            If CheckCarNumberDuplicate(cmbCarNo.Text, cmbCliManu.Text) Then
-                Dim dic As New Dictionary(Of String, Object) From {
-                    {"車主", cmbCliManu.Text},
-                    {"車號", cmbCarNo.Text}
-                }
-                InserTable("車籍資料表", dic)
-                '對應臨時車號新增時要刷新
-                btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
-            Else
-                MsgBox($"重複的車號:{cmbCarNo.Text}")
-            End If
+        If Not String.IsNullOrEmpty(cmbCliManu.Text) Then dicCar.Add("車主", cmbCliManu.Text)
+
+        Dim sql = "SELECT * FROM 車籍資料表 WHERE "
+        Dim where = String.Join(" AND ", dicCar.Select(Function(x) $"{x.Key} = '{x.Value}'"))
+        sql += where
+
+        If SelectTable(sql).Rows.Count = 0 Then
+            InserTable("車籍資料表", dicCar)
+        Else
+            UpdateTable("車籍資料表", dicCar, where)
         End If
 
         '如果有空重時間與總重時間表示完成過磅
@@ -1041,6 +1076,41 @@ Finish:
         MsgBox("儲存成功")
     End Sub
 
+    '過磅作業-客戶、廠商-選擇
+    Private Sub cmbCliManu_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbCliManu.SelectionChangeCommitted
+        Dim cmb As ComboBox = sender
+        Dim row As DataRowView = cmb.SelectedItem
+
+        If String.IsNullOrEmpty(cmbCarNo.Text) Then
+            If row IsNot Nothing Then
+                Dim name As String = row("簡稱")
+                cmbCarNo.DataSource = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車主 = '{name}'")
+                cmbCarNo.SelectedIndex = -1
+            Else
+                cmbCarNo.DataSource = SelectTable($"SELECT * FROM 車籍資料表")
+                cmbCarNo.SelectedIndex = -1
+            End If
+        End If
+    End Sub
+
+    '過磅作業-客戶、廠商-按 Enter
+    Private Sub cmbCliManu_KeyDown(sender As Object, e As KeyEventArgs) Handles cmbCliManu.KeyDown
+        Dim cmb As ComboBox = sender
+
+        If e.KeyCode = Keys.Enter Then
+            Dim row As DataRowView = cmb.SelectedItem
+
+            If row IsNot Nothing AndAlso String.IsNullOrEmpty(cmbCarNo.Text) Then
+                Dim name As String = row("簡稱")
+                cmbCarNo.DataSource = SelectTable($"SELECT * FROM 車籍資料表 WHERE 車主 = '{name}'")
+                cmbCarNo.SelectedIndex = -1
+            Else
+                cmbCarNo.DataSource = SelectTable($"SELECT * FROM 車籍資料表")
+                cmbCarNo.SelectedIndex = -1
+            End If
+        End If
+    End Sub
+
     ''' <summary>
     ''' 檢查車號車主是否重複
     ''' </summary>
@@ -1060,14 +1130,19 @@ Finish:
     ''' <param name="status">insert、update</param>
     ''' <returns></returns>
     Private Function Save過磅Data(table As String, status As String) As Boolean
-        Dim dicRequired As New Dictionary(Of String, Object) From {
-            {"廠商/客戶", cmbCliManu},
-            {"產品名稱", cmbProduct},
-            {"車號", cmbCarNo}
-        }
+        Dim dicRequired As New Dictionary(Of String, Object)
+
+        dicRequired.Add("車號", cmbCarNo)
+
+        If table = "過磅資料表" Then
+            dicRequired.Add("廠商/客戶", cmbCliManu)
+            dicRequired.Add("產品名稱", cmbProduct)
+        End If
+
         If Not CheckRequiredCol(dicRequired) Then Return False
 
         Dim dicData As New Dictionary(Of String, String)
+
         For Each ctrl In tp過磅.Controls.OfType(Of Control).Where(Function(ctrls) ctrls.Tag IsNot Nothing AndAlso ctrls.Text <> "")
             Dim ctrlType = ctrl.GetType.Name
             Dim ctrlTag = ctrl.Tag
@@ -1077,6 +1152,12 @@ Finish:
                 Case "TextBox", "ComboBox"
                     dicData.Add(ctrlTag, ctrlText)
 
+                    If ctrlTag = "產品名稱" Then
+                        Dim product = SelectTable($"SELECT 代號 FROM 產品資料表 WHERE 品名 = '{ctrlText}'")
+                        Dim productCode = product.Rows(0).Field(Of String)("代號")
+
+                        dicData.Add("產品代號", productCode)
+                    End If
                 Case "DateTimePicker"
                     If status = "insert" Then
                         dicData.Add(ctrlTag, DirectCast(ctrl, DateTimePicker).Value.ToString("yyyy/MM/dd"))
@@ -1099,7 +1180,6 @@ Finish:
 
         Return success
     End Function
-
 
     '儲存-貨品資料
     Private Sub btnModify_貨品_Click(sender As Object, e As EventArgs) Handles btnModify_貨品.Click
@@ -1302,7 +1382,7 @@ Finish:
         Dim selectRow = dgv.SelectedRows(0)
         GetDataToControls(tp, selectRow)
         tempCarNo = selectRow.Cells("車號").Value
-        tempCarOwner = selectRow.Cells("車主").Value
+        tempCarOwner = If(IsDBNull(selectRow.Cells("車主").Value), "", selectRow.Cells("車主").Value)
     End Sub
 
     Private Sub dgv_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgv客戶.CellMouseClick, dgv廠商.CellMouseClick
@@ -1760,7 +1840,7 @@ Finish:
 
     Private Sub btnSave_rcep_Click(sender As Object, e As EventArgs) Handles btnSave_rcep.Click
         Try
-            Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
+            Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
             Dim kvp As KeyValuePair(Of String, String) = cmbRcepStyle.SelectedItem
             Dim content = "type:" & kvp.Value & vbCrLf &
                 "title:" & chkCustomizeTitle.Checked & vbCrLf &
@@ -1883,5 +1963,25 @@ Finish:
                 .SaveAs("客戶清單")
             End With
         End Using
+    End Sub
+
+    Private Sub tmrLoadPDF_Tick(sender As Object, e As EventArgs) Handles tmrLoadPDF.Tick
+        Dim fileName As String = "直式.html"
+        Dim folder = Path.Combine(StartupPath, "Rcep")
+        Dim filePath = Path.Combine(folder, fileName)
+        Dim pdfFilePath = Path.Combine(folder, "test.pdf")
+        SaveAsPDF("", pdfFilePath)
+
+        tmrLoadPDF.Enabled = False
+    End Sub
+
+    '過磅作業-車號-輸入文字
+    Private Sub cmbCarNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles cmbCarNo.KeyPress
+        If Char.IsLetter(e.KeyChar) Then e.KeyChar = Char.ToUpper(e.KeyChar)
+    End Sub
+
+    '車籍資料-車號
+    Private Sub txtNo_車籍_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNo_車籍.KeyPress
+        If Char.IsLetter(e.KeyChar) Then e.KeyChar = Char.ToUpper(e.KeyChar)
     End Sub
 End Class

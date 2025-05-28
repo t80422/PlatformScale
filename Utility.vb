@@ -5,6 +5,13 @@ Imports System.Windows
 Imports Application = System.Windows.Forms.Application
 
 Module Utility
+    Public stopwatch As New Stopwatch '測量程式執行時間
+    Public debug As Boolean
+    Public searchTime As Long
+    Public printTime As Long
+    Public replaceTime As Long
+    Public PDFTime As Long
+
     ''' <summary>
     ''' 設定DataGridView的樣式屬性
     ''' </summary>
@@ -92,6 +99,41 @@ Module Utility
         Next
     End Sub
 
+
+    ''' <summary>
+    ''' 清空指定控制項內其他控制項
+    ''' </summary>
+    ''' <param name="container">控制項的集合</param>
+    Public Sub ClearControls(container As Control, Optional exception As List(Of String) = Nothing)
+        For Each ctrl As Control In container.Controls
+            ' 檢查是否為例外列表中的控件
+            If exception IsNot Nothing AndAlso (exception.Contains(ctrl.Name) OrElse exception.Contains(ctrl.Text)) Then
+                Continue For
+            End If
+
+            ' 遞迴調用對於容器類型控件
+            If TypeOf ctrl Is GroupBox OrElse TypeOf ctrl Is FlowLayoutPanel OrElse TypeOf ctrl Is Panel Then
+                ClearControls(ctrl, exception)
+            ElseIf TypeOf ctrl Is TabControl Then
+                Dim tabControl As TabControl = CType(ctrl, TabControl)
+                For Each tabPage As TabPage In tabControl.TabPages
+                    ClearControls(tabPage, exception) ' 正確地對 TabPages 進行遞迴
+                Next
+            End If
+
+            ' 清除特定類型控件的內容
+            If TypeOf ctrl Is TextBox Then
+                Dim txt As TextBox = ctrl
+                txt.Text = String.Empty
+            ElseIf TypeOf ctrl Is CheckBox Then
+                CType(ctrl, CheckBox).Checked = False
+            ElseIf TypeOf ctrl Is RadioButton Then
+                CType(ctrl, RadioButton).Checked = False
+            ElseIf TypeOf ctrl Is ComboBox Then
+                CType(ctrl, ComboBox).SelectedIndex = -1
+            End If
+        Next
+    End Sub
     ''' <summary>
     ''' 將取得的資料傳至各控制項(控制項的Tag必須寫上表格欄位名稱)
     ''' </summary>
@@ -210,7 +252,6 @@ Module Utility
         Dim printerSettings As New PrinterSettings()
         printerSettings.DefaultPageSettings.Margins = New Margins(0, 0, 0, 0)
 
-        'todo 寫成參數檔,會有客製的過磅單,不一定每個客戶都使用
         Select Case type
             Case "A"
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 310, 598)
@@ -218,9 +259,13 @@ Module Utility
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 700, 401)
             Case "C"
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 858, 700)
+            Case "D"
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 303, 700)
             Case Else
 
         End Select
+
+        stopwatch.Restart()
 
         Using document As PdfiumViewer.PdfDocument = PdfiumViewer.PdfDocument.Load(filePath)
             Dim printDocument As PrintDocument = document.CreatePrintDocument()
@@ -228,6 +273,13 @@ Module Utility
             printDocument.PrintController = New StandardPrintController()
             printDocument.Print()
         End Using
+        stopwatch.Stop()
+        printTime = stopwatch.ElapsedMilliseconds / 1000
+
+        If debug Then MsgBox($"搜尋資料時間:{searchTime}秒" & vbCrLf &
+                             $"寫入範本檔時間:{replaceTime}秒" & vbCrLf &
+                             $"轉成PDF時間:{PDFTime}秒" & vbCrLf &
+                             $"列印時間:{printTime}秒")
     End Sub
 
     ''' <summary>
