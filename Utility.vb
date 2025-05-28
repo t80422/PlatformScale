@@ -259,6 +259,8 @@ Module Utility
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 700, 401)
             Case "C"
                 printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 858, 700)
+            Case "D"
+                printerSettings.DefaultPageSettings.PaperSize = New PaperSize("Custom", 303, 700)
             Case Else
 
         End Select

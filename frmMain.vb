@@ -115,31 +115,37 @@ Public Class frmMain
     Private Sub InitRcepStyle()
         '設定 系統設定-過磅單樣式 cmb
         Dim dic = New Dictionary(Of String, String) From {
-        {"直式", "A"},
-        {"橫式", "B"},
-        {"直式三聯", "C"}
-    }
+            {"直式", "A"},
+            {"橫式", "B"},
+            {"直式三聯", "C"},
+            {"直式2", "D"}
+        }
 
         With cmbRcepStyle
             For Each kvp In dic
                 .Items.Add(New KeyValuePair(Of String, String)(kvp.Key, kvp.Value))
             Next
+
             .DisplayMember = "Key"
             .ValueMember = "Value"
         End With
 
         '載入設定檔
-        Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
+        Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
+
         If Not File.Exists(filePath) Then
             File.Create(filePath).Close()
             Exit Sub
         Else
             Dim lines = File.ReadAllLines(filePath)
+
             For Each line In lines
                 Dim parts = Split(line, ":")
+
                 Select Case parts(0)
                     Case "type"
                         Dim selectedType = parts(1)
+
                         For Each item As KeyValuePair(Of String, String) In cmbRcepStyle.Items
                             If item.Value = selectedType Then
                                 cmbRcepStyle.SelectedItem = item
@@ -497,11 +503,13 @@ Public Class frmMain
                 fileName = "橫式.html"
             Case "C"
                 fileName = "直式三聯.html"
+            Case "D"
+                fileName = "直式2.html"
         End Select
 
-        Dim folder = IO.Path.Combine(StartupPath, "Rcep")
-        Dim filePath = IO.Path.Combine(folder, fileName)
-        Dim pdfFilePath = IO.Path.Combine(folder, "test.pdf")
+        Dim folder = Path.Combine(StartupPath, "Rcep")
+        Dim filePath = Path.Combine(folder, fileName)
+        Dim pdfFilePath = Path.Combine(folder, "test.pdf")
 
         stopwatch.Restart()
         CloseOpenPDF(pdfFilePath)
@@ -1135,6 +1143,7 @@ Finish:
         If Not CheckRequiredCol(dicRequired) Then Return False
 
         Dim dicData As New Dictionary(Of String, String)
+
         For Each ctrl In tp過磅.Controls.OfType(Of Control).Where(Function(ctrls) ctrls.Tag IsNot Nothing AndAlso ctrls.Text <> "")
             Dim ctrlType = ctrl.GetType.Name
             Dim ctrlTag = ctrl.Tag
@@ -1144,6 +1153,12 @@ Finish:
                 Case "TextBox", "ComboBox"
                     dicData.Add(ctrlTag, ctrlText)
 
+                    If ctrlTag = "產品名稱" Then
+                        Dim product = SelectTable($"SELECT 代號 FROM 產品資料表 WHERE 品名 = '{ctrlText}'")
+                        Dim productCode = product.Rows(0).Field(Of String)("代號")
+
+                        dicData.Add("產品代號", productCode)
+                    End If
                 Case "DateTimePicker"
                     If status = "insert" Then
                         dicData.Add(ctrlTag, DirectCast(ctrl, DateTimePicker).Value.ToString("yyyy/MM/dd"))
@@ -1833,7 +1848,7 @@ Finish:
 
     Private Sub btnSave_rcep_Click(sender As Object, e As EventArgs) Handles btnSave_rcep.Click
         Try
-            Dim filePath = IO.Path.Combine(StartupPath, "RcrpStyle.set")
+            Dim filePath = Path.Combine(StartupPath, "RcrpStyle.set")
             Dim kvp As KeyValuePair(Of String, String) = cmbRcepStyle.SelectedItem
             Dim content = "type:" & kvp.Value & vbCrLf &
                 "title:" & chkCustomizeTitle.Checked & vbCrLf &
