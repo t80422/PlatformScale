@@ -291,6 +291,7 @@ Partial Class frmMain
         Me.tmr過磅 = New System.Windows.Forms.Timer(Me.components)
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
         Me.tmrCheckModify = New System.Windows.Forms.Timer(Me.components)
+        Me.tmrLoadPDF = New System.Windows.Forms.Timer(Me.components)
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -594,6 +595,8 @@ Partial Class frmMain
         '
         'cmbCarNo
         '
+        Me.cmbCarNo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
+        Me.cmbCarNo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource
         Me.cmbCarNo.Enabled = False
         Me.cmbCarNo.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.cmbCarNo.FormattingEnabled = True
@@ -3315,6 +3318,9 @@ Partial Class frmMain
         Me.tmrCheckModify.Enabled = True
         Me.tmrCheckModify.Interval = 10000
         '
+        'tmrLoadPDF
+        '
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3326,7 +3332,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.0.6"
+        Me.Text = "原綱衡器過磅系統 v1.0.7"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3651,4 +3657,5 @@ Partial Class frmMain
     Friend WithEvents txtRcepHeight As TextBox
     Friend WithEvents txtRcepWidth As TextBox
     Friend WithEvents Label72 As Label
+    Friend WithEvents tmrLoadPDF As Timer
 End Class
