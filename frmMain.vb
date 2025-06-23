@@ -838,6 +838,7 @@ Public Class frmMain
 
         If CheckInsert(sender, dic, lst, table) Then
             btn.PerformClick()
+            btnClear_report_Click(btnClear_report, EventArgs.Empty)
             MsgBox("新增成功")
         End If
     End Sub
@@ -854,6 +855,7 @@ Public Class frmMain
         End If
         If InserTable("產品資料表", dic) Then
             btnClear_貨品.PerformClick()
+            btnClear_report_Click(btnClear_report, EventArgs.Empty)
             MsgBox("新增成功")
         End If
     End Sub
@@ -862,6 +864,12 @@ Public Class frmMain
     Private Sub btnInsert_權限_Click(sender As Object, e As EventArgs) Handles btnInsert_權限.Click
         Dim dic As New Dictionary(Of String, Object)
         grp權限.Controls.OfType(Of Control).Where(Function(txt) txt.Tag <> "").ToList.ForEach(Sub(ctrl) dic.Add(ctrl.Tag.ToString, ctrl.Text))
+
+        If String.IsNullOrEmpty(dic("名稱")) Then
+            MsgBox("名稱為必填欄位")
+            Return
+        End If
+
         If InserTable("密碼資料表", dic) Then
             btnClear_權限.PerformClick()
             MsgBox("新增成功")
@@ -886,6 +894,7 @@ Public Class frmMain
 
         If InserTable("車籍資料表", dic) Then
             btnClear_車籍.PerformClick()
+            btnClear_report_Click(btnClear_report, EventArgs.Empty)
             MsgBox("新增成功")
         Else
             MsgBox("新增失敗")
@@ -1000,6 +1009,7 @@ Public Class frmMain
                     '對應臨時客戶/廠商新增時要刷新
                     btnClear_Click(btnClear_客戶, e)
                     btnClear_Click(btnClear_廠商, e)
+                    btnClear_report_Click(btnClear_report, e)
                 End If
             End If
         End If
@@ -1015,6 +1025,8 @@ Public Class frmMain
 
         If SelectTable(sql).Rows.Count = 0 Then
             InserTable("車籍資料表", dicCar)
+            btnClear_車籍_Click(btnClear_車籍, e)
+            btnClear_report_Click(btnClear_report, e)
         Else
             UpdateTable("車籍資料表", dicCar, where)
         End If
@@ -1362,6 +1374,7 @@ Finish:
         If Not UpdateTable(table, dic, $"車號 = '{tempCarNo}' AND 車主 = '{tempCarOwner}'") Then Exit Sub
 
         btn.PerformClick()
+        btnClear_report_Click(btnClear_report, EventArgs.Empty)
         MsgBox("修改成功")
     End Sub
 
@@ -1485,6 +1498,7 @@ Finish:
         If Not UpdateTable(table, dic, $"{condition(0)} = '{condition(1)}'") Then Exit Sub
 
         btn.PerformClick()
+        btnClear_report_Click(btnClear_report, EventArgs.Empty)
         MsgBox("修改成功")
     End Sub
 
@@ -1991,5 +2005,11 @@ Finish:
     '車籍資料-車號
     Private Sub txtNo_車籍_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtNo_車籍.KeyPress
         If Char.IsLetter(e.KeyChar) Then e.KeyChar = Char.ToUpper(e.KeyChar)
+    End Sub
+
+    Private Sub btnClear_report_Click(sender As Object, e As EventArgs) Handles btnClear_report.Click
+        InitReportDate()
+        InitReportCombobox()
+        rdoCustomer.Checked = True
     End Sub
 End Class

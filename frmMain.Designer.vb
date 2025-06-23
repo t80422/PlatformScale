@@ -292,6 +292,7 @@ Partial Class frmMain
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
         Me.tmrCheckModify = New System.Windows.Forms.Timer(Me.components)
         Me.tmrLoadPDF = New System.Windows.Forms.Timer(Me.components)
+        Me.btnClear_report = New System.Windows.Forms.Button()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -490,7 +491,7 @@ Partial Class frmMain
         Me.Label100.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label100.Location = New System.Drawing.Point(8, 95)
         Me.Label100.Name = "Label100"
-        Me.Label100.Size = New System.Drawing.Size(76, 16)
+        Me.Label100.Size = New System.Drawing.Size(75, 16)
         Me.Label100.TabIndex = 279
         Me.Label100.Text = "磅單序號"
         '
@@ -511,7 +512,7 @@ Partial Class frmMain
         Me.Label95.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label95.Location = New System.Drawing.Point(527, 95)
         Me.Label95.Name = "Label95"
-        Me.Label95.Size = New System.Drawing.Size(42, 16)
+        Me.Label95.Size = New System.Drawing.Size(41, 16)
         Me.Label95.TabIndex = 275
         Me.Label95.Text = "趟數"
         '
@@ -542,7 +543,7 @@ Partial Class frmMain
         Me.RadioButton13.Checked = True
         Me.RadioButton13.Location = New System.Drawing.Point(6, 18)
         Me.RadioButton13.Name = "RadioButton13"
-        Me.RadioButton13.Size = New System.Drawing.Size(62, 20)
+        Me.RadioButton13.Size = New System.Drawing.Size(61, 20)
         Me.RadioButton13.TabIndex = 259
         Me.RadioButton13.TabStop = True
         Me.RadioButton13.Text = "0.00"
@@ -553,7 +554,7 @@ Partial Class frmMain
         Me.RadioButton12.AutoSize = True
         Me.RadioButton12.Location = New System.Drawing.Point(74, 18)
         Me.RadioButton12.Name = "RadioButton12"
-        Me.RadioButton12.Size = New System.Drawing.Size(71, 20)
+        Me.RadioButton12.Size = New System.Drawing.Size(70, 20)
         Me.RadioButton12.TabIndex = 260
         Me.RadioButton12.Text = "0.000"
         Me.RadioButton12.UseVisualStyleBackColor = True
@@ -612,7 +613,7 @@ Partial Class frmMain
         Me.Label60.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label60.Location = New System.Drawing.Point(657, 208)
         Me.Label60.Name = "Label60"
-        Me.Label60.Size = New System.Drawing.Size(78, 16)
+        Me.Label60.Size = New System.Drawing.Size(77, 16)
         Me.Label60.TabIndex = 269
         Me.Label60.Text = "備    註"
         '
@@ -733,7 +734,7 @@ Partial Class frmMain
         Me.lblTime.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.lblTime.Location = New System.Drawing.Point(177, 134)
         Me.lblTime.Name = "lblTime"
-        Me.lblTime.Size = New System.Drawing.Size(80, 16)
+        Me.lblTime.Size = New System.Drawing.Size(79, 16)
         Me.lblTime.TabIndex = 263
         Me.lblTime.Tag = "過磅時間"
         Me.lblTime.Text = "10:11:12"
@@ -754,7 +755,7 @@ Partial Class frmMain
         Me.Label74.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label74.Location = New System.Drawing.Point(287, 245)
         Me.Label74.Name = "Label74"
-        Me.Label74.Size = New System.Drawing.Size(77, 16)
+        Me.Label74.Size = New System.Drawing.Size(76, 16)
         Me.Label74.TabIndex = 258
         Me.Label74.Text = "總 米 數"
         '
@@ -775,7 +776,7 @@ Partial Class frmMain
         Me.Label73.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label73.Location = New System.Drawing.Point(7, 225)
         Me.Label73.Name = "Label73"
-        Me.Label73.Size = New System.Drawing.Size(76, 16)
+        Me.Label73.Size = New System.Drawing.Size(75, 16)
         Me.Label73.TabIndex = 256
         Me.Label73.Text = "每米噸數"
         '
@@ -796,7 +797,7 @@ Partial Class frmMain
         Me.Label70.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label70.Location = New System.Drawing.Point(658, 172)
         Me.Label70.Name = "Label70"
-        Me.Label70.Size = New System.Drawing.Size(76, 16)
+        Me.Label70.Size = New System.Drawing.Size(75, 16)
         Me.Label70.TabIndex = 251
         Me.Label70.Text = "載入時間"
         '
@@ -816,7 +817,7 @@ Partial Class frmMain
         Me.Label69.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label69.Location = New System.Drawing.Point(658, 134)
         Me.Label69.Name = "Label69"
-        Me.Label69.Size = New System.Drawing.Size(76, 16)
+        Me.Label69.Size = New System.Drawing.Size(75, 16)
         Me.Label69.TabIndex = 249
         Me.Label69.Text = "載入時間"
         '
@@ -862,7 +863,7 @@ Partial Class frmMain
         Me.Label67.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label67.Location = New System.Drawing.Point(530, 208)
         Me.Label67.Name = "Label67"
-        Me.Label67.Size = New System.Drawing.Size(17, 16)
+        Me.Label67.Size = New System.Drawing.Size(16, 16)
         Me.Label67.TabIndex = 245
         Me.Label67.Text = "T"
         '
@@ -872,7 +873,7 @@ Partial Class frmMain
         Me.Label68.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label68.Location = New System.Drawing.Point(287, 208)
         Me.Label68.Name = "Label68"
-        Me.Label68.Size = New System.Drawing.Size(78, 16)
+        Me.Label68.Size = New System.Drawing.Size(77, 16)
         Me.Label68.TabIndex = 244
         Me.Label68.Text = "淨    重"
         '
@@ -893,7 +894,7 @@ Partial Class frmMain
         Me.Label65.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label65.Location = New System.Drawing.Point(530, 171)
         Me.Label65.Name = "Label65"
-        Me.Label65.Size = New System.Drawing.Size(17, 16)
+        Me.Label65.Size = New System.Drawing.Size(16, 16)
         Me.Label65.TabIndex = 242
         Me.Label65.Text = "T"
         '
@@ -903,7 +904,7 @@ Partial Class frmMain
         Me.Label66.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label66.Location = New System.Drawing.Point(287, 172)
         Me.Label66.Name = "Label66"
-        Me.Label66.Size = New System.Drawing.Size(78, 16)
+        Me.Label66.Size = New System.Drawing.Size(77, 16)
         Me.Label66.TabIndex = 241
         Me.Label66.Text = "總    重"
         '
@@ -924,7 +925,7 @@ Partial Class frmMain
         Me.Label64.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label64.Location = New System.Drawing.Point(530, 134)
         Me.Label64.Name = "Label64"
-        Me.Label64.Size = New System.Drawing.Size(17, 16)
+        Me.Label64.Size = New System.Drawing.Size(16, 16)
         Me.Label64.TabIndex = 239
         Me.Label64.Text = "T"
         '
@@ -934,7 +935,7 @@ Partial Class frmMain
         Me.Label57.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label57.Location = New System.Drawing.Point(286, 134)
         Me.Label57.Name = "Label57"
-        Me.Label57.Size = New System.Drawing.Size(76, 16)
+        Me.Label57.Size = New System.Drawing.Size(75, 16)
         Me.Label57.TabIndex = 238
         Me.Label57.Text = "空車重量"
         '
@@ -1059,7 +1060,7 @@ Partial Class frmMain
         Me.Label63.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label63.Location = New System.Drawing.Point(7, 193)
         Me.Label63.Name = "Label63"
-        Me.Label63.Size = New System.Drawing.Size(76, 16)
+        Me.Label63.Size = New System.Drawing.Size(75, 16)
         Me.Label63.TabIndex = 228
         Me.Label63.Text = "產品名稱"
         '
@@ -1081,7 +1082,7 @@ Partial Class frmMain
         Me.Label58.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label58.Location = New System.Drawing.Point(658, 95)
         Me.Label58.Name = "Label58"
-        Me.Label58.Size = New System.Drawing.Size(77, 16)
+        Me.Label58.Size = New System.Drawing.Size(76, 16)
         Me.Label58.TabIndex = 218
         Me.Label58.Text = "承 辦 人"
         '
@@ -1102,7 +1103,7 @@ Partial Class frmMain
         Me.lblCliManu.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.lblCliManu.Location = New System.Drawing.Point(8, 163)
         Me.lblCliManu.Name = "lblCliManu"
-        Me.lblCliManu.Size = New System.Drawing.Size(78, 16)
+        Me.lblCliManu.Size = New System.Drawing.Size(77, 16)
         Me.lblCliManu.TabIndex = 203
         Me.lblCliManu.Text = "客    戶"
         '
@@ -1112,7 +1113,7 @@ Partial Class frmMain
         Me.Label54.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label54.Location = New System.Drawing.Point(287, 95)
         Me.Label54.Name = "Label54"
-        Me.Label54.Size = New System.Drawing.Size(78, 16)
+        Me.Label54.Size = New System.Drawing.Size(77, 16)
         Me.Label54.TabIndex = 200
         Me.Label54.Text = "車    號"
         '
@@ -2398,6 +2399,7 @@ Partial Class frmMain
         '
         'tpReport
         '
+        Me.tpReport.Controls.Add(Me.btnClear_report)
         Me.tpReport.Controls.Add(Me.chkExcel)
         Me.tpReport.Controls.Add(Me.Label56)
         Me.tpReport.Controls.Add(Me.cmbCarNo_report)
@@ -2896,7 +2898,7 @@ Partial Class frmMain
         Me.Label62.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.Label62.Location = New System.Drawing.Point(10, 328)
         Me.Label62.Name = "Label62"
-        Me.Label62.Size = New System.Drawing.Size(225, 80)
+        Me.Label62.Size = New System.Drawing.Size(224, 80)
         Me.Label62.TabIndex = 261
         Me.Label62.Text = "偏移量說明:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    左右-" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "        正數往左,負數往右" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "    上下-" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "        正數往下,負數往上"
         '
@@ -3321,6 +3323,17 @@ Partial Class frmMain
         'tmrLoadPDF
         '
         '
+        'btnClear_report
+        '
+        Me.btnClear_report.AutoSize = True
+        Me.btnClear_report.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnClear_report.Image = CType(resources.GetObject("btnClear_report.Image"), System.Drawing.Image)
+        Me.btnClear_report.Location = New System.Drawing.Point(886, 6)
+        Me.btnClear_report.Name = "btnClear_report"
+        Me.btnClear_report.Size = New System.Drawing.Size(81, 81)
+        Me.btnClear_report.TabIndex = 317
+        Me.btnClear_report.UseVisualStyleBackColor = False
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3332,7 +3345,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.0.7"
+        Me.Text = "原綱衡器過磅系統 v1.0.8"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3658,4 +3671,5 @@ Partial Class frmMain
     Friend WithEvents txtRcepWidth As TextBox
     Friend WithEvents Label72 As Label
     Friend WithEvents tmrLoadPDF As Timer
+    Friend WithEvents btnClear_report As Button
 End Class
