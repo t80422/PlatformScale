@@ -51,7 +51,11 @@ Public Class frmMain
         End With
 
         '讀取系統設定-遠端備份
-        lblRemote.Text = SelectTable($"SELECT IP FROM 遠端備份資料表").Rows(0)("IP")
+        Dim dtRemote = SelectTable("SELECT * FROM 遠端備份資料表")
+
+        If dtRemote.Rows.Count > 0 Then
+            lblRemote.Text = SelectTable($"SELECT IP FROM 遠端備份資料表").Rows(0)("IP")
+        End If
 
         '初始化 系統設定-Port設定
         dgvPort.DataSource = SelectTable("SELECT * FROM 通訊埠口資料表")
@@ -96,14 +100,17 @@ Public Class frmMain
     End Function
 
     Private Sub InitReportCombobox()
+        cmbProduct_report.Items.Clear()
         cmbProduct_report.Items.Add("全部")
         cmbProduct_report.Items.AddRange(SelectTable("SELECT 品名 FROM 產品資料表").AsEnumerable().Select(Function(row) row("品名")).ToArray())
         cmbProduct_report.SelectedIndex = 0
 
+        cmbCliSup_report.Items.Clear()
         cmbCliSup_report.Items.Add("全部")
         cmbCliSup_report.Items.AddRange(SelectTable($"SELECT 簡稱 FROM 客戶資料表").AsEnumerable().Select(Function(row) row("簡稱")).ToArray())
         cmbCliSup_report.SelectedIndex = 0
 
+        cmbCarNo_report.Items.Clear()
         cmbCarNo_report.Items.Add("全部")
         cmbCarNo_report.Items.AddRange(SelectTable($"SELECT 車號 FROM 車籍資料表").AsEnumerable().Select(Function(row) row("車號")).ToArray())
         cmbCarNo_report.SelectedIndex = 0
@@ -664,11 +671,13 @@ Public Class frmMain
     '廠商資料-刪除
     Private Sub btnDel_廠商_Click(sender As Object, e As EventArgs) Handles btnDel_廠商.Click
         CommonDelete(txtNo_廠商, "廠商資料表")
+        btnClear_report_Click(btnClear_report, e)
     End Sub
 
     '客戶資料-刪除
     Private Sub btnDel_客戶_Click(sender As Object, e As EventArgs) Handles btnDelete_客戶.Click
         CommonDelete(txtNo_客戶, "客戶資料表")
+        btnClear_report_Click(btnClear_report, e)
     End Sub
 
     ''' <summary>
@@ -1571,6 +1580,7 @@ Finish:
         If Not DeleteTable(table, $"{condition(0)} = '{condition(1)}'") Then Exit Sub
 
         btn.PerformClick()
+        btnClear_report_Click(btnClear_report, e)
         MsgBox("刪除成功")
     End Sub
 

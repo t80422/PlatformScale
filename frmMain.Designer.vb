@@ -205,6 +205,7 @@ Partial Class frmMain
         Me.dgv貨品 = New System.Windows.Forms.DataGridView()
         Me.btnQuery_貨品 = New System.Windows.Forms.Button()
         Me.tpReport = New System.Windows.Forms.TabPage()
+        Me.btnClear_report = New System.Windows.Forms.Button()
         Me.chkExcel = New System.Windows.Forms.CheckBox()
         Me.Label56 = New System.Windows.Forms.Label()
         Me.cmbCarNo_report = New System.Windows.Forms.ComboBox()
@@ -292,7 +293,6 @@ Partial Class frmMain
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
         Me.tmrCheckModify = New System.Windows.Forms.Timer(Me.components)
         Me.tmrLoadPDF = New System.Windows.Forms.Timer(Me.components)
-        Me.btnClear_report = New System.Windows.Forms.Button()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -2419,6 +2419,17 @@ Partial Class frmMain
         Me.tpReport.Text = "報   表"
         Me.tpReport.UseVisualStyleBackColor = True
         '
+        'btnClear_report
+        '
+        Me.btnClear_report.AutoSize = True
+        Me.btnClear_report.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
+        Me.btnClear_report.Image = CType(resources.GetObject("btnClear_report.Image"), System.Drawing.Image)
+        Me.btnClear_report.Location = New System.Drawing.Point(886, 6)
+        Me.btnClear_report.Name = "btnClear_report"
+        Me.btnClear_report.Size = New System.Drawing.Size(81, 81)
+        Me.btnClear_report.TabIndex = 317
+        Me.btnClear_report.UseVisualStyleBackColor = False
+        '
         'chkExcel
         '
         Me.chkExcel.AutoSize = True
@@ -3323,17 +3334,6 @@ Partial Class frmMain
         'tmrLoadPDF
         '
         '
-        'btnClear_report
-        '
-        Me.btnClear_report.AutoSize = True
-        Me.btnClear_report.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.btnClear_report.Image = CType(resources.GetObject("btnClear_report.Image"), System.Drawing.Image)
-        Me.btnClear_report.Location = New System.Drawing.Point(886, 6)
-        Me.btnClear_report.Name = "btnClear_report"
-        Me.btnClear_report.Size = New System.Drawing.Size(81, 81)
-        Me.btnClear_report.TabIndex = 317
-        Me.btnClear_report.UseVisualStyleBackColor = False
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3345,7 +3345,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.0.8"
+        Me.Text = "原綱衡器過磅系統 v1.0.9"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()

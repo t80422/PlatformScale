@@ -13,7 +13,7 @@ Module modAccess
         Try
             Dim dbSet = ReadConfigFile("DB.set")
 
-            If dbSet Is Nothing OrElse Not File.Exists(dbSet(0)) Then
+            If dbSet Is Nothing OrElse dbSet.Length <> 2 Then
                 SetDatabase()
             Else
                 dataSource = dbSet(0)
