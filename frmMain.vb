@@ -16,6 +16,8 @@ Imports Path = System.IO.Path
 Imports TextBox = System.Windows.Forms.TextBox
 
 Public Class frmMain
+    Implements ICarView
+
     Public permissions As Integer '權限等級
     Public user As String '使用者
     Private serialPortA As SerialPort
@@ -28,6 +30,8 @@ Public Class frmMain
     Private tempCarNo As String '用在車籍資料
     Private tempCarOwner As String '用在車籍資料
     Private currentProductId As String
+    Private carPresenter As CarPresenter
+    Public Event DeleteCar As EventHandler(Of DeleteRequestedEventArgs) Implements ICarView.DeleteCar
 
     Private Enum enumWho
         客戶
@@ -72,6 +76,8 @@ Public Class frmMain
         tmrLoadPDF.Enabled = True
 
         debug = Configuration.ConfigurationManager.AppSettings("Debug") = "T"
+
+        carPresenter = New CarPresenter(Me, New CarRep)
     End Sub
 
     ''' <summary>
@@ -1551,7 +1557,7 @@ Finish:
     End Sub
 
     '刪除-廠商資料,客戶資料,車籍資料,貨品資料,廠商資料-專案,客戶資料-工程
-    Private Sub btnDel_Click(sender As Object, e As EventArgs) Handles btnDel_車籍.Click, btnDel_貨品.Click
+    Private Sub btnDel_Click(sender As Object, e As EventArgs) Handles btnDel_貨品.Click
         If permissions = 1 Then
             MsgBox("權限不足,無法刪除")
             Exit Sub
@@ -1580,6 +1586,28 @@ Finish:
         If Not DeleteTable(table, $"{condition(0)} = '{condition(1)}'") Then Exit Sub
 
         btn.PerformClick()
+        btnClear_report_Click(btnClear_report, e)
+        MsgBox("刪除成功")
+    End Sub
+
+    Private Sub btnDel_車籍_Click(sender As Object, e As EventArgs) Handles btnDel_車籍.Click
+        If permissions = 1 Then
+            MsgBox("權限不足,無法刪除")
+            Exit Sub
+        End If
+
+        Dim carNum = txtNo_車籍.Text
+        Dim owner = txt車主.Text
+
+        If String.IsNullOrWhiteSpace(carNum) Then
+            MsgBox("請選擇刪除對象")
+            Exit Sub
+        End If
+
+        If MsgBox($"你確定要刪除 {carNum} ?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then Exit Sub
+
+        carPresenter.Delete(carNum, owner)
+        btnClear_車籍_Click(btnClear_車籍, EventArgs.Empty)
         btnClear_report_Click(btnClear_report, e)
         MsgBox("刪除成功")
     End Sub
@@ -1813,6 +1841,17 @@ Finish:
                 Case "過磅單日統計表"
                     exlReport.GenerateWeighingDailyReport(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
 
+                Case "客戶出貨日報表"
+                    Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value).ToString("yyyy/MM/dd")
+                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value).AddDays(1).ToString("yyyy/MM/dd")
+                    Dim customer = cmbCliSup_report.Text
+
+                    If String.IsNullOrEmpty(customer) Then
+                        MsgBox("請選擇客戶")
+                        Exit Sub
+                    End If
+
+                    exlReport.GenerateCustomerShipmentDailyReport(startDate, endDate, customer)
                 Case Else
 
             End Select

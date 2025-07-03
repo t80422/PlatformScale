@@ -293,6 +293,7 @@ Partial Class frmMain
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
         Me.tmrCheckModify = New System.Windows.Forms.Timer(Me.components)
         Me.tmrLoadPDF = New System.Windows.Forms.Timer(Me.components)
+        Me.RadioButton1 = New System.Windows.Forms.RadioButton()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -2443,7 +2444,7 @@ Partial Class frmMain
         'Label56
         '
         Me.Label56.AutoSize = True
-        Me.Label56.Location = New System.Drawing.Point(622, 272)
+        Me.Label56.Location = New System.Drawing.Point(622, 305)
         Me.Label56.Name = "Label56"
         Me.Label56.Size = New System.Drawing.Size(56, 21)
         Me.Label56.TabIndex = 315
@@ -2453,7 +2454,7 @@ Partial Class frmMain
         '
         Me.cmbCarNo_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbCarNo_report.FormattingEnabled = True
-        Me.cmbCarNo_report.Location = New System.Drawing.Point(684, 269)
+        Me.cmbCarNo_report.Location = New System.Drawing.Point(684, 302)
         Me.cmbCarNo_report.Name = "cmbCarNo_report"
         Me.cmbCarNo_report.Size = New System.Drawing.Size(230, 29)
         Me.cmbCarNo_report.TabIndex = 314
@@ -2461,7 +2462,7 @@ Partial Class frmMain
         'lblCliSup
         '
         Me.lblCliSup.AutoSize = True
-        Me.lblCliSup.Location = New System.Drawing.Point(314, 272)
+        Me.lblCliSup.Location = New System.Drawing.Point(314, 305)
         Me.lblCliSup.Name = "lblCliSup"
         Me.lblCliSup.Size = New System.Drawing.Size(56, 21)
         Me.lblCliSup.TabIndex = 313
@@ -2471,7 +2472,7 @@ Partial Class frmMain
         '
         Me.cmbCliSup_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbCliSup_report.FormattingEnabled = True
-        Me.cmbCliSup_report.Location = New System.Drawing.Point(376, 269)
+        Me.cmbCliSup_report.Location = New System.Drawing.Point(376, 302)
         Me.cmbCliSup_report.Name = "cmbCliSup_report"
         Me.cmbCliSup_report.Size = New System.Drawing.Size(230, 29)
         Me.cmbCliSup_report.TabIndex = 312
@@ -2479,7 +2480,7 @@ Partial Class frmMain
         'Label53
         '
         Me.Label53.AutoSize = True
-        Me.Label53.Location = New System.Drawing.Point(6, 272)
+        Me.Label53.Location = New System.Drawing.Point(6, 305)
         Me.Label53.Name = "Label53"
         Me.Label53.Size = New System.Drawing.Size(56, 21)
         Me.Label53.TabIndex = 311
@@ -2489,7 +2490,7 @@ Partial Class frmMain
         '
         Me.cmbProduct_report.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbProduct_report.FormattingEnabled = True
-        Me.cmbProduct_report.Location = New System.Drawing.Point(68, 269)
+        Me.cmbProduct_report.Location = New System.Drawing.Point(68, 302)
         Me.cmbProduct_report.Name = "cmbProduct_report"
         Me.cmbProduct_report.Size = New System.Drawing.Size(230, 29)
         Me.cmbProduct_report.TabIndex = 310
@@ -2506,7 +2507,7 @@ Partial Class frmMain
         Me.GroupBox3.Controls.Add(Me.Label19)
         Me.GroupBox3.Controls.Add(Me.Label20)
         Me.GroupBox3.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.GroupBox3.Location = New System.Drawing.Point(113, 156)
+        Me.GroupBox3.Location = New System.Drawing.Point(113, 189)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(552, 86)
         Me.GroupBox3.TabIndex = 7
@@ -2613,6 +2614,7 @@ Partial Class frmMain
         '
         'grpType_report
         '
+        Me.grpType_report.Controls.Add(Me.RadioButton1)
         Me.grpType_report.Controls.Add(Me.RadioButton11)
         Me.grpType_report.Controls.Add(Me.RadioButton10)
         Me.grpType_report.Controls.Add(Me.RadioButton9)
@@ -2625,7 +2627,7 @@ Partial Class frmMain
         Me.grpType_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
         Me.grpType_report.Location = New System.Drawing.Point(8, 6)
         Me.grpType_report.Name = "grpType_report"
-        Me.grpType_report.Size = New System.Drawing.Size(785, 144)
+        Me.grpType_report.Size = New System.Drawing.Size(785, 177)
         Me.grpType_report.TabIndex = 2
         Me.grpType_report.TabStop = False
         Me.grpType_report.Text = "種類"
@@ -2738,7 +2740,7 @@ Partial Class frmMain
         Me.grpInOut_report.Controls.Add(Me.rdoSupplier)
         Me.grpInOut_report.Controls.Add(Me.rdoCustomer)
         Me.grpInOut_report.Font = New System.Drawing.Font("標楷體", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.grpInOut_report.Location = New System.Drawing.Point(8, 156)
+        Me.grpInOut_report.Location = New System.Drawing.Point(8, 189)
         Me.grpInOut_report.Name = "grpInOut_report"
         Me.grpInOut_report.Size = New System.Drawing.Size(99, 86)
         Me.grpInOut_report.TabIndex = 1
@@ -3334,6 +3336,16 @@ Partial Class frmMain
         'tmrLoadPDF
         '
         '
+        'RadioButton1
+        '
+        Me.RadioButton1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton1.Location = New System.Drawing.Point(6, 143)
+        Me.RadioButton1.Name = "RadioButton1"
+        Me.RadioButton1.Size = New System.Drawing.Size(270, 23)
+        Me.RadioButton1.TabIndex = 9
+        Me.RadioButton1.Text = "客戶出貨日報表"
+        Me.RadioButton1.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3345,7 +3357,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.0.9"
+        Me.Text = "原綱衡器過磅系統 v1.1.0"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
@@ -3672,4 +3684,5 @@ Partial Class frmMain
     Friend WithEvents Label72 As Label
     Friend WithEvents tmrLoadPDF As Timer
     Friend WithEvents btnClear_report As Button
+    Friend WithEvents RadioButton1 As RadioButton
 End Class

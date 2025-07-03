@@ -808,6 +808,145 @@ Namespace ReportGenerators
             WriteToExcel(table)
         End Sub
 
+        Public Sub GenerateCustomerShipmentDailyReport(startDate As String, endDate As String, customer As String)
+            '標題
+            cells(1, 4) = $"列印日期:{Date.Now:yyyy/MM/dd}"
+
+            '撈資料參數
+            Dim dic As New Dictionary(Of String, Object) From {
+                {"startDate", startDate},
+                {"endDate", endDate},
+                {"customer", customer}
+            }
+
+            ' 第一次查詢：取得期間內所有不重複的產品
+            Dim sql1 As String = "SELECT DISTINCT 產品名稱 FROM 過磅資料表 " &
+                                "WHERE 過磅日期 BETWEEN @startDate AND @endDate "
+            If customer <> "全部" Then sql1 &= "AND ([客戶/廠商] = @customer) "
+            sql1 &= "ORDER BY 產品名稱"
+
+            Dim dtProducts = SelectTable(sql1, dic)
+            Dim productList As New List(Of String)
+            For Each row As DataRow In dtProducts.Rows
+                productList.Add(row("產品名稱").ToString())
+            Next
+
+            ' 第二次查詢：取得詳細資料
+            Dim sql2 As String = "SELECT 過磅日期, [客戶/廠商], 產品名稱, 淨重 " &
+                                "FROM 過磅資料表 " &
+                                "WHERE 過磅日期 BETWEEN @startDate AND @endDate "
+            If customer <> "全部" Then sql2 &= "AND ([客戶/廠商] = @customer) "
+            sql2 &= "ORDER BY 過磅日期, [客戶/廠商]"
+
+            Dim dt = SelectTable(sql2, dic)
+
+            ' 用LINQ分組處理資料：按日期+客戶分組
+            Dim groupedData = From row In dt.AsEnumerable()
+                              Group By
+                                  Day = row("過磅日期"),
+                                  Cus = row("客戶/廠商")
+                              Into Group
+                              Select New With {
+                                  Key Day,
+                                  Key Cus,
+                                  .ProductWeights = Group.GroupBy(Function(r) r("產品名稱")).
+                                                   ToDictionary(Function(g) g.Key.ToString(),
+                                                               Function(g) g.Sum(Function(r) CDbl(r("淨重"))))
+                              }
+
+            ' 動態建立DataTable
+            Dim table As New Data.DataTable()
+            table.Columns.Add("日期")
+            table.Columns.Add("客戶")
+            ' 動態加入產品欄位
+            For Each product As String In productList
+                table.Columns.Add(product)
+            Next
+            table.Columns.Add("總計(噸數)")
+
+            ' 計算總計用的變數
+            Dim productTotals As New Dictionary(Of String, Double)
+            For Each product As String In productList
+                productTotals(product) = 0
+            Next
+            Dim totalWeight As Double = 0
+
+            ' 填入資料
+            For Each group In groupedData.OrderBy(Function(x) x.Day).ThenBy(Function(x) x.Cus)
+                Dim rowData As New List(Of Object) From {
+                    group.Day,
+                    group.Cus
+                }
+
+                                 ' 填入各產品的重量（沒有的產品填0）
+                 Dim groupTotalWeight As Double = 0
+                 For Each product As String In productList
+                     If group.ProductWeights.ContainsKey(product) Then
+                         Dim weight As Double = Math.Round(group.ProductWeights(product), 3)
+                         rowData.Add(weight)
+                         productTotals(product) += weight
+                         groupTotalWeight += weight
+                     Else
+                         rowData.Add(0)
+                     End If
+                 Next
+                 
+                 Dim roundedWeight As Double = Math.Round(groupTotalWeight, 3)
+                 rowData.Add(roundedWeight)
+                 totalWeight += roundedWeight
+
+                table.Rows.Add(rowData.ToArray())
+            Next
+
+            ' 加入總計行
+            If table.Rows.Count > 0 Then
+                DrawLine(table.Rows.Count + 2, 1, table.Columns.Count, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlHairline)
+
+                Dim totalRowData As New List(Of Object) From {
+                    "",
+                    "(總計)"
+                }
+
+                                 For Each product As String In productList
+                     totalRowData.Add(Math.Round(productTotals(product), 3))
+                 Next
+                 totalRowData.Add(Math.Round(totalWeight, 3))
+
+                table.Rows.Add(totalRowData.ToArray())
+            End If
+
+            ' 先寫入動態表頭
+            Dim headerArray(0, table.Columns.Count - 1) As Object
+            For j = 0 To table.Columns.Count - 1
+                headerArray(0, j) = table.Columns(j).ColumnName
+            Next
+            Dim headerRange As Range = ws.Range(ws.Cells(2, 1), ws.Cells(2, table.Columns.Count))
+            headerRange.Value = headerArray
+
+            ' 為表頭加上上下邊框
+            DrawLine(2, 1, table.Columns.Count, XlBordersIndex.xlEdgeTop, XlBorderWeight.xlThin)
+            DrawLine(2, 1, table.Columns.Count, XlBordersIndex.xlEdgeBottom, XlBorderWeight.xlThin)
+
+            ' 將 DataTable 資料寫入一個二維陣列
+            Dim objectArray(table.Rows.Count - 1, table.Columns.Count - 1) As Object
+
+            ' 寫入資料
+            For i = 0 To table.Rows.Count - 1
+                For j = 0 To table.Columns.Count - 1
+                    objectArray(i, j) = table.Rows(i)(j)
+                Next
+            Next
+
+            ' 一次性將二維陣列寫入 Excel（從第3行開始）
+            If table.Rows.Count > 0 Then
+                Dim range As Range = ws.Range(ws.Cells(3, 1), ws.Cells(table.Rows.Count + 2, table.Columns.Count))
+                range.Value = objectArray
+            End If
+
+            ' 自動調整所有欄位的欄寬
+            ws.Columns.AutoFit()
+        End Sub
+
         Public Sub CreateNewReport(sheetName As String)
             Dim orgWb As Workbook = exl.Workbooks.Open(Path.Combine(_filePath, "Report", "報表範本檔.xlsx"))
             Dim orgWs As Worksheet = orgWb.Worksheets(sheetName)
@@ -881,7 +1020,6 @@ Namespace ReportGenerators
 
             Return sb.ToString
         End Function
-
 
         Public Sub WriteToExcel(table As Data.DataTable)
             ' 將 DataTable 寫入一個二維陣列
