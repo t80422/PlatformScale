@@ -808,8 +808,10 @@ Namespace ReportGenerators
             WriteToExcel(table)
         End Sub
 
-        Public Sub GenerateCustomerShipmentDailyReport(startDate As String, endDate As String, customer As String)
+        Public Sub GenerateCustomerShipmentDailyReport(startDate As String, endDate As String, customer As String, inout As String)
             '標題
+            Dim type = If(inout = "出貨", "客戶", "廠商")
+            cells(1, 1) = $"{type}{inout}每日統計表"
             cells(1, 4) = $"列印日期:{Date.Now:yyyy/MM/dd}"
 
             '撈資料參數
@@ -819,9 +821,11 @@ Namespace ReportGenerators
                 {"customer", customer}
             }
 
+
             ' 第一次查詢：取得期間內所有不重複的產品
             Dim sql1 As String = "SELECT DISTINCT 產品名稱 FROM 過磅資料表 " &
-                                "WHERE 過磅日期 BETWEEN @startDate AND @endDate "
+                                 "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                                $"AND [進/出] = '{inout}' "
             If customer <> "全部" Then sql1 &= "AND ([客戶/廠商] = @customer) "
             sql1 &= "ORDER BY 產品名稱"
 
@@ -833,8 +837,9 @@ Namespace ReportGenerators
 
             ' 第二次查詢：取得詳細資料
             Dim sql2 As String = "SELECT 過磅日期, [客戶/廠商], 產品名稱, 淨重 " &
-                                "FROM 過磅資料表 " &
-                                "WHERE 過磅日期 BETWEEN @startDate AND @endDate "
+                                 "FROM 過磅資料表 " &
+                                 "WHERE 過磅日期 BETWEEN @startDate AND @endDate " &
+                                $"AND [進/出] = '{inout}' "
             If customer <> "全部" Then sql2 &= "AND ([客戶/廠商] = @customer) "
             sql2 &= "ORDER BY 過磅日期, [客戶/廠商]"
 
@@ -872,28 +877,36 @@ Namespace ReportGenerators
             Dim totalWeight As Double = 0
 
             ' 填入資料
+            Dim previousDate As String = ""
             For Each group In groupedData.OrderBy(Function(x) x.Day).ThenBy(Function(x) x.Cus)
+                Dim currentDate As String = group.Day.ToString()
+
+                ' 如果是新的日期，顯示日期；否則留空
+                Dim dateToShow As String = If(currentDate = previousDate, "", currentDate)
+
                 Dim rowData As New List(Of Object) From {
-                    group.Day,
+                    dateToShow,
                     group.Cus
                 }
 
-                                 ' 填入各產品的重量（沒有的產品填0）
-                 Dim groupTotalWeight As Double = 0
-                 For Each product As String In productList
-                     If group.ProductWeights.ContainsKey(product) Then
-                         Dim weight As Double = Math.Round(group.ProductWeights(product), 3)
-                         rowData.Add(weight)
-                         productTotals(product) += weight
-                         groupTotalWeight += weight
-                     Else
-                         rowData.Add(0)
-                     End If
-                 Next
-                 
-                 Dim roundedWeight As Double = Math.Round(groupTotalWeight, 3)
-                 rowData.Add(roundedWeight)
-                 totalWeight += roundedWeight
+                previousDate = currentDate
+
+                ' 填入各產品的重量（沒有的產品填0）
+                Dim groupTotalWeight As Double = 0
+                For Each product As String In productList
+                    If group.ProductWeights.ContainsKey(product) Then
+                        Dim weight As Double = Math.Round(group.ProductWeights(product), 3)
+                        rowData.Add(weight)
+                        productTotals(product) += weight
+                        groupTotalWeight += weight
+                    Else
+                        rowData.Add(0)
+                    End If
+                Next
+
+                Dim roundedWeight As Double = Math.Round(groupTotalWeight, 3)
+                rowData.Add(roundedWeight)
+                totalWeight += roundedWeight
 
                 table.Rows.Add(rowData.ToArray())
             Next
@@ -907,10 +920,10 @@ Namespace ReportGenerators
                     "(總計)"
                 }
 
-                                 For Each product As String In productList
-                     totalRowData.Add(Math.Round(productTotals(product), 3))
-                 Next
-                 totalRowData.Add(Math.Round(totalWeight, 3))
+                For Each product As String In productList
+                    totalRowData.Add(Math.Round(productTotals(product), 3))
+                Next
+                totalRowData.Add(Math.Round(totalWeight, 3))
 
                 table.Rows.Add(totalRowData.ToArray())
             End If

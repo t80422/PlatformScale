@@ -3343,7 +3343,7 @@ Partial Class frmMain
         Me.RadioButton1.Name = "RadioButton1"
         Me.RadioButton1.Size = New System.Drawing.Size(270, 23)
         Me.RadioButton1.TabIndex = 9
-        Me.RadioButton1.Text = "客戶出貨日報表"
+        Me.RadioButton1.Text = "客戶廠商出進貨日報表"
         Me.RadioButton1.UseVisualStyleBackColor = True
         '
         'frmMain
@@ -3357,7 +3357,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.1.0"
+        Me.Text = "原綱衡器過磅系統 v1.1.1"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()

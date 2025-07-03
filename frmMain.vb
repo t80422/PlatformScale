@@ -1841,17 +1841,12 @@ Finish:
                 Case "過磅單日統計表"
                     exlReport.GenerateWeighingDailyReport(nudYear.Value, nudMonth.Value, nudDay_start.Value, nudDay_end.Value, inOut, dic)
 
-                Case "客戶出貨日報表"
+                Case "客戶廠商出進貨日報表"
                     Dim startDate = New Date(nudYear.Value, nudMonth.Value, nudDay_start.Value).ToString("yyyy/MM/dd")
-                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value).AddDays(1).ToString("yyyy/MM/dd")
+                    Dim endDate = New Date(nudYear.Value, nudMonth.Value, nudDay_end.Value).ToString("yyyy/MM/dd")
                     Dim customer = cmbCliSup_report.Text
 
-                    If String.IsNullOrEmpty(customer) Then
-                        MsgBox("請選擇客戶")
-                        Exit Sub
-                    End If
-
-                    exlReport.GenerateCustomerShipmentDailyReport(startDate, endDate, customer)
+                    exlReport.GenerateCustomerShipmentDailyReport(startDate, endDate, customer, inOut)
                 Case Else
 
             End Select
