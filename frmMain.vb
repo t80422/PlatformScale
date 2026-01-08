@@ -31,6 +31,8 @@ Public Class frmMain
     Private tempCarOwner As String '用在車籍資料
     Private currentProductId As String
     Private carPresenter As CarPresenter
+    Private isCreateOrder As Boolean '是否為新增
+
     Public Event DeleteCar As EventHandler(Of DeleteRequestedEventArgs) Implements ICarView.DeleteCar
 
     Private Enum enumWho
@@ -447,19 +449,15 @@ Public Class frmMain
     ''' <summary>
     ''' 取最新磅單序號
     ''' </summary>
-    Private Function GetNewRecpNo() As String
-        Dim d = Now
-        'Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
-        '                                        "UNION " &
-        '                                      $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 過磅日期 = '{d:yyyy/MM/dd}' " &
-        '                                       "ORDER BY 磅單序號 DESC")
-        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 磅單序號 like '{Now:yyyyMMdd}%' " &
+    Private Function GetNewRecpNo(day As Date) As String
+        'Dim d = Now
+        Dim dt = SelectTable($"SELECT 磅單序號 FROM 過磅資料表 WHERE 磅單序號 like '{day:yyyyMMdd}%' " &
                                                 "UNION " &
-                                              $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 磅單序號 like '{Now:yyyyMMdd}%' " &
+                                              $"SELECT 磅單序號 FROM 二次過磅暫存資料表 WHERE 磅單序號 like '{day:yyyyMMdd}%' " &
                                                "ORDER BY 磅單序號 DESC")
         Dim num As String
         If dt.Rows.Count = 0 Then
-            num = d.ToString("yyyyMMdd001")
+            num = day.ToString("yyyyMMdd001")
         Else
             num = dt.Rows(0).Field(Of String)("磅單序號") + 1
         End If
@@ -796,6 +794,7 @@ Public Class frmMain
         dtp過磅.Value = Now
         rdoShipment.Checked = True
         SetCmbCliManu(enumWho.客戶)
+        isCreateOrder = False
     End Sub
 
     '清除-系統設定-權限設定
@@ -808,12 +807,14 @@ Public Class frmMain
     '新增-過磅作業
     Private Sub btnInsert_過磅_Click(sender As Object, e As EventArgs) Handles btnInsert_過磅.Click
         btnClear_過磅.PerformClick()
-        txtRcepNo.Text = GetNewRecpNo()
+        txtRcepNo.Text = GetNewRecpNo(dtp過磅.Value.Date)
         txtUser.Text = user
         cmbCliManu.Enabled = True
         cmbCarNo.Enabled = True
         cmbProduct.Enabled = True
         txtTPM.ReadOnly = False
+
+        isCreateOrder = True
     End Sub
 
     '新增-廠商資料,客戶資料
@@ -2055,5 +2056,10 @@ Finish:
         InitReportDate()
         InitReportCombobox()
         rdoCustomer.Checked = True
+    End Sub
+
+    Private Sub dtp過磅_ValueChanged(sender As Object, e As EventArgs) Handles dtp過磅.ValueChanged
+        If Not isCreateOrder Then Exit Sub
+        txtRcepNo.Text = GetNewRecpNo(dtp過磅.Value.Date)
     End Sub
 End Class

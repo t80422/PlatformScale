@@ -1,5 +1,4 @@
 ﻿Imports System.Data.OleDb
-Imports System.IO
 
 Module modAccess
     Public conn As OleDbConnection
@@ -20,36 +19,46 @@ Module modAccess
                 passWord = dbSet(1)
             End If
 
-            connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source='{dataSource}';Jet OLEDB:Database Password={passWord}"
+            connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
             conn = New OleDbConnection(connStr)
 
             TestConnect()
         Catch ex As Exception
             MsgBox(ex.Message)
+            MsgBox(ex.StackTrace)
         End Try
     End Sub
 
     Public Sub TestConnect()
         Try
             conn.Open()
+        Catch ex As OleDbException
+            MsgBox($"資料庫連線錯誤: {ex.Message}{vbCrLf}錯誤代碼: {ex.ErrorCode}")
+            MsgBox(ex.StackTrace)
+            SetDatabase()
         Catch ex As Exception
             MsgBox(ex.Message)
+            MsgBox(ex.StackTrace)
             SetDatabase()
         End Try
         conn.Close()
     End Sub
 
     Public Sub SetDatabase()
-        dataSource = InputBox("請輸入資料庫路徑")
-        If dataSource = "" Then End
+        Try
+            dataSource = InputBox("請輸入資料庫路徑")
+            If dataSource = "" Then End
 
-        passWord = InputBox("請輸入密碼")
+            passWord = InputBox("請輸入密碼")
 
-        Dim content = dataSource & vbCrLf & passWord
-        CreateOrUpdateConfigFile("DB.set", content)
-        connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
-        'connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\WorkWork\db4UGWS.mdb;Jet OLEDB:Database Password={passWord}"
-        conn = New OleDbConnection(connStr)
+            Dim content = dataSource & vbCrLf & passWord
+            CreateOrUpdateConfigFile("DB.set", content)
+            connStr = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={dataSource};Jet OLEDB:Database Password={passWord}"
+            conn = New OleDbConnection(connStr)
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            MsgBox(ex.StackTrace)
+        End Try
     End Sub
 
     ''' <summary>

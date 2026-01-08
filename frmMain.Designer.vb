@@ -224,6 +224,7 @@ Partial Class frmMain
         Me.Label19 = New System.Windows.Forms.Label()
         Me.Label20 = New System.Windows.Forms.Label()
         Me.grpType_report = New System.Windows.Forms.GroupBox()
+        Me.RadioButton1 = New System.Windows.Forms.RadioButton()
         Me.RadioButton11 = New System.Windows.Forms.RadioButton()
         Me.RadioButton10 = New System.Windows.Forms.RadioButton()
         Me.RadioButton9 = New System.Windows.Forms.RadioButton()
@@ -293,7 +294,6 @@ Partial Class frmMain
         Me.tmrScale = New System.Windows.Forms.Timer(Me.components)
         Me.tmrCheckModify = New System.Windows.Forms.Timer(Me.components)
         Me.tmrLoadPDF = New System.Windows.Forms.Timer(Me.components)
-        Me.RadioButton1 = New System.Windows.Forms.RadioButton()
         Me.tabMain.SuspendLayout()
         Me.tp過磅.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
@@ -2632,6 +2632,16 @@ Partial Class frmMain
         Me.grpType_report.TabStop = False
         Me.grpType_report.Text = "種類"
         '
+        'RadioButton1
+        '
+        Me.RadioButton1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
+        Me.RadioButton1.Location = New System.Drawing.Point(6, 143)
+        Me.RadioButton1.Name = "RadioButton1"
+        Me.RadioButton1.Size = New System.Drawing.Size(270, 23)
+        Me.RadioButton1.TabIndex = 9
+        Me.RadioButton1.Text = "客戶廠商出進貨日報表"
+        Me.RadioButton1.UseVisualStyleBackColor = True
+        '
         'RadioButton11
         '
         Me.RadioButton11.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
@@ -3336,16 +3346,6 @@ Partial Class frmMain
         'tmrLoadPDF
         '
         '
-        'RadioButton1
-        '
-        Me.RadioButton1.Font = New System.Drawing.Font("標楷體", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(136, Byte))
-        Me.RadioButton1.Location = New System.Drawing.Point(6, 143)
-        Me.RadioButton1.Name = "RadioButton1"
-        Me.RadioButton1.Size = New System.Drawing.Size(270, 23)
-        Me.RadioButton1.TabIndex = 9
-        Me.RadioButton1.Text = "客戶廠商出進貨日報表"
-        Me.RadioButton1.UseVisualStyleBackColor = True
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 21.0!)
@@ -3357,7 +3357,7 @@ Partial Class frmMain
         Me.Margin = New System.Windows.Forms.Padding(6, 5, 6, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "原綱衡器過磅系統 v1.1.1"
+        Me.Text = "原綱衡器過磅系統 v1.1.2"
         Me.tabMain.ResumeLayout(False)
         Me.tp過磅.ResumeLayout(False)
         Me.tp過磅.PerformLayout()
