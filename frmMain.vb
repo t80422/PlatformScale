@@ -2062,4 +2062,23 @@ Finish:
         If Not isCreateOrder Then Exit Sub
         txtRcepNo.Text = GetNewRecpNo(dtp過磅.Value.Date)
     End Sub
+
+    Private Sub dtp過磅_CloseUp(sender As Object, e As EventArgs) Handles dtp過磅.CloseUp
+        Dim dtp As DateTimePicker = sender
+
+        With dgv過磅
+            .DataSource = SelectTable(GetTableAllData("過磅資料表") + $" WHERE 磅單序號 like '{dtp.Value:yyyyMMdd}%' ORDER BY 磅單序號 DESC")
+            .Columns("空重載入時間").DefaultCellStyle.Format = "HH:mm"
+            .Columns("總重載入時間").DefaultCellStyle.Format = "HH:mm"
+            .Columns("過磅種類").Visible = False
+            .Columns("工程名稱").Visible = False
+            .Columns("工程代號").Visible = False
+            .Columns("載運地點").Visible = False
+            .Columns("產品代號").Visible = False
+            .Columns("備註").Visible = False
+            .Columns("全銜").Visible = False
+            .Columns("單價").Visible = False
+            .Columns("總價").Visible = False
+        End With
+    End Sub
 End Class
